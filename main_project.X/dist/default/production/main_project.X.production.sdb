@@ -25,10 +25,10 @@
 [v _lcdNibble lcdNibble `(v  1 e 1 0 ]
 "15 C:\Users\teddy\Desktop\programming\Git\AER201/main.c
 [v _main main `(v  1 e 1 0 ]
-"149
+"163
 [v _switchMenu switchMenu `(v  1 e 1 0 ]
-"164
-[v _keypressed keypressed `II(v  1 e 1 0 ]
+"178
+[v _menuChange menuChange `IIH(v  1 e 1 0 ]
 "464 C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\doprnt.c
 [v _printf printf `(i  1 e 2 0 ]
 "62 C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\float.c
@@ -168,24 +168,26 @@
 "15 C:\Users\teddy\Desktop\programming\Git\AER201/main.c
 [v _main main `(v  1 e 1 0 ]
 {
-"48
-[v main@i_215 i `uc  1 a 1 59 ]
-"135
-[v main@i_237 i `uc  1 a 1 61 ]
-"115
+"62
+[v main@i_217 i `uc  1 a 1 59 ]
+"149
+[v main@i_239 i `uc  1 a 1 61 ]
+"129
 [v main@numAA numAA `uc  1 a 1 58 ]
-"102
+"116
 [v main@num9V num9V `uc  1 a 1 57 ]
-"89
+"103
 [v main@numC numC `uc  1 a 1 56 ]
-"77
+"91
 [v main@numBats numBats `uc  1 a 1 55 ]
-"64
+"78
 [v main@sec sec `uc  1 a 1 54 ]
 [v main@min min `uc  1 a 1 53 ]
-"43
-[v main@i i `uc  1 a 1 60 ]
-"147
+"57
+[v main@i_215 i `uc  1 a 1 60 ]
+"37
+[v main@i i `uc  1 a 1 62 ]
+"161
 } 0
 "464 C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\doprnt.c
 [v _printf printf `(i  1 e 2 0 ]
@@ -333,14 +335,14 @@
 [v ___lldiv@divisor divisor `ul  1 p 4 22 ]
 "31
 } 0
-"164 C:\Users\teddy\Desktop\programming\Git\AER201/main.c
-[v _keypressed keypressed `II(v  1 e 1 0 ]
+"178 C:\Users\teddy\Desktop\programming\Git\AER201/main.c
+[v _menuChange menuChange `IIH(v  1 e 1 0 ]
 {
-"166
-[v keypressed@keypress keypress `uc  1 a 1 17 ]
-"179
+"180
+[v menuChange@keypress keypress `uc  1 a 1 17 ]
+"193
 } 0
-"149
+"163
 [v _switchMenu switchMenu `(v  1 e 1 0 ]
 {
 [v switchMenu@left left `uc  1 a 1 wreg ]
@@ -348,5 +350,5 @@
 [v switchMenu@right right `uc  1 p 1 0 ]
 [v switchMenu@key key `uc  1 p 1 1 ]
 [v switchMenu@left left `uc  1 a 1 2 ]
-"162
+"176
 } 0

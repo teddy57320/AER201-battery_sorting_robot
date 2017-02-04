@@ -3826,8 +3826,22 @@ while (screenMode == 2){
 lcdInst(0b10000000);;
 printf("START:   PRESS *");
 lcdInst(0b11000000);;
-printf("OPTIONS:  4 OR 6");
+printf("< 4   DATA   6 >");
 (INTCONbits.GIE = 1);
+unsigned char i;
+for(i=0;i<50;i++){
+if (screenMode != 2)
+break;
+_delay((unsigned long)((10)*(10000000/4000.0)));
+}
+lcdInst(0b10000000);;
+lcdInst(0b11000000);;
+printf(" <4   DATA   6> ");
+for(i=0;i<50;i++){
+if (screenMode != 2)
+break;
+_delay((unsigned long)((10)*(10000000/4000.0)));
+}
 
 }
 while (screenMode == 1){
@@ -3955,7 +3969,7 @@ screenMode += 1;
 }
 }
 
-void interrupt keypressed(void) {
+void interrupt high_priority menuChange(void) {
 if(INT1IF){
 unsigned char keypress = (PORTB & 0xF0) >> 4;
 if (keys[keypress] == '*'){

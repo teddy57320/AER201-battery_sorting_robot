@@ -13,6 +13,7 @@ void switchMenu(unsigned char left, unsigned char right, unsigned char key);
 //toggles the interface "left" and "right" to show different logs
 
 void main(void){ 
+	
 	TRISC = 0x00;
     TRISD = 0x00;   //All output mode
     TRISB = 0xFF;   //All input mode
@@ -28,13 +29,26 @@ void main(void){
 
     while (1) {
         while (screenMode == STANDBY){	//standby mode
-        	di();
+        	di(); //making sure printing on LCD does not get interrupted
             __lcd_home();
             printf("START:   PRESS *");
             __lcd_newline();
-            printf("OPTIONS:  4 OR 6");
+            printf("< 4   DATA   6 >");
             ei();
-            //making sure printing on LCD does not get interrupted
+            unsigned char i;
+            for(i=0;i<50;i++){
+            	if (screenMode != STANDBY)	//ensure immediate scrolling
+            		break;
+            	__delay_ms(10);
+            }
+            __lcd_home();
+            __lcd_newline();
+            printf(" <4   DATA   6> ");
+            for(i=0;i<50;i++){
+            	if (screenMode != STANDBY)
+            		break;
+            	__delay_ms(10);
+            }
         }
         while (screenMode == OPERATING){	//while machine is running
         	di();
@@ -161,7 +175,7 @@ void switchMenu(unsigned char left, unsigned char right, unsigned char key){
     }
 }   
 
-void interrupt keypressed(void) {
+void interrupt high_priority menuChange(void) {
     if(INT1IF){
         unsigned char keypress = (PORTB & 0xF0) >> 4;
         if (keys[keypress] == '*'){	
