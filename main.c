@@ -21,6 +21,7 @@ void main(void){
     LATC = 0x00;
     ADCON0 = 0x00;  //Disable ADC
     ADCON1 = 0xFF;  //Set PORTB to be digital instead of analog default  
+    RC1 = 0;    //used to disable keypad
     
     INT1IE = 1; //enable external interrupt
     TMR0IE = 1; //enable timer overflow interrupt
@@ -189,6 +190,7 @@ void interrupt isr(void) {
         	if(screenMode == STANDBY){
         		screenMode = OPERATING;
                 T0CONbits.TMR0ON = 1; //turn on timer
+                RC1 = 1;    //free keypad pins
             }
         	else if (screenMode == FINISH)
         		screenMode = STANDBY;
@@ -213,6 +215,7 @@ void interrupt isr(void) {
             counter = 0;
             screenMode = FINISH;
             T0CONbits.TMR0ON = 0;   //turn off timer
+            RC1 = 0;    //enable keypad 
         }
     }
 }

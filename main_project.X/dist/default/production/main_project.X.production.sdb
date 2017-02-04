@@ -25,9 +25,9 @@
 [v _lcdNibble lcdNibble `(v  1 e 1 0 ]
 "16 C:\Users\teddy\Desktop\programming\Git\AER201/main.c
 [v _main main `(v  1 e 1 0 ]
-"169
+"170
 [v _switchMenu switchMenu `(v  1 e 1 0 ]
-"184
+"185
 [v _isr isr `II(v  1 e 1 0 ]
 "464 C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\doprnt.c
 [v _printf printf `(i  1 e 2 0 ]
@@ -120,7 +120,7 @@
 [v _SSPBUF SSPBUF `VEuc  1 e 1 @4041 ]
 "5781
 [v _T0CON T0CON `VEuc  1 e 1 @4053 ]
-[s S198 . 1 `uc 1 T0PS 1 0 :3:0 
+[s S199 . 1 `uc 1 T0PS 1 0 :3:0 
 `uc 1 PSA 1 0 :1:3 
 `uc 1 T0SE 1 0 :1:4 
 `uc 1 T0CS 1 0 :1:5 
@@ -128,17 +128,17 @@
 `uc 1 TMR0ON 1 0 :1:7 
 ]
 "5803
-[s S205 . 1 `uc 1 T0PS0 1 0 :1:0 
+[s S206 . 1 `uc 1 T0PS0 1 0 :1:0 
 `uc 1 T0PS1 1 0 :1:1 
 `uc 1 T0PS2 1 0 :1:2 
 `uc 1 . 1 0 :3:3 
 `uc 1 T016BIT 1 0 :1:6 
 ]
-[u S211 . 1 `S198 1 . 1 0 `S205 1 . 1 0 ]
-[v _T0CONbits T0CONbits `VES211  1 e 1 @4053 ]
+[u S212 . 1 `S199 1 . 1 0 `S206 1 . 1 0 ]
+[v _T0CONbits T0CONbits `VES212  1 e 1 @4053 ]
 "5857
 [v _TMR0 TMR0 `VEus  1 e 2 @4054 ]
-[s S135 . 1 `uc 1 RBIF 1 0 :1:0 
+[s S136 . 1 `uc 1 RBIF 1 0 :1:0 
 `uc 1 INT0IF 1 0 :1:1 
 `uc 1 TMR0IF 1 0 :1:2 
 `uc 1 RBIE 1 0 :1:3 
@@ -148,7 +148,7 @@
 `uc 1 GIE_GIEH 1 0 :1:7 
 ]
 "6298
-[s S144 . 1 `uc 1 . 1 0 :1:0 
+[s S145 . 1 `uc 1 . 1 0 :1:0 
 `uc 1 INT0F 1 0 :1:1 
 `uc 1 T0IF 1 0 :1:2 
 `uc 1 . 1 0 :1:3 
@@ -157,12 +157,12 @@
 `uc 1 PEIE 1 0 :1:6 
 `uc 1 GIE 1 0 :1:7 
 ]
-[s S153 . 1 `uc 1 . 1 0 :6:0 
+[s S154 . 1 `uc 1 . 1 0 :6:0 
 `uc 1 GIEL 1 0 :1:6 
 `uc 1 GIEH 1 0 :1:7 
 ]
-[u S157 . 1 `S135 1 . 1 0 `S144 1 . 1 0 `S153 1 . 1 0 ]
-[v _INTCONbits INTCONbits `VES157  1 e 1 @4082 ]
+[u S158 . 1 `S136 1 . 1 0 `S145 1 . 1 0 `S154 1 . 1 0 ]
+[v _INTCONbits INTCONbits `VES158  1 e 1 @4082 ]
 "6604
 [v _ACKDT ACKDT `VEb  1 e 0 @32301 ]
 "6606
@@ -173,6 +173,8 @@
 [v _INT1IF INT1IF `VEb  1 e 0 @32640 ]
 "7220
 [v _PEN PEN `VEb  1 e 0 @32298 ]
+"7310
+[v _RC1 RC1 `VEb  1 e 0 @31761 ]
 "7336
 [v _RCEN RCEN `VEb  1 e 0 @32299 ]
 "7382
@@ -194,22 +196,22 @@
 "16 C:\Users\teddy\Desktop\programming\Git\AER201/main.c
 [v _main main `(v  1 e 1 0 ]
 {
-"155
-[v main@i_272 i `uc  1 a 1 59 ]
-"135
+"156
+[v main@i_273 i `uc  1 a 1 59 ]
+"136
 [v main@numAA numAA `uc  1 a 1 58 ]
-"122
+"123
 [v main@num9V num9V `uc  1 a 1 57 ]
-"109
+"110
 [v main@numC numC `uc  1 a 1 56 ]
-"97
+"98
 [v main@numBats numBats `uc  1 a 1 55 ]
-"84
+"85
 [v main@sec sec `uc  1 a 1 54 ]
 [v main@min min `uc  1 a 1 53 ]
-"49
+"50
 [v main@i i `uc  1 a 1 60 ]
-"167
+"168
 } 0
 "464 C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\doprnt.c
 [v _printf printf `(i  1 e 2 0 ]
@@ -357,14 +359,14 @@
 [v ___lldiv@divisor divisor `ul  1 p 4 22 ]
 "31
 } 0
-"184 C:\Users\teddy\Desktop\programming\Git\AER201/main.c
+"185 C:\Users\teddy\Desktop\programming\Git\AER201/main.c
 [v _isr isr `II(v  1 e 1 0 ]
 {
-"186
+"187
 [v isr@keypress keypress `uc  1 a 1 17 ]
-"218
+"221
 } 0
-"169
+"170
 [v _switchMenu switchMenu `(v  1 e 1 0 ]
 {
 [v switchMenu@left left `uc  1 a 1 wreg ]
@@ -372,5 +374,5 @@
 [v switchMenu@right right `uc  1 p 1 0 ]
 [v switchMenu@key key `uc  1 p 1 1 ]
 [v switchMenu@left left `uc  1 a 1 2 ]
-"182
+"183
 } 0

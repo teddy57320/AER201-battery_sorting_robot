@@ -14,7 +14,7 @@
 #define	LCD_PORT    LATD   //On LATD[4,7] to be specific
 #define LCD_DELAY   30
 
-//Menu interface modes
+//Menu Interface Screens
 #define STANDBY		2
 #define OPERATING	1
 #define FINISH		0
