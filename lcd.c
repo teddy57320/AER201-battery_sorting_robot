@@ -13,9 +13,8 @@
 
 void initLCD(void) {
     __delay_ms(15);
-    lcdInst(0b00110011);        //Force into 8bit mode
-    lcdInst(0b00110011);        //Should require only three commands, but
-    lcdInst(0b00110010);        //Seems to be demanding five. quoi. 
+    lcdInst(0b00110011);       
+    lcdInst(0b00110010);        
     lcdInst(0b00101000);
     lcdInst(0b00001111);
     lcdInst(0b00000110);
