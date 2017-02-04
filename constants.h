@@ -32,6 +32,5 @@
 #define __lcd_home() lcdInst(0b10000000);
 #define __bcd_to_num(num) (num & 0x0F) + ((num & 0xF0)>>4)*10
 
-
 #endif	/* CONSTANTS_H */
 

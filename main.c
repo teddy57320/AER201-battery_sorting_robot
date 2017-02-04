@@ -8,12 +8,12 @@
 const char keys[] = "123A456B789C*0#D";
 unsigned char screenMode = STANDBY;
 unsigned char time[7];
+int counter = 0;
 
 void switchMenu(unsigned char left, unsigned char right, unsigned char key);
 //toggles the interface "left" and "right" to show different logs
 
 void main(void){ 
-	
 	TRISC = 0x00;
     TRISD = 0x00;   //All output mode
     TRISB = 0xFF;   //All input mode
@@ -21,7 +21,18 @@ void main(void){
     LATC = 0x00;
     ADCON0 = 0x00;  //Disable ADC
     ADCON1 = 0xFF;  //Set PORTB to be digital instead of analog default  
-    INT1IE = 1;
+    
+    INT1IE = 1; //enable external interrupt
+    TMR0IE = 1; //enable timer overflow interrupt
+    
+    T0CON = 0b01000111; //implement the following in register T0CON:
+//    TMR0ON = 0; //turn off timer
+//    T08BIT = 1; //use 8-bit timer
+//    T0CS = 0;   //use internal clock
+//    //TOSE not changed
+//    PSA = 0;    //enable prescalar
+//    T0PS2:T0PS0 = 111 //prescale 1:256
+
     initLCD();
     //nRBPU = 0;
     I2C_Master_Init(10000); //Initialize I2C Master with 100KHz clock
@@ -51,27 +62,22 @@ void main(void){
             }
         }
         while (screenMode == OPERATING){	//while machine is running
-        	di();
             __lcd_home();
-            printf("RUNNING...      ");
-            unsigned char i;
-            for (i=0; i<10; i++){
-                __lcd_home();
-                __lcd_newline();
-                printf("%02d              ", i);
-                __delay_1s();
-            }
-            ei();
-            //insert main operating code of the program
-            screenMode = FINISH;
+            printf("RUNNING...      ");     
+            __lcd_newline();
+            printf("                ");
+            
+//            insert main operating code of the program
+            
+//            screenMode = FINISH;
         }
         while (screenMode == FINISH){	//finish screen  
-        	di();         
+        	  
         	__lcd_home();
         	printf("DONE! PRESS *   ");
         	__lcd_newline();
         	printf("TO CONTINUE     ");
-        	ei();
+        	
         }
         while (screenMode == RUN_TIME){	//shows the log of latest run time
         	di();
@@ -175,13 +181,15 @@ void switchMenu(unsigned char left, unsigned char right, unsigned char key){
     }
 }   
 
-void interrupt high_priority menuChange(void) {
-    if(INT1IF){
+void interrupt isr(void) {
+    if(INT1IF && (screenMode != OPERATING)){  //keypad disconnected during operation
         unsigned char keypress = (PORTB & 0xF0) >> 4;
         if (keys[keypress] == '*'){	
         	//press * to start operation or resume to standby after finish
-        	if(screenMode == STANDBY)
+        	if(screenMode == STANDBY){
         		screenMode = OPERATING;
+                T0CONbits.TMR0ON = 1; //turn on timer
+            }
         	else if (screenMode == FINISH)
         		screenMode = STANDBY;
         }
@@ -190,4 +198,22 @@ void interrupt high_priority menuChange(void) {
         	// press 4 to toggle "left", 6 to toggle "right"
         INT1IF = 0;     //Clear flag bit
     }
+    if ((screenMode == OPERATING) && TMR0IF && TMR0IE){ //stop operation after 3 minutes
+        
+        TMR0IF = 0;
+        TMR0 = 0;
+        counter++;
+        if (counter >= 6866){
+        	// time for timer overflow
+            // = number of ticks to overflow * seconds per tick
+        	// = (256-timeResetValue)*(1/(_XTAL_FREQ/4/prescale))
+        	// = (256-0)*(1/(10000000/4/256)) = 0.0262 seconds
+        	// so to time 3 minutes it needs to run
+        	// 180seconds / 0.0262seconds = 6866.455 ~ 6866 times
+            counter = 0;
+            screenMode = FINISH;
+            T0CONbits.TMR0ON = 0;   //turn off timer
+        }
+    }
 }
+

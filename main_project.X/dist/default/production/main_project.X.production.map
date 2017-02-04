@@ -5,7 +5,7 @@ Linker command line:
 -W-3 --edf=C:\Program Files (x86)\Microchip\xc8\v1.40\dat\en_msgs.txt -cs \
   -h+dist/default/production\main_project.X.production.sym \
   --cmf=dist/default/production\main_project.X.production.cmf -z -Q18F4620 \
-  -oC:\Users\teddy\AppData\Local\Temp\s49c.2 \
+  -oC:\Users\teddy\AppData\Local\Temp\s93s.2 \
   -Mdist/default/production/main_project.X.production.map -E1 -ver=XC8 \
   -ASTACK=080h-0f7fh -pstack=STACK -ACODE=00h-0FFFFh -ACONST=00h-0FFFFh \
   -ASMALLCONST=01000h-010FFhx240 -AMEDIUMCONST=01000h-0FFFFh \
@@ -25,7 +25,7 @@ Linker command line:
   -pfarbss=FARRAM,fardata=FARRAM,nvFARRAM=FARRAM \
   -pintsave_regs=BIGRAM,bigbss=BIGRAM,bigdata=BIGRAM -pbss=RAM \
   -pidata=CODE,irdata=CODE,ibigdata=CODE,ifardata=CODE -prparam=COMRAM \
-  C:\Users\teddy\AppData\Local\Temp\s49c.obj \
+  C:\Users\teddy\AppData\Local\Temp\s93s.obj \
   dist/default/production\main_project.X.production.obj 
 
 Object code version is 3.11
@@ -38,7 +38,7 @@ Call graph: (short form)
 
 
                 Name                               Link     Load   Length Selector   Space Scale
-C:\Users\teddy\AppData\Local\Temp\s49c.obj
+C:\Users\teddy\AppData\Local\Temp\s93s.obj
                 init                                  E        E        4        4       0
                 reset_vec                             0        0        4        0       0
                 idloc                            200000   200000        8   200000       0
@@ -46,9 +46,9 @@ C:\Users\teddy\AppData\Local\Temp\s49c.obj
 dist/default/production\main_project.X.production.obj
                 intcode                               8        8        6        4       0
                 temp                                 48       48        1        1       1
-                mediumconst                        FE78     FE78      188     7F3C       0
+                mediumconst                        FE7A     FE7A      186     7F3D       0
                 text18                              956      956       36        4       0
-                intcode_body                        676      676       DC        4       0
+                intcode_body                        634      634      11E        4       0
                 text16                              752      752       82        4       0
                 text15                              7D4      7D4       5A        4       0
                 text14                              A22      A22       12        4       0
@@ -64,11 +64,11 @@ dist/default/production\main_project.X.production.obj
                 text4                               9B8      9B8       26        4       0
                 text3                               A04      A04       1E        4       0
                 text2                               A34      A34        C        4       0
-                text1                               36A      36A      30C        4       0
-                text0                                12       12      358        4       0
-                cstackCOMRAM                          1        1       3F        1       1
+                text1                               328      328      30C        4       0
+                text0                                12       12      316        4       0
+                cstackCOMRAM                          1        1       3D        1       1
                 dataCOMRAM                           47       47        1        1       1
-                bssCOMRAM                            40       40        7        1       1
+                bssCOMRAM                            3E       3E        9        1       1
                 cinit                               98C      98C       2C        4       0
                 idataCOMRAM                         A66      A66        1        4       0
 
@@ -80,7 +80,7 @@ TOTAL           Name                               Link     Load   Length     Sp
                 init                                  E        E        4         0
                 reset_vec                             0        0        4         0
                 text18                              956      956       36         0
-                intcode_body                        676      676       DC         0
+                intcode_body                        634      634      11E         0
                 text16                              752      752       82         0
                 text15                              7D4      7D4       5A         0
                 text14                              A22      A22       12         0
@@ -96,8 +96,8 @@ TOTAL           Name                               Link     Load   Length     Sp
                 text4                               9B8      9B8       26         0
                 text3                               A04      A04       1E         0
                 text2                               A34      A34        C         0
-                text1                               36A      36A      30C         0
-                text0                                12       12      358         0
+                text1                               328      328      30C         0
+                text0                                12       12      316         0
                 cinit                               98C      98C       2C         0
                 idataCOMRAM                         A66      A66        1         0
 
@@ -106,13 +106,13 @@ TOTAL           Name                               Link     Load   Length     Sp
         CLASS   SMALLCONST     
 
         CLASS   MEDIUMCONST    
-                mediumconst                        FE78     FE78      188         0
+                mediumconst                        FE7A     FE7A      186         0
 
         CLASS   COMRAM         
                 temp                                 48       48        1         1
-                cstackCOMRAM                          1        1       3F         1
+                cstackCOMRAM                          1        1       3D         1
                 dataCOMRAM                           47       47        1         1
-                bssCOMRAM                            40       40        7         1
+                bssCOMRAM                            3E       3E        9         1
 
         CLASS   ABS1           
 
@@ -171,7 +171,7 @@ SEGMENTS        Name                           Load    Length   Top    Selector 
                 reset_vec                      000000  000004  000004         0       0  CODE    
                 cstackCOMRAM                   000001  000048  000049         1       1  COMRAM  
                 intcode                        000008  000A5F  000A67         4       0  CODE    
-                mediumconst                    00FE78  000188  010000      7F3C       0  MEDIUMCO
+                mediumconst                    00FE7A  000186  010000      7F3D       0  MEDIUMCO
                 idloc                          200000  000008  200008    200000       0  IDLOC   
                 config                         300000  00000E  30000E    300000       0  CONFIG  
 
@@ -197,15 +197,15 @@ UNUSED ADDRESS RANGES
         BANK9            000900-0009FF              100
         BIGRAM           000049-000F7F              F37
         CODE             000004-000007                4
-                         000A67-00FE77             F411
+                         000A67-00FE79             F413
         COMRAM           000049-00007F               37
         CONST            000004-000007                4
-                         000A67-00FE77             F411
+                         000A67-00FE79             F413
         EEDATA           F00000-F003FF              400
-        MEDIUMCONST      001000-00FE77             EE78
+        MEDIUMCONST      001000-00FE79             EE7A
         RAM              000080-000F7F              100
         SFR              000F80-000FFF               80
-        SMALLCONST       001000-00FE77              100
+        SMALLCONST       001000-00FE79              100
         STACK            000080-000F7F              F00
 
                                   Symbol Table
@@ -246,6 +246,11 @@ _SSPBUF                    (abs)        000FC9
 _SSPCON1                   (abs)        000FC6
 _SSPCON2                   (abs)        000FC5
 _SSPSTAT                   (abs)        000FC7
+_T0CON                     (abs)        000FD5
+_T0CONbits                 (abs)        000FD5
+_TMR0                      (abs)        000FD6
+_TMR0IE                    (abs)        007F95
+_TMR0IF                    (abs)        007F92
 _TRISB                     (abs)        000F93
 _TRISC                     (abs)        000F94
 _TRISC3                    (abs)        007CA3
@@ -418,7 +423,7 @@ __Lintentry                intentry     000000
 __Lintret                  intret       000000
 __Lintsave_regs            intsave_regs 000000
 __Lirdata                  irdata       000000
-__Lmediumconst             mediumconst  00FE78
+__Lmediumconst             mediumconst  00FE7A
 __LnvFARRAM                nvFARRAM     000000
 __Lnvbit                   nvbit        000000
 __Lnvrram                  nvrram       000000
@@ -497,30 +502,30 @@ __end_of___lwdiv           text6        000880
 __end_of___lwmod           text5        000956
 __end_of___wmul            text4        0009DE
 __end_of__initialization   cinit        0009AA
-__end_of_dpowers           mediumconst  00FE94
-__end_of_hexpowers         mediumconst  00FE9C
+__end_of_dpowers           mediumconst  00FE96
+__end_of_hexpowers         mediumconst  00FE9E
 __end_of_initLCD           text7        000914
 __end_of_isdigit           text3        000A22
-__end_of_keys              mediumconst  00FE8A
+__end_of_isr               intcode_body 000752
+__end_of_keys              mediumconst  00FE8C
 __end_of_lcdInst           text8        000A4C
 __end_of_lcdNibble         text9        0008CE
-__end_of_main              text0        00036A
-__end_of_menuChange        intcode_body 000752
-__end_of_printf            text1        000676
+__end_of_main              text0        000328
+__end_of_printf            text1        000634
 __end_of_putch             text2        000A40
 __end_of_switchMenu        text18       00098C
 __initialization           cinit        00098C
-__mediumconst              mediumconst  00FE78
-__pbssCOMRAM               bssCOMRAM    000040
+__mediumconst              mediumconst  00FE7A
+__pbssCOMRAM               bssCOMRAM    00003E
 __pcinit                   cinit        00098C
 __pcstackCOMRAM            cstackCOMRAM 000001
 __pdataCOMRAM              dataCOMRAM   000047
 __pidataCOMRAM             idataCOMRAM  000A66
 __pintcode                 intcode      000008
-__pintcode_body            intcode_body 000676
-__pmediumconst             mediumconst  00FE78
+__pintcode_body            intcode_body 000634
+__pmediumconst             mediumconst  00FE7A
 __ptext0                   text0        000012
-__ptext1                   text1        00036A
+__ptext1                   text1        000328
 __ptext10                  text10       000A4C
 __ptext11                  text11       000A56
 __ptext12                  text12       000A5E
@@ -550,52 +555,51 @@ __size_of___lwmod          (abs)        000000
 __size_of___wmul           (abs)        000000
 __size_of_initLCD          (abs)        000000
 __size_of_isdigit          (abs)        000000
+__size_of_isr              (abs)        000000
 __size_of_lcdInst          (abs)        000000
 __size_of_lcdNibble        (abs)        000000
 __size_of_main             (abs)        000000
-__size_of_menuChange       (abs)        000000
 __size_of_printf           (abs)        000000
 __size_of_putch            (abs)        000000
 __size_of_switchMenu       (abs)        000000
 __smallconst               smallconst   000000
-_dpowers                   mediumconst  00FE8A
-_hexpowers                 mediumconst  00FE94
+_counter                   bssCOMRAM    000045
+_dpowers                   mediumconst  00FE8C
+_hexpowers                 mediumconst  00FE96
 _initLCD                   text7        0008CE
 _isdigit                   text3        000A04
-_isdigit$500               cstackCOMRAM 000014
-_keys                      mediumconst  00FE79
+_isdigit$539               cstackCOMRAM 000014
+_isr                       intcode      000008
+_keys                      mediumconst  00FE7B
 _lcdInst                   text8        000A40
 _lcdNibble                 text9        000880
 _main                      text0        000012
-_menuChange                intcode      000008
-_printf                    text1        00036A
+_printf                    text1        000328
 _putch                     text2        000A34
 _screenMode                dataCOMRAM   000047
 _switchMenu                text18       000956
-_time                      bssCOMRAM    000040
+_time                      bssCOMRAM    00003E
 btemp                      temp         000048
 end_of_initialization      cinit        0009AA
 int$flags                  temp         000048
-int_func                   intcode_body 000676
+int_func                   intcode_body 000634
 intlevel0                  text         000000
 intlevel1                  text         000000
 intlevel2                  text         000000
 intlevel3                  text         000000
 isdigit@c                  cstackCOMRAM 000015
+isr@keypress               cstackCOMRAM 000012
 lcdInst@data               cstackCOMRAM 000015
 lcdNibble@data             cstackCOMRAM 000014
 lcdNibble@temp             cstackCOMRAM 000013
-main@i                     cstackCOMRAM 00003F
-main@i_215                 cstackCOMRAM 00003D
-main@i_217                 cstackCOMRAM 00003C
-main@i_239                 cstackCOMRAM 00003E
+main@i                     cstackCOMRAM 00003D
+main@i_272                 cstackCOMRAM 00003C
 main@min                   cstackCOMRAM 000036
 main@num9V                 cstackCOMRAM 00003A
 main@numAA                 cstackCOMRAM 00003B
 main@numBats               cstackCOMRAM 000038
 main@numC                  cstackCOMRAM 000039
 main@sec                   cstackCOMRAM 000037
-menuChange@keypress        cstackCOMRAM 000012
 printf@ap                  cstackCOMRAM 00002C
 printf@c                   cstackCOMRAM 000034
 printf@f                   cstackCOMRAM 00001F
@@ -618,12 +622,11 @@ FUNCTION INFORMATION:
 
  *************** function _main *****************
  Defined at:
-		line 15 in file "../main.c"
+		line 16 in file "../main.c"
  Parameters:    Size  Location     Type
 		None
  Auto vars:     Size  Location     Type
   i               1   59[COMRAM] unsigned char 
-  i               1   61[COMRAM] unsigned char 
   numAA           1   58[COMRAM] unsigned char 
   num9V           1   57[COMRAM] unsigned char 
   numC            1   56[COMRAM] unsigned char 
@@ -631,7 +634,6 @@ FUNCTION INFORMATION:
   sec             1   54[COMRAM] unsigned char 
   min             1   53[COMRAM] unsigned char 
   i               1   60[COMRAM] unsigned char 
-  i               1   62[COMRAM] unsigned char 
  Return value:  Size  Location     Type
                   1    wreg      void 
  Registers used:
@@ -642,10 +644,10 @@ FUNCTION INFORMATION:
 		Unchanged: 
  Data sizes:     COMRAM   BANK0   BANK1   BANK2   BANK3   BANK4   BANK5   BANK6   BANK7   BANK8   BANK9  BANK10  BANK11  BANK12  BANK13  BANK14  BANK15
       Params:         0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0
-      Locals:        10       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0
+      Locals:         8       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0
       Temps:          1       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0
-      Totals:        11       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0
-Total ram usage:       11 bytes
+      Totals:         9       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0
+Total ram usage:        9 bytes
  Hardware stack levels required when called:    5
  This function calls:
 		_I2C_Master_Init
@@ -669,7 +671,7 @@ Total ram usage:       11 bytes
 		 -> STR_19(23), STR_18(23), STR_17(21), STR_16(17), 
 		 -> STR_15(21), STR_14(17), STR_13(19), STR_12(17), 
 		 -> STR_11(19), STR_10(17), STR_9(25), STR_8(17), 
-		 -> STR_7(17), STR_6(17), STR_5(19), STR_4(17), 
+		 -> STR_7(17), STR_6(17), STR_5(17), STR_4(17), 
 		 -> STR_3(17), STR_2(17), STR_1(17), 
  Auto vars:     Size  Location     Type
   idx             1   42[COMRAM] unsigned char 
@@ -1174,9 +1176,9 @@ Total ram usage:       13 bytes
  This function uses a non-reentrant model
 
 
- *************** function _menuChange *****************
+ *************** function _isr *****************
  Defined at:
-		line 178 in file "../main.c"
+		line 184 in file "../main.c"
  Parameters:    Size  Location     Type
 		None
  Auto vars:     Size  Location     Type
@@ -1206,7 +1208,7 @@ Total ram usage:       15 bytes
 
  *************** function _switchMenu *****************
  Defined at:
-		line 163 in file "../main.c"
+		line 169 in file "../main.c"
  Parameters:    Size  Location     Type
   left            1    wreg     unsigned char 
   right           1    0[COMRAM] unsigned char 
@@ -1231,7 +1233,7 @@ Total ram usage:        3 bytes
  This function calls:
 		Nothing
  This function is called by:
-		_menuChange
+		_isr
  This function uses a non-reentrant model
 
 
@@ -1241,13 +1243,13 @@ MODULE INFORMATION
 Module		Function		Class		Link	Load	Size
 ../main.c
 		_switchMenu    		CODE           	0956	0000	55
-		_menuChange    		CODE           	0008	0000	227
-		_main          		CODE           	0012	0000	857
+		_main          		CODE           	0012	0000	791
+		_isr           		CODE           	0008	0000	293
 
 ../main.c estimated size: 1139
 
 C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\doprnt.c
-		_printf        		CODE           	036A	0000	781
+		_printf        		CODE           	0328	0000	781
 
 C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\doprnt.c estimated size: 781
 
@@ -1275,10 +1277,10 @@ C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\isdigit.c
 C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\isdigit.c estimated size: 31
 
 shared
-		_dpowers       		MEDIUMCONST    	FE8A	0000	11
-		_keys          		MEDIUMCONST    	FE79	0000	18
+		_dpowers       		MEDIUMCONST    	FE8C	0000	11
+		_keys          		MEDIUMCONST    	FE7B	0000	18
 		__initialization		CODE           	098C	0000	31
-		_hexpowers     		MEDIUMCONST    	FE94	0000	9
+		_hexpowers     		MEDIUMCONST    	FE96	0000	9
 
 shared estimated size: 69
 
