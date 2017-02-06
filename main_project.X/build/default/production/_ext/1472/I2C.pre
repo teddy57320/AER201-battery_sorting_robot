@@ -3756,12 +3756,7 @@ I2C_Master_Wait();
 SEN = 1;
 }
 
-void I2C_Master_RepeatedStart()
-{
-I2C_Master_Wait();
-RSEN = 1;
-}
-
+# 41
 void I2C_Master_Stop()
 {
 I2C_Master_Wait();
@@ -3787,8 +3782,3 @@ ACKEN = 1;
 return temp;
 }
 
-void delay_10ms(unsigned char n) {
-while (n-- != 0) {
-_delay((unsigned long)((5)*(10000000/4000.0)));
-}
-}

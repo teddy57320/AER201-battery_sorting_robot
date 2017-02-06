@@ -32,11 +32,11 @@ void I2C_Master_Start()
   SEN = 1;
 }
 
-void I2C_Master_RepeatedStart()
-{
-  I2C_Master_Wait();
-  RSEN = 1;
-}
+//void I2C_Master_RepeatedStart()
+//{
+//  I2C_Master_Wait();
+//  RSEN = 1;
+//}
 
 void I2C_Master_Stop()
 {
@@ -63,8 +63,8 @@ unsigned char I2C_Master_Read(unsigned char a)
   return temp;
 }
 
-void delay_10ms(unsigned char n) { 
-    while (n-- != 0) { 
-        __delay_ms(5); 
-    } 
-}
+//void delay_10ms(unsigned char n) { 
+//    while (n-- != 0) { 
+//        __delay_ms(5); 
+//    } 
+//}

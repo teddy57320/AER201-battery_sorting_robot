@@ -13,8 +13,6 @@ Version 3.2 HI-TECH Software Intermediate Code
 [v _TRISC4 `Vb ~T0 @X0 0 e@31908 ]
 "7420
 [v _SEN `Vb ~T0 @X0 0 e@32296 ]
-"7382
-[v _RSEN `Vb ~T0 @X0 0 e@32297 ]
 "7220
 [v _PEN `Vb ~T0 @X0 0 e@32298 ]
 "4966
@@ -25,10 +23,6 @@ Version 3.2 HI-TECH Software Intermediate Code
 [v _ACKDT `Vb ~T0 @X0 0 e@32301 ]
 "6606
 [v _ACKEN `Vb ~T0 @X0 0 e@32300 ]
-[v F2878 `(v ~T0 @X0 1 tf1`ul ]
-"159 C:\Program Files (x86)\Microchip\xc8\v1.40\include\pic18.h
-[v __delay `JF2878 ~T0 @X0 0 e ]
-[p i __delay ]
 [; ;htc.h: 26: extern const char __xc8_OPTIM_SPEED;
 [; ;htc.h: 28: extern double __fpnormalize(double);
 [; ;xc8debug.h: 14: extern void __builtin_software_breakpoint(void);
@@ -2876,24 +2870,6 @@ Version 3.2 HI-TECH Software Intermediate Code
 "33
 [e :UE 270 ]
 }
-"35
-[v _I2C_Master_RepeatedStart `(v ~T0 @X0 1 ef ]
-"36
-{
-[; ;I2C.c: 35: void I2C_Master_RepeatedStart()
-[; ;I2C.c: 36: {
-[e :U _I2C_Master_RepeatedStart ]
-[f ]
-[; ;I2C.c: 37: I2C_Master_Wait();
-"37
-[e ( _I2C_Master_Wait ..  ]
-[; ;I2C.c: 38: RSEN = 1;
-"38
-[e = _RSEN -> -> 1 `i `b ]
-[; ;I2C.c: 39: }
-"39
-[e :UE 271 ]
-}
 "41
 [v _I2C_Master_Stop `(v ~T0 @X0 1 ef ]
 "42
@@ -2910,7 +2886,7 @@ Version 3.2 HI-TECH Software Intermediate Code
 [e = _PEN -> -> 1 `i `b ]
 [; ;I2C.c: 45: }
 "45
-[e :UE 272 ]
+[e :UE 271 ]
 }
 "47
 [v _I2C_Master_Write `(v ~T0 @X0 1 ef1`ui ]
@@ -2931,7 +2907,7 @@ Version 3.2 HI-TECH Software Intermediate Code
 [e = _SSPBUF -> _d `uc ]
 [; ;I2C.c: 51: }
 "51
-[e :UE 273 ]
+[e :UE 272 ]
 }
 "53
 [v _I2C_Master_Read `(uc ~T0 @X0 1 ef1`uc ]
@@ -2971,34 +2947,8 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;I2C.c: 63: return temp;
 "63
 [e ) _temp ]
-[e $UE 274  ]
+[e $UE 273  ]
 [; ;I2C.c: 64: }
 "64
-[e :UE 274 ]
-}
-"66
-[v _delay_10ms `(v ~T0 @X0 1 ef1`uc ]
-{
-[; ;I2C.c: 66: void delay_10ms(unsigned char n) {
-[e :U _delay_10ms ]
-[v _n `uc ~T0 @X0 1 r1 ]
-[f ]
-[; ;I2C.c: 67: while (n-- != 0) {
-"67
-[e $U 276  ]
-[e :U 277 ]
-{
-[; ;I2C.c: 68: _delay((unsigned long)((5)*(10000000/4000.0)));
-"68
-[e ( __delay (1 -> * -> -> 5 `i `d / -> -> 10000000 `l `d .4000.0 `ul ]
-"69
-}
-[e :U 276 ]
-"67
-[e $ != -> -- _n -> -> 1 `i `uc `i -> 0 `i 277  ]
-[e :U 278 ]
-[; ;I2C.c: 69: }
-[; ;I2C.c: 70: }
-"70
-[e :UE 275 ]
+[e :UE 273 ]
 }

@@ -3798,16 +3798,20 @@ void I2C_Master_Init(const unsigned long c);
 void I2C_Master_Write(unsigned d);
 unsigned char I2C_Master_Read(unsigned char a);
 
-# 8 "../main.c"
+# 9 "../main.c"
 const char keys[] = "123A456B789C*0#D";
-unsigned char screenMode = 2;
-unsigned char time[7];
-int counter = 0;
 
 void switchMenu(unsigned char left, unsigned char right, unsigned char key);
 
 
+unsigned char screenMode = 2;
+unsigned char time[7];
+unsigned int opTimer, solOnTimer, solOffTimer, doneTimer = 0;
+unsigned char num9V, numC, numAA, numBats, min, sec = 0;
+unsigned char countC, countAA, count9V = 0;
+
 void main(void){
+
 TRISC = 0x00;
 TRISD = 0x00;
 TRISB = 0xFF;
@@ -3815,14 +3819,19 @@ LATB = 0x00;
 LATC = 0x00;
 ADCON0 = 0x00;
 ADCON1 = 0xFF;
-RC1 = 0;
 
+# 42
+GIE = 1;
 INT1IE = 1;
+INT1IF = 0;
+RBIE = 0;
 TMR0IE = 1;
+TMR0IF = 0;
 
+# 51
 T0CON = 0b01000111;
 
-# 37
+# 66
 initLCD();
 
 I2C_Master_Init(10000);
@@ -3857,9 +3866,7 @@ printf("RUNNING...      ");
 lcdInst(0b11000000);;
 printf("                ");
 
-
-
-
+# 119
 }
 while (screenMode == 0){
 
@@ -3871,11 +3878,6 @@ printf("TO CONTINUE     ");
 }
 while (screenMode == 3){
 (INTCONbits.GIE = 0);
-unsigned char min, sec;
-
-
-min = 1;
-sec = 1;
 
 lcdInst(0b10000000);;
 printf("TOTAL RUN TIME: ");
@@ -3884,10 +3886,6 @@ printf("%02x:%02x               ", min, sec);
 (INTCONbits.GIE = 1);
 }
 while (screenMode == 4){
-unsigned char numBats;
-
-
-numBats = 6;
 
 lcdInst(0b10000000);;
 printf("TOTAL NUMBER OF ");
@@ -3896,10 +3894,6 @@ printf("BATTERIES: %02d   ", numBats);
 }
 while (screenMode == 5){
 (INTCONbits.GIE = 0);
-unsigned char numC;
-
-
-numC = 3;
 
 lcdInst(0b10000000);;
 printf("NUMBER OF C     ");
@@ -3909,10 +3903,6 @@ printf("BATTERIES: %02d   ", numC);
 }
 while (screenMode == 6){
 (INTCONbits.GIE = 0);
-unsigned char num9V;
-
-
-num9V = 10;
 
 lcdInst(0b10000000);;
 printf("NUMBER OF 9V    ");
@@ -3922,10 +3912,6 @@ printf("BATTERIES: %02d     ", num9V);
 }
 while (screenMode == 7){
 (INTCONbits.GIE = 0);
-unsigned char numAA;
-
-
-numAA = 2;
 
 lcdInst(0b10000000);;
 printf("NUMBER OF AA    ");
@@ -3971,7 +3957,7 @@ screenMode += 1;
 }
 }
 
-void interrupt isr(void) {
+void interrupt high_priority highISR(void) {
 if(INT1IF && (screenMode != 1)){
 unsigned char keypress = (PORTB & 0xF0) >> 4;
 if (keys[keypress] == '*'){
@@ -3979,7 +3965,7 @@ if (keys[keypress] == '*'){
 if(screenMode == 2){
 screenMode = 1;
 T0CONbits.TMR0ON = 1;
-RC1 = 1;
+LATC = LATC | 0b00000010;
 }
 else if (screenMode == 0)
 screenMode = 2;
@@ -3990,18 +3976,32 @@ switchMenu('4', '6', keys[keypress]);
 INT1IF = 0;
 }
 if ((screenMode == 1) && TMR0IF && TMR0IE){
-
 TMR0IF = 0;
 TMR0 = 0;
-counter++;
-if (counter >= 6866){
+opTimer++;
 
-# 215
-counter = 0;
+# 236
+if (opTimer >= 6866){
+
+# 243
+opTimer = 0;
 screenMode = 0;
+
+
+
+
 T0CONbits.TMR0ON = 0;
-RC1 = 0;
+
+# 256
+LATC = LATC && 0b11111101;
+}
+
+# 286
 }
 }
+
+void interrupt low_priority lowISR(void){
+
+# 322
 }
 

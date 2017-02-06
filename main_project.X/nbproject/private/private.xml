@@ -4,6 +4,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/teddy/Desktop/programming/Git/AER201/main.c</file>
+            <file>file:/C:/Users/teddy/Desktop/programming/Git/AER201/configBits.h</file>
+            <file>file:/C:/Users/teddy/Desktop/programming/Git/AER201/I2C.c</file>
+            <file>file:/C:/Users/teddy/Desktop/programming/Git/AER201/lcd.c</file>
+            <file>file:/C:/Users/teddy/Desktop/programming/Git/AER201/I2C.h</file>
+            <file>file:/C:/Users/teddy/Desktop/programming/Git/AER201/eeprom_routines.h</file>
             <file>file:/C:/Users/teddy/Desktop/programming/Git/AER201/constants.h</file>
         </group>
     </open-files>
