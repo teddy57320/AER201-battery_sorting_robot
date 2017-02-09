@@ -11,22 +11,28 @@ const char keys[] = "123A456B789C*0#D";
 void switchMenu(unsigned char left, unsigned char right, unsigned char key);
 //toggles the interface "left" and "right" to show different logs
 
-unsigned char screenMode = STANDBY;	//start at standby screen
+void readADC(char channel);
+//select A2D channel to read
+
+unsigned int screenMode = STANDBY;	//start at standby screen
 unsigned char time[7];		//used to retrieve real time/date
 unsigned int opTimer, solOnTimer, solOffTimer, doneTimer = 0;	//counters
-unsigned char num9V, numC, numAA, numBats, min, sec = 0; 
-unsigned char countC, countAA, count9V = 0;	//temp values to count batteries
+unsigned char num9V, numC, numAA, numBats, numDrain = 0; 
+unsigned int min, sec = 0;
+unsigned int runMin, runSec = 0;		//temp values for counting run time
+unsigned char countC, countAA, count9V, countDrain = 0;	//temp values to count batteries
 
 void main(void){ 
-
+    TRISA = 0xFF;
 	TRISC = 0x00;
     TRISD = 0x00;   //All output mode
     TRISB = 0xFF;   //All input mode
+    LATA = 0x00;
     LATB = 0x00; 
     LATC = 0x00;
     ADCON0 = 0x00;  //Disable ADC
     ADCON1 = 0xFF;  //Set PORTB to be digital instead of analog default  
-
+    
 /*	REAL PIN ASSIGNMENTS	
 	TRISA = 0b00001100;		//RA2 and RA3 used for voltage detection --> input
 	TRISB = 0b00110000;		//RB4 and RB5 for IR sensor in UVDs --> input
@@ -42,8 +48,8 @@ void main(void){
     INT1IE = 1;	//enable external interrupt.-
     INT1IF = 0;	//turn off external interrupt flag
     RBIE = 0;	//enable PORTB on change interrupt 
-    TMR0IE = 1; //enable timer overflow interrupt
-    TMR0IF = 0;	//turn off timer overflow interrupt flag
+    TMR0IE = 1; //enable timer0 overflow interrupt
+    TMR0IF = 0;	//turn off timer0 overflow interrupt flag
 
 /***********************************************************
     Timer SETUP*/
@@ -95,13 +101,10 @@ void main(void){
             printf("RUNNING...      ");     
             __lcd_newline();
             printf("                ");
-           
-       
 /*************************************************
 			BATTERY-SORTING OPERATION           */
 /*         
             funnelSol(0);		//turn on funnel solenoid
-            rotDrum(1);			//turn on rotating drum
             gearUnit1(1);		//turn on stepper motor
             gearUnit2(1);
 
@@ -117,16 +120,13 @@ void main(void){
 //************************************************
         }
         while (screenMode == FINISH){	//finish screen  
-        	  
         	__lcd_home();
         	printf("DONE! PRESS *   ");
         	__lcd_newline();
         	printf("TO CONTINUE     ");
-        	
         }
         while (screenMode == RUN_TIME){	//shows the log of latest run time
         	di();
-        	// readRunTime(min, sec);	//hypothetical code to retrieve total number of batteries from memory
         	__lcd_home();
         	printf("TOTAL RUN TIME: ");
         	__lcd_newline();
@@ -134,37 +134,43 @@ void main(void){
         	ei();
         }
         while (screenMode == NUM_BAT){	//shows the log of total number of processed batteries 
-        	//readTotalBats(numBats)	//hypothetical code to retrieve total number of batteries from memory
+        	di();
         	__lcd_home();
-        	printf("TOTAL NUMBER OF ");
+        	printf("TOTAL # OF      ");
         	__lcd_newline();
         	printf("BATTERIES: %02d   ", numBats);
+        	ei();
         }
         while (screenMode == NUM_C){	//shows number of processed C batteries from the latest run
         	di();
-        	//readTotalC(numC)	//hypothetical code to retrieve total number of C batteries from memory
         	__lcd_home();
-        	printf("NUMBER OF C     ");
+        	printf("# OF C          ");
         	__lcd_newline();
         	printf("BATTERIES: %02d   ", numC);
         	ei();
         }
         while (screenMode == NUM_9V){	//shows number of processed 9V batteries from the latest run
         	di();
-        	//readTotal9V(num9V)	//hypothetical code to retrieve total number of 9V batteries from memory
         	__lcd_home();
-        	printf("NUMBER OF 9V    ");
+        	printf("# OF 9V         ");
         	__lcd_newline();
         	printf("BATTERIES: %02d     ", num9V);
         	ei();
         }
         while (screenMode == NUM_AA){	//shows number of processed AA batteries from the latest run
         	di();
-        	//readTotalAA(numAA)	//hypothetical code to retrieve total number of AA batteries from memory
         	__lcd_home();
-        	printf("NUMBER OF AA    ");
+        	printf("# OF AA         ");
         	__lcd_newline();
-        	printf("BATTERIES: %02x     ", numAA);
+        	printf("BATTERIES: %02d     ", numAA);
+        	ei();
+        }
+        while (screenMode == NUM_DRAIN){
+        	di();
+        	__lcd_home();
+        	printf("# OF DRAINED    ");
+        	__lcd_newline();
+        	printf("BATTERIES: %02d     ", numDrain);
         	ei();
         }
         while (screenMode == RTC_DISPLAY){	// real time/date display
@@ -205,6 +211,14 @@ void switchMenu(unsigned char left, unsigned char right, unsigned char key){
     }
 }   
 
+//void readADC(char channel){
+//    // Select A2D channel to read
+//    ADCON0 = ((channel <<2));
+//    ADON = 1;
+//    ADCON0bits.GO = 1;
+//   while(ADCON0bits.GO_NOT_DONE){__delay_ms(5);}    
+//}
+
 void interrupt high_priority highISR(void) {
     if(INT1IF && (screenMode != OPERATING)){  	//keypad disconnected during operation
         unsigned char keypress = (PORTB & 0xF0) >> 4;
@@ -226,12 +240,7 @@ void interrupt high_priority highISR(void) {
     if ((screenMode == OPERATING) && TMR0IF && TMR0IE){ //stop operation after 3 minutes
         TMR0IF = 0;
         TMR0 = 0;
-        opTimer++;
-
-//        __lcd_home();
-//        __lcd_newline();
-//        printf("SECONDS: %003d", opTimer*180/6866);
-        
+        opTimer++;        
         if (opTimer >= 6866){	//3 minutes
         	// time for timer overflow
             // = number of ticks to overflow * seconds per tick
@@ -249,9 +258,13 @@ void interrupt high_priority highISR(void) {
             // num9V = count9V;		//update number of batteries
             // numC = countC;
             // numAA = countAA;
+            // numDrain = countDrain;
             // count9V = 0;
             // countC = 0;
             // countAA = 0;
+            // countDrain = 0;
+            // min = runMin;		//update run time
+            // sec = runSec;
             LATC = LATC && 0b11111101; // RC1 = 0 enable keypad 
         }
          /*interrupt for turning funnelSol on and off
@@ -277,9 +290,11 @@ void interrupt high_priority highISR(void) {
             // num9V = count9V;		//update number of batteries
             // numC = countC;
             // numAA = countAA;
+            // numDrain = countDrain;
             // count9V = 0;
             // countC = 0;
             // countAA = 0;
+            // countDrain = 0;
             LATC = LATC && 0b11111101; // RC1 = 0 enable keypad 
         }*/
     }	
@@ -299,7 +314,7 @@ void interrupt low_priority lowISR(void){
 				//logical circuit to determine category
 				//add to battery counter
 				//set appropriate platforms to rotate
-			//else......							otherwise, platform just finished rotating
+			//else......					otherwise, platform just finished rotating
 				//stop rotation of platforms
 				//start gearUnit
 		//if (UVD2){
@@ -310,7 +325,7 @@ void interrupt low_priority lowISR(void){
 				//logical circuit to determine category
 				//add to battery counter
 				//set appropriate platforms to rotate
-			//else......							otherwise, platform just finished rotating
+			//else......					otherwise, platform just finished rotating
 				//stop rotation of platforms
 				//start gearUnit
 		}

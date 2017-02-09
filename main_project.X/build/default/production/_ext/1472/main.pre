@@ -3804,23 +3804,34 @@ const char keys[] = "123A456B789C*0#D";
 void switchMenu(unsigned char left, unsigned char right, unsigned char key);
 
 
-unsigned char screenMode = 2;
+void readADC(char channel);
+
+
+unsigned int screenMode = 2;
 unsigned char time[7];
 unsigned int opTimer, solOnTimer, solOffTimer, doneTimer = 0;
-unsigned char num9V, numC, numAA, numBats, min, sec = 0;
-unsigned char countC, countAA, count9V = 0;
+unsigned char num9V, numC, numAA, numBats, numDrain = 0;
+unsigned int min, sec = 0;
+unsigned int runMin, runSec = 0;
+unsigned char countC, countAA, count9V, countDrain = 0;
 
 void main(void){
-
+TRISA = 0xFF;
 TRISC = 0x00;
 TRISD = 0x00;
 TRISB = 0xFF;
+LATA = 0x00;
 LATB = 0x00;
 LATC = 0x00;
 ADCON0 = 0x00;
 ADCON1 = 0xFF;
 
-# 42
+ADCON1 = 0x0B;
+CVRCON = 0x00;
+CMCONbits.CIS = 0;
+ADFM = 1;
+
+# 52
 GIE = 1;
 INT1IE = 1;
 INT1IF = 0;
@@ -3828,10 +3839,10 @@ RBIE = 0;
 TMR0IE = 1;
 TMR0IF = 0;
 
-# 51
+# 61
 T0CON = 0b01000111;
 
-# 66
+# 76
 initLCD();
 
 I2C_Master_Init(10000);
@@ -3866,19 +3877,16 @@ printf("RUNNING...      ");
 lcdInst(0b11000000);;
 printf("                ");
 
-# 119
+# 126
 }
 while (screenMode == 0){
-
 lcdInst(0b10000000);;
 printf("DONE! PRESS *   ");
 lcdInst(0b11000000);;
 printf("TO CONTINUE     ");
-
 }
 while (screenMode == 3){
 (INTCONbits.GIE = 0);
-
 lcdInst(0b10000000);;
 printf("TOTAL RUN TIME: ");
 lcdInst(0b11000000);;
@@ -3886,40 +3894,46 @@ printf("%02x:%02x               ", min, sec);
 (INTCONbits.GIE = 1);
 }
 while (screenMode == 4){
-
+(INTCONbits.GIE = 0);
 lcdInst(0b10000000);;
-printf("TOTAL NUMBER OF ");
+printf("TOTAL # OF      ");
 lcdInst(0b11000000);;
 printf("BATTERIES: %02d   ", numBats);
+(INTCONbits.GIE = 1);
 }
 while (screenMode == 5){
 (INTCONbits.GIE = 0);
-
 lcdInst(0b10000000);;
-printf("NUMBER OF C     ");
+printf("# OF C          ");
 lcdInst(0b11000000);;
 printf("BATTERIES: %02d   ", numC);
 (INTCONbits.GIE = 1);
 }
 while (screenMode == 6){
 (INTCONbits.GIE = 0);
-
 lcdInst(0b10000000);;
-printf("NUMBER OF 9V    ");
+printf("# OF 9V         ");
 lcdInst(0b11000000);;
 printf("BATTERIES: %02d     ", num9V);
 (INTCONbits.GIE = 1);
 }
 while (screenMode == 7){
 (INTCONbits.GIE = 0);
-
 lcdInst(0b10000000);;
-printf("NUMBER OF AA    ");
+printf("# OF AA         ");
 lcdInst(0b11000000);;
-printf("BATTERIES: %02x     ", numAA);
+printf("BATTERIES: %02d     ", numAA);
 (INTCONbits.GIE = 1);
 }
 while (screenMode == 8){
+(INTCONbits.GIE = 0);
+lcdInst(0b10000000);;
+printf("# OF DRAINED    ");
+lcdInst(0b11000000);;
+printf("BATTERIES: %02d     ", numDrain);
+(INTCONbits.GIE = 1);
+}
+while (screenMode == 9){
 
 I2C_Master_Start();
 I2C_Master_Write(0b11010000);
@@ -3945,16 +3959,24 @@ return;
 void switchMenu(unsigned char left, unsigned char right, unsigned char key){
 if (key == right){
 if (screenMode == 2)
-screenMode = 8;
+screenMode = 9;
 else
 screenMode -= 1;
 }
 else if (key == left){
-if (screenMode == 8)
+if (screenMode == 9)
 screenMode = 2;
 else
 screenMode += 1;
 }
+}
+
+void readADC(char channel){
+
+ADCON0 = ((channel <<2));
+ADON = 1;
+ADCON0bits.GO = 1;
+while(ADCON0bits.GO_NOT_DONE){_delay((unsigned long)((5)*(10000000/4000.0)));}
 }
 
 void interrupt high_priority highISR(void) {
@@ -3979,11 +4001,9 @@ if ((screenMode == 1) && TMR0IF && TMR0IE){
 TMR0IF = 0;
 TMR0 = 0;
 opTimer++;
-
-# 236
 if (opTimer >= 6866){
 
-# 243
+# 256
 opTimer = 0;
 screenMode = 0;
 
@@ -3992,16 +4012,16 @@ screenMode = 0;
 
 T0CONbits.TMR0ON = 0;
 
-# 256
+# 273
 LATC = LATC && 0b11111101;
 }
 
-# 286
+# 305
 }
 }
 
 void interrupt low_priority lowISR(void){
 
-# 322
+# 341
 }
 
