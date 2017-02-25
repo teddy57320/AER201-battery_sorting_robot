@@ -4,5 +4,6 @@
 ../I2C.h  \
 ../eeprom_routines.h  \
 ../constants.h  \
+../motors.h  \
 ../lcd.h  \
 ../configBits.h 

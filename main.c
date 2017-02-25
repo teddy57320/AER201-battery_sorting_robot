@@ -5,61 +5,102 @@
 #include "lcd.h"
 #include "I2C.h"
 #include "eeprom_routines.h"
+#include "motors.h"
 
 const char keys[] = "123A456B789C*0#D";
 
 void switchMenu(unsigned char left, unsigned char right, unsigned char key);
 //toggles the interface "left" and "right" to show different logs
 
-void readADC(char channel);
+void readADC(unsigned char channel);
 //select A2D channel to read
 
-unsigned int screenMode = STANDBY;	//start at standby screen
+void stopOperation(void);
+//stop battery sorting
+
 unsigned char time[7];		//used to retrieve real time/date
-unsigned int opTimer, solOnTimer, solOffTimer, doneTimer = 0;	//counters
-unsigned char num9V, numC, numAA, numBats, numDrain = 0; 
-unsigned int min, sec = 0;
-unsigned int runMin, runSec = 0;		//temp values for counting run time
-unsigned char countC, countAA, count9V, countDrain = 0;	//temp values to count batteries
+unsigned char opTimer, solOnTimer;
+unsigned int doneTimer;	//counters
+unsigned char num9V, numC, numAA, numBats, numDrain;    //number of batteries of each kind sorted
+unsigned char min, sec;                              
+unsigned char countC, countAA, count9V, countDrain;     //temp values to count batteries
+unsigned char plat1Left = 1;
+unsigned char plat1Right, plat2Left, plat2Right; 
+unsigned char step1, step2;
+
 
 void main(void){ 
-    TRISA = 0xFF;
-	TRISC = 0x00;
-    TRISD = 0x00;   //All output mode
-    TRISB = 0xFF;   //All input mode
-    LATA = 0x00;
-    LATB = 0x00; 
-    LATC = 0x00;
-    ADCON0 = 0x00;  //Disable ADC
-    ADCON1 = 0xFF;  //Set PORTB to be digital instead of analog default  
-    
-/*	REAL PIN ASSIGNMENTS	
-	TRISA = 0b00001100;		//RA2 and RA3 used for voltage detection --> input
-	TRISB = 0b00110000;		//RB4 and RB5 for IR sensor in UVDs --> input
+
+    // TRISA = 0xFF;
+    // TRISC = 0x00;
+    // TRISD = 0x00;   //All output mode
+    // TRISB = 0xFF;   //All input mode
+    // LATA = 0x00;
+    // LATB = 0x00; 
+    // LATC = 0x00;
+
+    // ADCON0 = 0x00;  //Disable ADC
+    // ADCON1 = 0xFF;  //Set PORTB to be digital instead of analog default  
+    	
+	TRISA = 0b11000011;		//RA0 and RA1 used for analog inputs
+    TRISB = 0b11110010;     //inputs: RB4:7 for keypad, RB1 for LCD
 	TRISC = 0x00;			//all output
-	TRISD = 0x00;			//all output
-	LATB = 0x00; 
+	TRISD = 0x00;			//all output 
+    TRISE = 0x00;           //all output
+
+	LATA = 0x00;
+    LATB = 0x00;
     LATC = 0x00;
-    LAT1 = 0x00;
-    ADCON0 = 0x00;  //Disable ADC
-	ADCON1 = 0xFE;  //set RA0 and RA1 to analog, everything else to digital
- */
+    LATD = 0x00;
+    LATE = 0x00;
+
+    ADCON0 = 0x00;          //disable ADC
+	ADCON1 = 0x0E;    //set RA0 and RA1 to analog, everything else to digital
+    ADFM = 1;               //right justified
+ 
     GIE = 1;	//globally enable interrupt
+    PEIE = 1;   //enable peripheral interrupt
     INT1IE = 1;	//enable external interrupt.-
     INT1IF = 0;	//turn off external interrupt flag
-    RBIE = 0;	//enable PORTB on change interrupt 
+    // RBIE = 0;	//enable PORTB on change interrupt 
     TMR0IE = 1; //enable timer0 overflow interrupt
     TMR0IF = 0;	//turn off timer0 overflow interrupt flag
+    TMR1IE = 1;
+    TMR1IF = 0;
 
 /***********************************************************
-    Timer SETUP*/
-    T0CON = 0b01000111; //implement the following in register T0CON:
-//    TMR0ON = 0; //turn off timer
-//    T08BIT = 1; //use 8-bit timer
-//    T0CS = 0;   //use internal clock
-//    //TOSE not changed
-//    PSA = 0;    //enable prescalar
-//    T0PS2:T0PS0 = 111 //prescale 1:256
+    TMR0 SETUP*/
+    T0CON = 0b00000111; 
+/*implement the following in register T0CON:   
+   TMR0ON = 0; //turn off timer
+   T08BIT = 0; //use 16-bit timer
+   T0CS = 0;   //use internal clock
+   //TOSE not changed
+   PSA = 0;    //enable prescalar
+   T0PS2:T0PS0 = 111 //prescale 1:256 */
+    TMR0 = 55770;
+// time for timer overflow
+// = number of ticks to overflow * seconds per tick
+// = (2^16-1-TimeresetValue)*(1/(_XTAL_FREQ/4/prescale))
+// = (65535-55770)*4*256/10000000 = 1 second
+//**********************************************************
+
+/***********************************************************
+    TMR1 SETUP*/
+    T1CON = 0b10000000; 
+/*implement the following in register T0CON:   
+   RD16 = 1;
+   T1RUN = 0;
+   T1CKPS1:0 = 00;
+   T1OSCEN = 0;
+   T1SYNC = 0;
+   TMR1CS = 0;
+   TMR1ON = 0; */
+    TMR1 = 48035;
+// time for timer overflow
+// = number of ticks to overflow * seconds per tick
+// = (2^16-1-TimeresetValue)*(1/(_XTAL_FREQ/4/prescale))
+// = (65535-48035)*4/10000000 = 7 milliseconds
 //**********************************************************
 
 /***********************************************************
@@ -96,28 +137,47 @@ void main(void){
             	__delay_ms(10);
             }
         }
-        while (screenMode == OPERATING){	//while machine is running
+        while (screenMode == OPERATING){	//machine is running
             __lcd_home();
             printf("RUNNING...      ");     
             __lcd_newline();
-            printf("                ");
+            printf("PRESS # TO STOP ");
+            //readADC(0);         //read UVD IR sensor 
+            // turnPlatsLeft(200);
+            // turnPlat1Left(200);
+            // turnPlatsRight(200);
+            // turnPlat2Right(200);
+
+            // if (((ADRESH<<8)+ADRESL)<200){
+            //     __delay_ms(10);
+            //     readADC(0);
+
+            // }
+            if (plat1Left){
+                 plat1c1a(1);
+                 plat1c1b(0);
+                 step1 = 1;
+                 T1CONbits.TMR1ON = 1;       //doesnt reset TMR1
+                 while(plat1Left){}
+            }
+  
 /*************************************************
-			BATTERY-SORTING OPERATION           */
+			// BATTERY-SORTING OPERATION           */
 /*         
             funnelSol(0);		//turn on funnel solenoid
+            r.........
             gearUnit1(1);		//turn on stepper motor
-            gearUnit2(1);
 
             while(1){
- *              __lcd_home();
- *              __lcd_newline();
-                printf("SECONDS: %0004d    ", opTimer); 
+ *              
  *          }  
         	
 
 
 */  
 //************************************************
+            // if ((countC + countAA + count9V + countDrain) >= 15)
+            //     stopOperation();
         }
         while (screenMode == FINISH){	//finish screen  
         	__lcd_home();
@@ -130,7 +190,7 @@ void main(void){
         	__lcd_home();
         	printf("TOTAL RUN TIME: ");
         	__lcd_newline();
-        	printf("%02x:%02x               ", min, sec);
+        	printf("%02d:%02d               ", min, sec);
         	ei();
         }
         while (screenMode == NUM_BAT){	//shows the log of total number of processed batteries 
@@ -192,6 +252,16 @@ void main(void){
 		    __lcd_newline();
 		    printf("TIME: %02x:%02x:%02x  ", time[2],time[1],time[0]);    //HH:MM:SS	         
         }
+        while (screenMode == STOP){
+            di();
+            __lcd_home();
+            printf("EMERGENCY STOP  ");
+            __lcd_newline();
+            printf("                ");
+            __delay_ms(2000); 
+            screenMode = STANDBY;
+            ei();
+        }
     }
     return;
 }
@@ -201,108 +271,180 @@ void switchMenu(unsigned char left, unsigned char right, unsigned char key){
         if (screenMode == STANDBY)
             screenMode = RTC_DISPLAY;  	//loop to RTC display
         else
-            screenMode -= 1;
+            screenMode--;
     }
     else if (key == left){ 	//if "left" button is pressed, toggle "left"
         if (screenMode == RTC_DISPLAY)
             screenMode = STANDBY;	//loop back to standby
         else
-            screenMode += 1;
+            screenMode++;
     }
 }   
 
-//void readADC(char channel){
-//    // Select A2D channel to read
-//    ADCON0 = ((channel <<2));
-//    ADON = 1;
-//    ADCON0bits.GO = 1;
-//   while(ADCON0bits.GO_NOT_DONE){__delay_ms(5);}    
-//}
+void readADC(char channel){
+// Select A2D channel to read
+	ADCON0 = ((channel <<2));
+	ADCON0bits.ADON = 1;
+	ADCON0bits.GO = 1;
+	while(ADCON0bits.GO_NOT_DONE){}    
+}
+
+void stopOperation(void){
+    T0CONbits.TMR0ON = 0;   //turn off timer
+    T1CONbits.TMR1ON = 0;
+    TMR0 = 55770;
+    TMR1 = 48035;
+    // num9V = count9V;     //update number of batteries
+    // numC = countC;
+    // numAA = countAA;
+    // numDrain = countDrain;
+    // count9V = 0;
+    // countC = 0;
+    // countAA = 0;
+    // countDrain = 0;
+    min = opTimer / 60; //store run time
+    sec = opTimer % 60;
+    opTimer = 0;
+    solOnTimer = 0;
+    doneTimer = 0;
+    plat1c1a(0);
+    plat1c1b(0);
+    plat1c2b(0);
+    plat1c2a(0);
+    plat2c1a(0);
+    plat2c1b(0);
+    plat2c2b(0);
+    plat2c2a(0);
+    gearDir(0);
+    UVDsol(0);
+    gearStep(0);
+    funnelSol(0);
+}
 
 void interrupt high_priority highISR(void) {
-    if(INT1IF && (screenMode != OPERATING)){  	//keypad disconnected during operation
+    if (INT1IF){
         unsigned char keypress = (PORTB & 0xF0) >> 4;
         if (keys[keypress] == '*'){	
         	//press * to start operation or resume to standby after finish
         	if(screenMode == STANDBY){
         		screenMode = OPERATING;
-                T0CONbits.TMR0ON = 1; //turn on timer
-                LATC = LATC | 0b00000010; //RC1 = 1 , free keypad pins
+                T0CONbits.TMR0ON = 1; //turn on TMR0 
+                T1CONbits.TMR1ON = 0; //TMR1 off when not driving steppers
             }
         	else if (screenMode == FINISH)
         		screenMode = STANDBY;
+        }
+        else if (screenMode == OPERATING){
+            if (keys[keypress] == '#'){     //emergency stop
+                screenMode = STOP;
+                stopOperation();
+            }
         }
         else if (screenMode != FINISH) //edge case when user presses 4 or 6 at finish screen
         	switchMenu('4', '6', keys[keypress]);
         	// press 4 to toggle "left", 6 to toggle "right"
         INT1IF = 0;     //Clear flag bit
     }
-    if ((screenMode == OPERATING) && TMR0IF && TMR0IE){ //stop operation after 3 minutes
+    if (screenMode == OPERATING && TMR0IF){   //timer overflows every second
         TMR0IF = 0;
-        TMR0 = 0;
+        TMR0 = 55770;
         opTimer++;        
-        if (opTimer >= 6866){	//3 minutes
-        	// time for timer overflow
-            // = number of ticks to overflow * seconds per tick
-        	// = (256-TimeresetValue)*(1/(_XTAL_FREQ/4/prescale))
-        	// = (256-0)*(1/(10000000/4/256)) = 0.0262 seconds
-        	// so to time 3 minutes it needs to run
-        	// 180seconds / 0.0262seconds = 6866.455 ~ 6866 times
-            opTimer = 0;
+        if (opTimer >= 180){    //stop operation after 3 minutes
             screenMode = FINISH;
-            //funnelSol(0);		//turn off funnel solenoid
-            //gearUnit1(0);		//turn off gear unit
-            //gearUnit2(0);
-            //rotDrum(0);		//turn off rotating drum
-            T0CONbits.TMR0ON = 0;   //turn off timer
-            // num9V = count9V;		//update number of batteries
-            // numC = countC;
-            // numAA = countAA;
-            // numDrain = countDrain;
-            // count9V = 0;
-            // countC = 0;
-            // countAA = 0;
-            // countDrain = 0;
-            // min = runMin;		//update run time
-            // sec = runSec;
-            LATC = LATC && 0b11111101; // RC1 = 0 enable keypad 
-        }
-         /*interrupt for turning funnelSol on and off
-        
-        //if solenoid is off, solOffTimer++;
-        //else, solOnTimer++;
-        doneTimer++;
-        if (solOnTimer >= 152){		//4 seconds
-            solOnTimer = 0;
+            stopOperation();    
+        }        
+        // //doneTimer++;
+        // if (doneTimer >= WAIT_TIME){	
+        //     screenMode = FINISH;
+        //     stopOperation();
+        //}
+        if (LATCbits.LC0){  //after solenoid is on for one second, turn it off
             funnelSol(0);
         }
-        if (solOffTimer >= 38){		//1 second
-        	solOffTimer = 0;
-        	funnelSol(1);
-        if (doneTimer >= WAIT_TIME){	
-			opTimer = 0;
-            screenMode = FINISH;
-            //funnelSol(0);		//turn off funnel solenoid
-            //gearUnit1(0);		//turn off gear unit
-            //gearUnit2(0);
-            //rotDrum(0);		//turn off rotating drum
-            T0CONbits.TMR0ON = 0;   //turn off timer
-            // num9V = count9V;		//update number of batteries
-            // numC = countC;
-            // numAA = countAA;
-            // numDrain = countDrain;
-            // count9V = 0;
-            // countC = 0;
-            // countAA = 0;
-            // countDrain = 0;
-            LATC = LATC && 0b11111101; // RC1 = 0 enable keypad 
-        }*/
+        else {
+            solOnTimer++;
+            if (solOnTimer >= 4){   //turn on solenoid once every 4 seconds
+                solOnTimer = 0;
+                funnelSol(1);
+            }
+        }
+    }
+    if (screenMode == OPERATING && TMR1IF){   //timer overflows every 7 milliseconds
+        TMR1IF = 0;
+        TMR1 = 48035;
+        if (plat1Left){
+            if (step1 == 1){
+                plat1c2a(1);     //step1
+                plat1c2b(0);
+            }
+            if (step1 == 2){
+                plat1c1a(0);     //step2
+                plat1c1b(1);
+            }
+            if (step1 == 3){
+                plat1c2a(0);     //step3
+                plat1c2b(1);
+            }
+            if (step1 == 4){
+                plat1c1a(1);     //step4
+                plat1c1b(0);
+            }
+            plat1Left++;
+            if (plat1Left>=200){
+                plat1Left = 0;
+                T1CONbits.TMR1ON = 0;
+                step1 = 0;
+            }
+            else if (step1>=4)
+                step1 = 1;
+            else
+                step1++;    
+        }
+        // if (plat1Right){
+        //     if (step1 == 4){
+        //         plat1c2a(0);    //step4
+        //         plat1c2b(1);
+        //     }
+        //     if (step1 == 3){
+        //         plat1c1a(0);    //step3
+        //         plat1c1b(1);
+        //     }
+        //     if (step1 == 2){
+        //         plat1c2a(1);    //step2
+        //         plat1c2b(0);
+        //     }
+        //     if (step1 == 1){
+        //         plat1c1a(1);    //step1
+        //         plat1c1b(0);
+        //     }
+        //     if (plat1Right>=200){
+        //         plat1Right = 0;
+        //         T1CONbits.TMR1ON = 0;
+        //         step1 = 0;
+        //     }
+        //     if (step1<=1)
+        //         step1 = 4;
+        //     else
+        //         step1--;
+        // }
+        // if (plat2Left){
+
+        // }
+        // if (plat2Right){
+
+        // }
+
+        // doneTimer++;          
+        // if (doneTimer >= 2000){     
+        //     screenMode = FINISH;
+        //     stopOperation();
+        // }
     }	
 }
 
 void interrupt low_priority lowISR(void){
 	/*
-	if (RBIF && (screenMode == OPERATING)){	//when change is detected one of the UVD IR sensors	
+	if (RBIF && (screenMode == OPERATING){	//when change is detected one of the UVD IR sensors	
 		RBIF = 0;
 		doneTimer = 0;
 		//determine which sensor it is (in UVD1 or UVD2)
