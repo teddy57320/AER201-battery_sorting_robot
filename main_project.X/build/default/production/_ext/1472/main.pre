@@ -3801,15 +3801,7 @@ void I2C_Master_Init(const unsigned long c);
 void I2C_Master_Write(unsigned d);
 unsigned char I2C_Master_Read(unsigned char a);
 
-# 1 "../motors.h"
-void turnPlatsLeft(unsigned char deg);
-void turnPlatsRight(unsigned char deg);
-void turnPlat1Left(unsigned char deg);
-void turnPlat2Left(unsigned char deg);
-void turnPlat1Right(unsigned char deg);
-void turnPlat2Right(unsigned char deg);
-
-# 10 "../main.c"
+# 9 "../main.c"
 const char keys[] = "123A456B789C*0#D";
 
 void switchMenu(unsigned char left, unsigned char right, unsigned char key);
@@ -3821,21 +3813,36 @@ void readADC(unsigned char channel);
 void stopOperation(void);
 
 
+void testBatteries(void);
+
+
+int isFluctuate(unsigned char channel);
+
+
+int abs(int x){
+if (x<0)
+return -x;
+return x;
+}
+
 unsigned char time[7];
-unsigned char opTimer, solOnTimer;
-unsigned int doneTimer;
+unsigned char opTimer, solOnTimer, doneTimer;
+unsigned int waitMotor;
 unsigned char num9V, numC, numAA, numBats, numDrain;
 unsigned char min, sec;
 unsigned char countC, countAA, count9V, countDrain;
-unsigned char plat1Left = 1;
-unsigned char plat1Right, plat2Left, plat2Right;
-unsigned char step1, step2, count7;
+unsigned char plat2Left, plat1Right, plat2Right, plat1Left;
 
+
+
+
+unsigned char stepGear;
+unsigned char step1, step2;
+unsigned char turn1BackRight, turn1BackLeft, turn2BackRight, turn2BackLeft;
 
 void main(void){
 
-# 45
-TRISA = 0b11000011;
+TRISA = 0b00000011;
 TRISB = 0b11110010;
 TRISC = 0x00;
 TRISD = 0x00;
@@ -3849,7 +3856,10 @@ LATE = 0x00;
 
 ADCON0 = 0x00;
 ADCON1 = 0x0E;
-ADFM = 1;
+ADCON2 = 0b10110001;
+
+
+
 
 GIE = 1;
 PEIE = 1;
@@ -3861,19 +3871,19 @@ TMR0IF = 0;
 TMR1IE = 1;
 TMR1IF = 0;
 
-# 73
+# 80
 T0CON = 0b00000111;
 
-# 81
+# 88
 TMR0 = 55770;
 
-# 90
+# 97
 T1CON = 0b10000000;
 
-# 99
+# 106
 TMR1 = 48035;
 
-# 112
+# 115
 initLCD();
 
 I2C_Master_Init(10000);
@@ -3887,8 +3897,7 @@ printf("START:   PRESS *");
 lcdInst(0b11000000);;
 printf("< 4   DATA   6 >");
 (INTCONbits.GIE = 1);
-unsigned char i;
-for(i=0;i<50;i++){
+for(unsigned char i=0;i<50;i++){
 if (screenMode != 2)
 break;
 _delay((unsigned long)((10)*(10000000/4000.0)));
@@ -3896,7 +3905,7 @@ _delay((unsigned long)((10)*(10000000/4000.0)));
 lcdInst(0b10000000);;
 lcdInst(0b11000000);;
 printf(" <4   DATA   6> ");
-for(i=0;i<50;i++){
+for(unsigned char i=0;i<50;i++){
 if (screenMode != 2)
 break;
 _delay((unsigned long)((10)*(10000000/4000.0)));
@@ -3906,18 +3915,73 @@ while (screenMode == 1){
 lcdInst(0b10000000);;
 printf("RUNNING...      ");
 lcdInst(0b11000000);;
-printf("PRESS # TO STOP ");
+printf("%2d              ", countDrain);
 
-# 156
+# 152
+if (!isFluctuate(0)){
+if (((ADRESH<<8)+ADRESL)<200){
+LATAbits.LA7 = 1;;
+testBatteries();
+LATAbits.LA7 = 0;;
+if (stepGear){
+LATCbits.LC1= 1;;
+T1CONbits.TMR1ON = 1;
+}
 if (plat1Left){
 LATAbits.LA2 = 1;;
 LATAbits.LA3 = 0;;
 step1 = 1;
+turn1BackRight = 1;
 T1CONbits.TMR1ON = 1;
-while(plat1Left){}
 }
+if (plat1Right){
+LATAbits.LA2 = 1;;
+LATAbits.LA3 = 0;;
+step1 = 4;
+turn1BackLeft = 1;
+T1CONbits.TMR1ON = 1;
+}
+if (plat2Left){
+LATBbits.LB0 = 1;;
+LATBbits.LB2 = 0;;
+step2 = 1;
+turn2BackRight = 1;
+T1CONbits.TMR1ON = 1;
+}
+if (plat2Right){
+LATBbits.LB0 = 1;;
+LATBbits.LB2 = 0;;
+step2 = 4;
+turn2BackLeft = 1;
+T1CONbits.TMR1ON = 1;
+}
+while((stepGear|plat1Left|plat2Left|plat1Right|plat2Right) && screenMode==1);
+waitMotor = 1;
+while(waitMotor && screenMode == 1);
 
-# 181
+
+plat1Left = turn1BackLeft;
+plat1Right = turn1BackRight;
+plat2Left = turn2BackLeft;
+plat2Right = turn2BackRight;
+
+while((stepGear|plat1Left|plat2Left|plat1Right|plat2Right) && screenMode==1);
+T1CONbits.TMR1ON = 0;
+LATCbits.LC2 = 0;;
+LATAbits.LA2 = 0;;
+LATAbits.LA3 = 0;;
+LATAbits.LA4 = 0;;
+LATAbits.LA5 = 0;;
+LATBbits.LB0 = 0;;
+LATBbits.LB2 = 0;;
+LATBbits.LB3 = 0;;
+LATAbits.LA6 = 0;;
+if ((countC + countAA + count9V + countDrain) >= 15){
+screenMode = 0;
+stopOperation();
+}
+}
+}
 }
 while (screenMode == 0){
 lcdInst(0b10000000);;
@@ -4021,12 +4085,12 @@ screenMode++;
 }
 }
 
-void readADC(char channel){
+void readADC(unsigned char channel){
 
-ADCON0 = ((channel <<2));
+ADCON0 = channel <<2;
 ADCON0bits.ADON = 1;
 ADCON0bits.GO = 1;
-while(ADCON0bits.GO_NOT_DONE){}
+while(ADCON0bits.GO_NOT_DONE);
 }
 
 void stopOperation(void){
@@ -4034,13 +4098,30 @@ T0CONbits.TMR0ON = 0;
 T1CONbits.TMR1ON = 0;
 TMR0 = 55770;
 TMR1 = 48035;
-
-# 305
+num9V = count9V;
+numC = countC;
+numAA = countAA;
+numDrain = countDrain;
+count9V = 0;
+countC = 0;
+countAA = 0;
+countDrain = 0;
 min = opTimer / 60;
 sec = opTimer % 60;
 opTimer = 0;
 solOnTimer = 0;
 doneTimer = 0;
+waitMotor = 0;
+stepGear = 0;
+plat1Left = 0;
+plat1Right = 0;
+plat2Left = 0;
+plat2Right = 0;
+LATEbits.LE0 = 0;;
+LATEbits.LE1 = 0;;
+LATCbits.LC5 = 0;;
+LATDbits.LD0 = 0;;
+LATDbits.LD1 = 0;;
 LATAbits.LA2 = 0;;
 LATAbits.LA3 = 0;;
 LATAbits.LA4 = 0;;
@@ -4055,7 +4136,104 @@ LATCbits.LC2 = 0;;
 LATCbits.LC0 = 0;;
 }
 
-void interrupt high_priority highISR(void) {
+void testBatteries(void){
+stepGear = 1;
+LATEbits.LE1 = 1;;
+if (!isFluctuate(1)){
+if (((ADRESH<<8)+ADRESL)>=783){
+LATEbits.LE1 = 0;;
+count9V++;
+plat1Right = 1;
+plat2Left = 1;
+}
+else{
+LATEbits.LE1 = 0;;
+countDrain++;
+plat1Left = 1;
+plat2Right = 1;
+}
+return;
+}
+LATEbits.LE1 = 0;;
+LATCbits.LC5 = 1;;
+if (!isFluctuate(1)){
+if (((ADRESH<<8)+ADRESL)>=783){
+LATCbits.LC5 = 0;;
+count9V++;
+plat1Right = 1;
+plat2Left = 1;
+}
+else{
+LATCbits.LC5 = 0;;
+countDrain++;
+plat1Left = 1;
+plat2Right = 1;
+}
+return;
+}
+LATCbits.LC5 = 0;;
+LATEbits.LE0 = 1;;
+if (!isFluctuate(1)){
+if (((ADRESH<<8)+ADRESL)>=261){
+LATEbits.LE0 = 0;;
+countC++;
+plat1Right = 1;
+plat2Left = 1;
+return;
+}
+else{
+LATEbits.LE0 = 0;;
+countDrain++;
+plat1Left = 1;
+plat2Right = 1;
+}
+return;
+}
+LATEbits.LE0 = 0;;
+LATDbits.LD0 = 1;;
+if (!isFluctuate(1)){
+if (((ADRESH<<8)+ADRESL)>=261){
+LATDbits.LD0 = 0;;
+countAA++;
+plat1Right = 1;
+}
+else{
+LATDbits.LD0 = 0;;
+countDrain++;
+plat1Left = 1;
+}
+}
+LATDbits.LD0 = 0;;
+LATDbits.LD1 = 1;;
+if (!isFluctuate(1)){
+if (((ADRESH<<8)+ADRESL)>=261){
+LATDbits.LD1 = 0;;
+countAA++;
+plat2Left = 1;
+}
+else{
+LATDbits.LD1 = 0;;
+countDrain++;
+plat2Right = 1;
+}
+}
+LATDbits.LD1 = 0;;
+return;
+}
+
+int isFluctuate(unsigned char channel){
+readADC(channel);
+int tempVoltage = (ADRESH<<8)+ADRESL;
+for(unsigned char i = 0; i < 50; i++){
+_delay((unsigned long)((1)*(10000000/4000.0)));
+readADC(channel);
+if (abs((ADRESH<<8)+ADRESL-tempVoltage)>20)
+return 1;
+}
+return 0;
+}
+
+void interrupt ISR(void) {
 if (INT1IF){
 unsigned char keypress = (PORTB & 0xF0) >> 4;
 if (keys[keypress] == '*'){
@@ -4087,8 +4265,6 @@ if (opTimer >= 180){
 screenMode = 0;
 stopOperation();
 }
-
-# 361
 if (LATCbits.LC0){
 LATCbits.LC0 = 0;;
 }
@@ -4103,6 +4279,25 @@ LATCbits.LC0 = 1;;
 if (screenMode == 1 && TMR1IF){
 TMR1IF = 0;
 TMR1 = 48035;
+if (stepGear){
+stepGear++;
+if (stepGear >= 133){
+if (!LATCbits.LC1){
+stepGear = 0;
+}
+else{
+LATCbits.LC1= 0;;
+stepGear = 1;
+}
+}
+LATCbits.LC2 = !LATCbits.LC2;;
+}
+if (waitMotor){
+waitMotor++;
+if (waitMotor >= 286){
+waitMotor = 0;
+}
+}
 if (plat1Left){
 if (step1 == 1){
 LATAbits.LA5 = 1;;
@@ -4123,22 +4318,96 @@ LATAbits.LA3 = 0;;
 plat1Left++;
 if (plat1Left>=200){
 plat1Left = 0;
-T1CONbits.TMR1ON = 0;
 step1 = 0;
 }
 else if (step1>=4)
 step1 = 1;
 else
 step1++;
-
+}
+if (plat1Right){
+if (step1 == 4){
+LATAbits.LA5 = 0;;
+LATAbits.LA4 = 1;;
+}
+if (step1 == 3){
+LATAbits.LA2 = 0;;
+LATAbits.LA3 = 1;;
+}
+if (step1 == 2){
+LATAbits.LA5 = 1;;
+LATAbits.LA4 = 0;;
+}
+if (step1 == 1){
+LATAbits.LA2 = 1;;
+LATAbits.LA3 = 0;;
+}
+plat1Right++;
+if (plat1Right>=200){
+plat1Right = 0;
+step1 = 0;
+}
+else if (step1<=1)
+step1 = 4;
+else
+step1--;
+}
+if (plat2Left){
+if (step2 == 1){
+LATAbits.LA6 = 1;;
+LATBbits.LB3 = 0;;
+}
+if (step2 == 2){
+LATBbits.LB0 = 0;;
+LATBbits.LB2 = 1;;
+}
+if (step2 == 3){
+LATAbits.LA6 = 0;;
+LATBbits.LB3 = 1;;
+}
+if (step2 == 4){
+LATBbits.LB0 = 1;;
+LATBbits.LB2 = 0;;
+}
+plat2Left++;
+if (plat2Left>=200){
+plat2Left = 0;
+step2 = 0;
+}
+else if (step2>=4)
+step2 = 1;
+else
+step2++;
+}
+if (plat2Right){
+if (step2 == 4){
+LATAbits.LA6 = 0;;
+LATBbits.LB3 = 1;;
+}
+if (step2 == 3){
+LATBbits.LB0 = 0;;
+LATBbits.LB2 = 1;;
+}
+if (step2 == 2){
+LATAbits.LA6 = 1;;
+LATBbits.LB3 = 0;;
+}
+if (step2 == 1){
+LATBbits.LB0 = 1;;
+LATBbits.LB2 = 0;;
+}
+plat2Right++;
+if (plat2Right>=200){
+plat2Right = 0;
+step2 = 0;
+}
+else if (step2<=1)
+step2 = 4;
+else
+step2--;
 }
 
-# 443
+# 645
 }
-}
-
-void interrupt low_priority lowISR(void){
-
-# 479
 }
 

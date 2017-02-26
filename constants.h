@@ -62,10 +62,15 @@ unsigned char screenMode = STANDBY; //start at standby screen
 #define plat2c2a(s) LATAbits.LA6 = s;			//platform 2 coil 2a (RA6)
 
 #define UVDsol(s) LATAbits.LA7 = s;				//detector wall in UVD (RA7)
+#define trans1(s) LATEbits.LE0 = s;				//first transistor (RE0)
+#define trans2(s) LATEbits.LE1 = s;				//second transistor (RE1)				
+#define trans3(s) LATCbits.LC5 = s;				//third transistor (RC5)
+#define trans4(s) LATDbits.LD0 = s;				//fourth transistor (RD0)
+#define trans5(s) LATDbits.LD1 = s;				//fifth transistor (RD1)
 
 //inputs
-#define UVDsense() PORTAbits.RA0;				//IR sensor in UVD2 (RA0)
-#define UVDvolt() PORTAbits.RA1;				//voltage detector in UVD1 (RA1)
+// #define UVDsense() PORTAbits.RA0;				//IR sensor in UVD2 (RA0)
+// #define UVDvolt() PORTAbits.RA1;				//voltage detector in UVD1 (RA1)
 
 #define WAIT_TIME 10			//max waiting time before operation terminates
 
