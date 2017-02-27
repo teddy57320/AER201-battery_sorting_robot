@@ -52,7 +52,7 @@ unsigned char screenMode = STANDBY; //start at standby screen
 #define gearDir(s) LATCbits.LC1= s;				//dir pin for stepper (RC1)
 #define gearStep(s) LATCbits.LC2 = s;			//step pin for stepper (RC2)
 
-#define plat1c1a(s) LATAbits.LA2 = s;			//platform 1 coil 1a (RA2)
+#define plat1c1a(s) LATEbits.LE2 = s;			//platform 1 coil 1a (RE2)
 #define plat1c1b(s) LATAbits.LA3 = s;			//platform 1 coil 1b (RA3)
 #define plat1c2b(s) LATAbits.LA4 = s;			//platform 1 coil 2b (RA4)
 #define plat1c2a(s) LATAbits.LA5 = s;			//platform 2 coil 2a (RA5)
@@ -62,15 +62,17 @@ unsigned char screenMode = STANDBY; //start at standby screen
 #define plat2c2a(s) LATAbits.LA6 = s;			//platform 2 coil 2a (RA6)
 
 #define UVDsol(s) LATAbits.LA7 = s;				//detector wall in UVD (RA7)
-#define trans1(s) LATEbits.LE0 = s;				//first transistor (RE0)
-#define trans2(s) LATEbits.LE1 = s;				//second transistor (RE1)				
-#define trans3(s) LATCbits.LC5 = s;				//third transistor (RC5)
-#define trans4(s) LATDbits.LD0 = s;				//fourth transistor (RD0)
-#define trans5(s) LATDbits.LD1 = s;				//fifth transistor (RD1)
+
+#define trans1(s) LATEbits.LE0 = s;				//first transistor for 9V (RE0)
+#define trans2(s) LATEbits.LE1 = s;				//second transistor for 9V (RE1)				
+#define trans3(s) LATCbits.LC5 = s;				//third transistor C (RC5)
+#define trans4(s) LATDbits.LD0 = s;				//fourth transistor AA (RD0)
+#define trans5(s) LATDbits.LD1 = s;				//fifth transistor AA (RD1)
 
 //inputs
 // #define UVDsense() PORTAbits.RA0;				//IR sensor in UVD2 (RA0)
 // #define UVDvolt() PORTAbits.RA1;				//voltage detector in UVD1 (RA1)
+// #Define gearSense() PORTAbits.RA2;			//IR sensor at gear (RA2)
 
 #define WAIT_TIME 10			//max waiting time before operation terminates
 
