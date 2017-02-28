@@ -55,10 +55,10 @@ unsigned char screenMode = STANDBY; //start at standby screen
 #define plat1c1a(s) LATEbits.LE2 = s;			//platform 1 coil 1a (RE2)
 #define plat1c1b(s) LATAbits.LA3 = s;			//platform 1 coil 1b (RA3)
 #define plat1c2b(s) LATAbits.LA4 = s;			//platform 1 coil 2b (RA4)
-#define plat1c2a(s) LATAbits.LA5 = s;			//platform 2 coil 2a (RA5)
+#define plat1c2a(s) LATAbits.LA5 = s;			//platform 1 coil 2a (RA5)
 #define plat2c1a(s) LATBbits.LB0 = s;			//platform 2 coil 1a (RB0)
 #define plat2c1b(s) LATBbits.LB2 = s;			//platform 2 coil 1b (RB2)
-#define plat2c2b(s) LATBbits.LB3 = s;			//platform 2 coil 2b (RB3)
+#define plat2c2b(s) LATCbits.LC6 = s;			//platform 2 coil 2b (RB3)
 #define plat2c2a(s) LATAbits.LA6 = s;			//platform 2 coil 2a (RA6)
 
 #define UVDsol(s) LATAbits.LA7 = s;				//detector wall in UVD (RA7)
@@ -70,7 +70,7 @@ unsigned char screenMode = STANDBY; //start at standby screen
 #define trans5(s) LATDbits.LD1 = s;				//fifth transistor AA (RD1)
 
 //inputs
-// #define UVDsense() PORTAbits.RA0;				//IR sensor in UVD2 (RA0)
+// #define UVDsense() PORTAbits.RA0;		    //IR sensor in UVD2 (RA0)
 // #define UVDvolt() PORTAbits.RA1;				//voltage detector in UVD1 (RA1)
 // #Define gearSense() PORTAbits.RA2;			//IR sensor at gear (RA2)
 

@@ -9,10 +9,10 @@
 const char keys[] = "123A456B789C*0#D";
 
 void switchMenu(unsigned char left, unsigned char right, unsigned char key);
-//toggles the interface "left" and "right" to show different logs
+//toggles "left" and "right" to show scroll through different logs
 
 void readADC(unsigned char channel);
-//select A2D channel to read
+//select analog channel to read
 
 void stopOperation(void);
 //stop battery sorting
@@ -23,19 +23,19 @@ void testBatteries(void);
 int isFluctuate(unsigned char channel);
 //reads voltage and determines if it is fluctuating (fluctuation means no battery is being measured)
 
-int abs(int x){
+int abs(int x){     //absolute value function
     if (x<0)
         return -x;
     return x;
 }
 
-unsigned char time[7];		                 //used to retrieve real time/date
+unsigned char time[7];		                            //used to retrieve real time/date
 unsigned char opTimer, solOnTimer = 4, waitMotor;       //counters for counting run time, solenoid running, and 2 second wait for platform turning, respectively
 unsigned char doneTimer;                                //done sorting flag if no battery is detected at after 10 seconds
 unsigned char num9V, numC, numAA, numBats, numDrain;    //number of batteries of each kind sorted
 unsigned char min, sec;                                 //store latest run time                              
 unsigned char countC, countAA, count9V, countDrain;     //temporary values to count batteries during sorting
-unsigned char plat2Left, plat1Right, plat2Right, plat1Left; //flags for platform motors
+unsigned int plat2Left, plat1Right, plat2Right, plat1Left; //flags for platform motors
 //plat1Left --> drained, counterclockwise
 //plat1Right --> charged, clockwise
 //plat2Left --> charged, counterclockwise
@@ -48,7 +48,7 @@ unsigned char turn1BackRight, turn1BackLeft, turn2BackRight, turn2BackLeft;     
 void main(void){ 
 
 	TRISA = 0b00000111;		//RA0, RA1, and RA2 used for analog inputs
-    TRISB = 0b11110010;     //inputs: RB4:7 for keypad, RB1 for LCD
+    TRISB = 0b11110010;     //inputs: RB4:7 for keypad, RB1 for keypad, RB3 for LCD
 	TRISC = 0x00;			//all output
 	TRISD = 0x00;			//all output 
     TRISE = 0x00;           //all output
@@ -117,6 +117,7 @@ void main(void){
     I2C_Master_Init(10000); //Initialize I2C Master with 100KHz clock
     ei(); // Enable all interrupts
 
+    
     while (1) {
         while (screenMode == STANDBY){	//standby mode
             __lcd_home();
@@ -143,79 +144,81 @@ void main(void){
             // __lcd_newline();
             // printf("%02d                ", doneTimer);
            // __lcd_home();
-           // printf("RUNNING...      ");     
+           // printf("RUNNING...      ");  
+           readADC(0);
            __lcd_home();
            __lcd_newline();
-           printf("PRESS # TO STOP ");
+           printf("%04d %2d         ", (ADRESH<<8)+ADRESL, countDrain+countAA+count9V+countC);
 
-            if (!isFluctuate(0)){  //read UVD IR sensor            
-                if (((ADRESH<<8)+ADRESL)<50){    //if battery is present
-                    UVDsol(1);
-                    testBatteries();   
-                    UVDsol(0);         
-                    if (stepGear){      //flag to turn stepper
-                        gearDir(1);
-                        T1CONbits.TMR1ON = 1;
-                    }
-                    if (plat1Left){     //flag to turn platform1 left
-                        plat1c1a(1);
-                        plat1c1b(0);
-                        step1 = 1;
-                        turn1BackRight = 1;
-                        T1CONbits.TMR1ON = 1;
-                    }
-                    if (plat1Right){    //flag to turn platform1 right
-                        plat1c1a(1);
-                        plat1c1b(0);
-                        step1 = 4;
-                        turn1BackLeft = 1;
-                        T1CONbits.TMR1ON = 1;
-                    }
-                    if (plat2Left){     //flag to turn platform2 left
-                        plat2c1a(1);
-                        plat2c1b(0);
-                        step2 = 1;
-                        turn2BackRight = 1;
-                        T1CONbits.TMR1ON = 1;
-                    }
-                    if (plat2Right){    //flag to turn platform2 right
-                        plat2c1a(1);
-                        plat2c1b(0);
-                        step2 = 4;
-                        turn2BackLeft = 1;
-                        T1CONbits.TMR1ON = 1;
-                    }                
-                    while((stepGear|plat1Left|plat2Left|plat1Right|plat2Right) && screenMode==OPERATING);  //wait for motors to finish turning
-                    waitMotor = 1;
-                    while(waitMotor && screenMode == OPERATING);
-                    // __delay_ms(2000);               //allow time for battery to fall
-                    
+            // if (!isFluctuate(0)){  //read UVD IR sensor AN0
+            if (((ADRESH<<8)+ADRESL)<50){    //if battery is present
+                UVDsol(1);          //actuate wall
+                testBatteries();   
+                UVDsol(0);          //pull back wall
+                if (stepGear){      //flag to turn stepper
+                    gearDir(1);
+                    T1CONbits.TMR1ON = 1;
+                }
+                if (plat1Left){     //flag to turn platform1 left
                     plat1c1a(1);
                     plat1c1b(0);
+                    step1 = 1;
+                    turn1BackRight = 1;
+                    T1CONbits.TMR1ON = 1;
+                }
+                if (plat1Right){    //flag to turn platform1 right
+                    plat1c1a(1);
+                    plat1c1b(0);
+                    step1 = 4;
+                    turn1BackLeft = 1;
+                    T1CONbits.TMR1ON = 1;
+                }
+                if (plat2Left){     //flag to turn platform2 left
                     plat2c1a(1);
                     plat2c1b(0);
-                    plat1Left = turn1BackLeft;      //turn platforms back
-                    plat1Right = turn1BackRight;
-                    plat2Left = turn2BackLeft;
-                    plat2Right = turn2BackRight;                        
-
-                    while((stepGear|plat1Left|plat2Left|plat1Right|plat2Right) && screenMode==OPERATING);  //wait for motors
-                    T1CONbits.TMR1ON = 0;   //stop timer for motors
-                    gearStep(0);            //reset all stepper motor pins
-                    plat1c1a(0);
-                    plat1c1b(0);
-                    plat1c2b(0);
-                    plat1c2a(0);
-                    plat2c1a(0);
+                    step2 = 1;
+                    turn2BackRight = 1;
+                    T1CONbits.TMR1ON = 1;
+                }
+                if (plat2Right){    //flag to turn platform2 right
+                    plat2c1a(1);
                     plat2c1b(0);
-                    plat2c2b(0);
-                    plat2c2a(0);
-                    if (((countC + countAA + count9V + countDrain) >= 15)|doneSorting){   //finish conditions
-                        screenMode = FINISH;
-                        stopOperation();
-                    } 
-                }                                                               
-            }     
+                    step2 = 4;
+                    turn2BackLeft = 1;
+                    T1CONbits.TMR1ON = 1;
+                }                
+                while((stepGear|plat1Left|plat2Left|plat1Right|plat2Right) && screenMode==OPERATING);  //wait for motors to finish turning
+                waitMotor = 1;
+                while(waitMotor && screenMode == OPERATING);    //delays for 2 seconds
+                // __delay_ms(2000);               //allow time for battery to fall
+                
+                plat1c1a(1);
+                plat1c1b(0);
+                plat2c1a(1);
+                plat2c1b(0);
+                plat1Left = turn1BackLeft;      //turn platforms back
+                plat1Right = turn1BackRight;
+                plat2Left = turn2BackLeft;
+                plat2Right = turn2BackRight;                        
+
+                while((stepGear|plat1Left|plat2Left|plat1Right|plat2Right) && screenMode==OPERATING);  //wait for motors
+                T1CONbits.TMR1ON = 0;   //stop timer for motors
+                gearStep(0);            //reset all stepper motor pins
+                plat1c1a(0);
+                plat1c1b(0);
+                plat1c2b(0);
+                plat1c2a(0);
+                plat2c1a(0);
+                plat2c1b(0);
+                plat2c2b(0);
+                plat2c2a(0);
+                if (((countC + countAA + count9V + countDrain) >= 15)|doneSorting){   //finish conditions
+                    screenMode = FINISH;
+                    stopOperation();
+                } 
+            }                       
+            __delay_ms(500);                                        
+            // }     
         }
         while (screenMode == FINISH){	//finish screen  
         	__lcd_home();
@@ -299,7 +302,8 @@ void switchMenu(unsigned char left, unsigned char right, unsigned char key){
             T0CONbits.TMR0ON = 1; //turn on TMR0 
             T1CONbits.TMR1ON = 0; //TMR1 off when not driving steppers
             __lcd_home();
-            printf("RUNNING... 00:00"); 
+            printf("RUNNING: 00:00  "); 
+            funnelSol(1);
         }
         else if (screenMode == FINISH)
             screenMode = STANDBY;
@@ -405,7 +409,7 @@ void testBatteries(void){
     trans1(0);
     trans2(1);      //enable second 9V circuit
     //if (!isFluctuate(1)){
-    if (((ADRESH<<8)+ADRESL)>=5){  
+    if (((ADRESH<<8)+ADRESL)>=706){  
         trans2(0);
         count9V++;
         plat1Right = 1; //charged
@@ -462,7 +466,8 @@ void testBatteries(void){
         countAA++;
         plat2Left = 1;
     }
-    else if (((ADRESH<<8)+ADRESL)>=5){
+    //else if (((ADRESH<<8)+ADRESL)>=5){
+    else{           //battery must be a drained AA
         trans5(0);
         countDrain++;
         plat2Right = 1;
@@ -497,10 +502,10 @@ void interrupt ISR(void) {
         min = opTimer / 60; //store run time
         sec = opTimer % 60;
         __lcd_home();
-        printf("RUNNING... %02d:%02d", min, sec);    
+        printf("RUNNING: %02d:%02d   ", min, sec);    
         if (waitMotor){     //turn back platforms after 2 seconds
             waitMotor++;
-            if (waitMotor >= 2){
+            if (waitMotor >= 3){
                 waitMotor = 0;
             }
         }        
@@ -518,15 +523,15 @@ void interrupt ISR(void) {
                 funnelSol(1);
             }
         }
-        readADC(2);                 //read gear IR sensor
-        if (((ADRESH<<8)+ADRESL)>50){
-            doneTimer++;
-            if (doneTimer >= 10){   //if after 10 seconds of not detecting a battery at the gear
-                doneSorting = 1;
-            }
-        }
-        else
-            doneTimer = 0;
+        // readADC(2);                 //read gear IR sensor
+        // if (((ADRESH<<8)+ADRESL)>50){
+        //     doneTimer++;
+        //     if (doneTimer >= WAIT_TIME){   //if after 10 seconds of not detecting a battery at the gear
+        //         doneSorting = 1;
+        //     }
+        // }
+        // else
+        //     doneTimer = 0;
     }
     if (screenMode == OPERATING && TMR1IF){   //timer overflows every 3 milliseconds
         TMR1IF = 0;
@@ -558,9 +563,9 @@ void interrupt ISR(void) {
                 plat1c1b(0);
             }
             plat1Left++;
-            if (plat1Left>=200){ //angle of rotation = ???, 256 cycles for 180 deg
-                plat1Left = 0;
-                step1 = 0;
+            if (plat1Left>=512){ //angle of rotation = ???, 256 cycles for 180 deg
+                plat1Left = 0;   //512 --> 90 deg
+                step1 = 1;
             }
             else if (step1>=4)
                 step1 = 1;
@@ -570,7 +575,7 @@ void interrupt ISR(void) {
         if (plat1Right){        //charged
             if (step1 == 4){
                 plat1c2a(0);    //step4
-                plat1c2b(1);
+                plat1c2b1();
             }
             if (step1 == 3){
                 plat1c1a(0);    //step3
@@ -585,9 +590,9 @@ void interrupt ISR(void) {
                 plat1c1b(0);
             }
             plat1Right++;
-            if (plat1Right>=200){
+            if (plat1Right>=512){
                 plat1Right = 0;
-                step1 = 0;
+                step1 = 4;
             }
             else if (step1<=1)
                 step1 = 4;
@@ -612,9 +617,9 @@ void interrupt ISR(void) {
                 plat2c1b(0);
             }
             plat2Left++;
-            if (plat2Left>=200){
+            if (plat2Left>=512){
                 plat2Left = 0;
-                step2 = 0;
+                step2 = 1;
             }
             else if (step2>=4)
                 step2 = 1;
@@ -639,9 +644,9 @@ void interrupt ISR(void) {
                 plat2c1b(0);
             }
             plat2Right++;
-            if (plat2Right>=200){
+            if (plat2Right>=512){
                 plat2Right = 0;
-                step2 = 0;
+                step2 = 4;
             }
             else if (step2<=1)
                 step2 = 4;

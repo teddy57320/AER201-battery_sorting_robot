@@ -1,10 +1,3 @@
-/*
- * File:   lcd.c
- * Author: True Administrator
- *
- * Created on July 18, 2016, 12:11 PM
- */
-
 #include <xc.h>
 #include "configBits.h"
 #include <stdio.h>

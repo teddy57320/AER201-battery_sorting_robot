@@ -2832,128 +2832,128 @@ Version 3.2 HI-TECH Software Intermediate Code
 -> -> 2 `i `uc
 ]
 [; ;constants.h: 30: unsigned char screenMode = 2;
-"14 ../lcd.c
+"7 ../lcd.c
 [v _initLCD `(v ~T0 @X0 1 ef ]
 {
-[; ;lcd.c: 14: void initLCD(void) {
+[; ;lcd.c: 7: void initLCD(void) {
 [e :U _initLCD ]
 [f ]
+[; ;lcd.c: 8: _delay((unsigned long)((15)*(10000000/4000.0)));
+"8
+[e ( __delay (1 -> * -> -> 15 `i `d / -> -> 10000000 `l `d .4000.0 `ul ]
+[; ;lcd.c: 9: lcdInst(0b00110011);
+"9
+[e ( _lcdInst (1 -> -> 51 `i `uc ]
+[; ;lcd.c: 10: lcdInst(0b00110010);
+"10
+[e ( _lcdInst (1 -> -> 50 `i `uc ]
+[; ;lcd.c: 11: lcdInst(0b00101000);
+"11
+[e ( _lcdInst (1 -> -> 40 `i `uc ]
+[; ;lcd.c: 12: lcdInst(0b00001111);
+"12
+[e ( _lcdInst (1 -> -> 15 `i `uc ]
+[; ;lcd.c: 13: lcdInst(0b00000110);
+"13
+[e ( _lcdInst (1 -> -> 6 `i `uc ]
+[; ;lcd.c: 14: lcdInst(0b00000001);
+"14
+[e ( _lcdInst (1 -> -> 1 `i `uc ]
 [; ;lcd.c: 15: _delay((unsigned long)((15)*(10000000/4000.0)));
 "15
 [e ( __delay (1 -> * -> -> 15 `i `d / -> -> 10000000 `l `d .4000.0 `ul ]
-[; ;lcd.c: 16: lcdInst(0b00110011);
+[; ;lcd.c: 16: }
 "16
-[e ( _lcdInst (1 -> -> 51 `i `uc ]
-[; ;lcd.c: 17: lcdInst(0b00110010);
-"17
-[e ( _lcdInst (1 -> -> 50 `i `uc ]
-[; ;lcd.c: 18: lcdInst(0b00101000);
-"18
-[e ( _lcdInst (1 -> -> 40 `i `uc ]
-[; ;lcd.c: 19: lcdInst(0b00001111);
-"19
-[e ( _lcdInst (1 -> -> 15 `i `uc ]
-[; ;lcd.c: 20: lcdInst(0b00000110);
-"20
-[e ( _lcdInst (1 -> -> 6 `i `uc ]
-[; ;lcd.c: 21: lcdInst(0b00000001);
-"21
-[e ( _lcdInst (1 -> -> 1 `i `uc ]
-[; ;lcd.c: 22: _delay((unsigned long)((15)*(10000000/4000.0)));
-"22
-[e ( __delay (1 -> * -> -> 15 `i `d / -> -> 10000000 `l `d .4000.0 `ul ]
-[; ;lcd.c: 23: }
-"23
 [e :UE 266 ]
 }
-"25
+"18
 [v _lcdInst `(v ~T0 @X0 1 ef1`uc ]
 {
-[; ;lcd.c: 25: void lcdInst(char data) {
+[; ;lcd.c: 18: void lcdInst(char data) {
 [e :U _lcdInst ]
 [v _data `uc ~T0 @X0 1 r1 ]
 [f ]
-[; ;lcd.c: 26: LATDbits.LATD2 = 0;
-"26
+[; ;lcd.c: 19: LATDbits.LATD2 = 0;
+"19
 [e = . . _LATDbits 0 2 -> -> 0 `i `uc ]
-[; ;lcd.c: 27: lcdNibble(data);
-"27
+[; ;lcd.c: 20: lcdNibble(data);
+"20
 [e ( _lcdNibble (1 _data ]
-[; ;lcd.c: 28: }
-"28
+[; ;lcd.c: 21: }
+"21
 [e :UE 267 ]
 }
-"30
+"23
 [v _putch `(v ~T0 @X0 1 ef1`uc ]
 {
-[; ;lcd.c: 30: void putch(char data){
+[; ;lcd.c: 23: void putch(char data){
 [e :U _putch ]
 [v _data `uc ~T0 @X0 1 r1 ]
 [f ]
-[; ;lcd.c: 31: LATDbits.LATD2 = 1;
-"31
+[; ;lcd.c: 24: LATDbits.LATD2 = 1;
+"24
 [e = . . _LATDbits 0 2 -> -> 1 `i `uc ]
-[; ;lcd.c: 32: lcdNibble(data);
-"32
+[; ;lcd.c: 25: lcdNibble(data);
+"25
 [e ( _lcdNibble (1 _data ]
-[; ;lcd.c: 33: }
-"33
+[; ;lcd.c: 26: }
+"26
 [e :UE 268 ]
 }
-"35
+"28
 [v _lcdNibble `(v ~T0 @X0 1 ef1`uc ]
 {
-[; ;lcd.c: 35: void lcdNibble(char data){
+[; ;lcd.c: 28: void lcdNibble(char data){
 [e :U _lcdNibble ]
 [v _data `uc ~T0 @X0 1 r1 ]
 [f ]
-"37
+"30
 [v _temp `uc ~T0 @X0 1 a ]
-[; ;lcd.c: 37: char temp = data & 0xF0;
+[; ;lcd.c: 30: char temp = data & 0xF0;
 [e = _temp -> & -> _data `i -> 240 `i `uc ]
-[; ;lcd.c: 38: LATD = LATD & 0x0F;
-"38
+[; ;lcd.c: 31: LATD = LATD & 0x0F;
+"31
 [e = _LATD -> & -> _LATD `i -> 15 `i `uc ]
-[; ;lcd.c: 39: LATD = temp | LATD;
+[; ;lcd.c: 32: LATD = temp | LATD;
+"32
+[e = _LATD -> | -> _temp `i -> _LATD `i `uc ]
+[; ;lcd.c: 34: LATDbits.LATD3 = 0;
+"34
+[e = . . _LATDbits 0 3 -> -> 0 `i `uc ]
+[; ;lcd.c: 35: _delay((unsigned long)((30)*(10000000/4000000.0)));
+"35
+[e ( __delay (1 -> * -> -> 30 `i `d / -> -> 10000000 `l `d .4000000.0 `ul ]
+[; ;lcd.c: 36: LATDbits.LATD3 = 1;
+"36
+[e = . . _LATDbits 0 3 -> -> 1 `i `uc ]
+[; ;lcd.c: 37: _delay((unsigned long)((30)*(10000000/4000000.0)));
+"37
+[e ( __delay (1 -> * -> -> 30 `i `d / -> -> 10000000 `l `d .4000000.0 `ul ]
+[; ;lcd.c: 39: data = data << 4;
 "39
-[e = _LATD -> | -> _temp `i -> _LATD `i `uc ]
-[; ;lcd.c: 41: LATDbits.LATD3 = 0;
-"41
-[e = . . _LATDbits 0 3 -> -> 0 `i `uc ]
-[; ;lcd.c: 42: _delay((unsigned long)((30)*(10000000/4000000.0)));
-"42
-[e ( __delay (1 -> * -> -> 30 `i `d / -> -> 10000000 `l `d .4000000.0 `ul ]
-[; ;lcd.c: 43: LATDbits.LATD3 = 1;
-"43
-[e = . . _LATDbits 0 3 -> -> 1 `i `uc ]
-[; ;lcd.c: 44: _delay((unsigned long)((30)*(10000000/4000000.0)));
-"44
-[e ( __delay (1 -> * -> -> 30 `i `d / -> -> 10000000 `l `d .4000000.0 `ul ]
-[; ;lcd.c: 46: data = data << 4;
-"46
 [e = _data -> << -> _data `i -> 4 `i `uc ]
-[; ;lcd.c: 48: temp = data & 0xF0;
-"48
+[; ;lcd.c: 41: temp = data & 0xF0;
+"41
 [e = _temp -> & -> _data `i -> 240 `i `uc ]
-[; ;lcd.c: 49: LATD = LATD & 0x0F;
-"49
+[; ;lcd.c: 42: LATD = LATD & 0x0F;
+"42
 [e = _LATD -> & -> _LATD `i -> 15 `i `uc ]
-[; ;lcd.c: 50: LATD = temp | LATD;
-"50
+[; ;lcd.c: 43: LATD = temp | LATD;
+"43
 [e = _LATD -> | -> _temp `i -> _LATD `i `uc ]
-[; ;lcd.c: 52: LATDbits.LATD3 = 0;
-"52
+[; ;lcd.c: 45: LATDbits.LATD3 = 0;
+"45
 [e = . . _LATDbits 0 3 -> -> 0 `i `uc ]
-[; ;lcd.c: 53: _delay((unsigned long)((30)*(10000000/4000000.0)));
-"53
+[; ;lcd.c: 46: _delay((unsigned long)((30)*(10000000/4000000.0)));
+"46
 [e ( __delay (1 -> * -> -> 30 `i `d / -> -> 10000000 `l `d .4000000.0 `ul ]
-[; ;lcd.c: 54: LATDbits.LATD3 = 1;
-"54
+[; ;lcd.c: 47: LATDbits.LATD3 = 1;
+"47
 [e = . . _LATDbits 0 3 -> -> 1 `i `uc ]
-[; ;lcd.c: 55: _delay((unsigned long)((30)*(10000000/4000000.0)));
-"55
+[; ;lcd.c: 48: _delay((unsigned long)((30)*(10000000/4000000.0)));
+"48
 [e ( __delay (1 -> * -> -> 30 `i `d / -> -> 10000000 `l `d .4000000.0 `ul ]
-[; ;lcd.c: 56: }
-"56
+[; ;lcd.c: 49: }
+"49
 [e :UE 269 ]
 }
