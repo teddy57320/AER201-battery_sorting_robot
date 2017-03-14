@@ -3793,7 +3793,7 @@ void lcdInst(char data);
 void lcdNibble(char data);
 void initLCD(void);
 
-# 30 "../constants.h"
+# 29 "../constants.h"
 unsigned char screenMode = 2;
 
 # 7 "../lcd.c"

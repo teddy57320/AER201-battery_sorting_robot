@@ -1,11 +1,3 @@
-/*
- * File:   I2C.c
- * Author: Administrator
- *
- * Created on August 4, 2016, 3:22 PM
- */
-
-
 #include <xc.h>
 #include "I2C.h"
 #include "configBits.h"

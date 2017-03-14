@@ -1,10 +1,3 @@
-/* 
- * File:   constants.h
- * Author: fkang
- *
- * Created on August 11, 2016, 2:41 PM
- */
-
 #ifndef CONSTANTS_H
 #define	CONSTANTS_H         //Prevent multiple inclusion 
 
@@ -27,6 +20,12 @@
 #define RTC_DISPLAY	9
 #define STOP		10
 
+//Stepper motor sequence
+#define STATIONARY	0
+#define DROP_BAT	1
+#define	WIGGLE		2
+#define FETCH_BAT 	3
+
 unsigned char screenMode = STANDBY; //start at standby screen
 
 //permanent logs
@@ -39,7 +38,8 @@ unsigned char screenMode = STANDBY; //start at standby screen
 // LCD macros
 #define __delay_1s() for(char i=0;i<100;i++){__delay_ms(10);}
 #define __lcd_newline() lcdInst(0b11000000);
-#define __lcd_clear() lcdInst(0b10000000);
+// #define __lcd_clear() lcdInst(0b10000000);
+#define __lcd_clear() lcdInst(0b00000001); __delay_ms(10);
 #define __lcd_home() lcdInst(0b10000000);
 #define __bcd_to_num(num) (num & 0x0F) + ((num & 0xF0)>>4)*10
 
@@ -52,13 +52,13 @@ unsigned char screenMode = STANDBY; //start at standby screen
 #define gearDir(s) LATCbits.LC1= s;				//dir pin for stepper (RC1)
 #define gearStep(s) LATCbits.LC2 = s;			//step pin for stepper (RC2)
 
-#define plat1c1a(s) LATEbits.LE2 = s;			//platform 1 coil 1a (RE2)
+#define plat1c1a(s) LATAbits.LA2 = s;			//platform 1 coil 1a (RA2)
 #define plat1c1b(s) LATAbits.LA3 = s;			//platform 1 coil 1b (RA3)
 #define plat1c2b(s) LATAbits.LA4 = s;			//platform 1 coil 2b (RA4)
 #define plat1c2a(s) LATAbits.LA5 = s;			//platform 1 coil 2a (RA5)
 #define plat2c1a(s) LATBbits.LB0 = s;			//platform 2 coil 1a (RB0)
 #define plat2c1b(s) LATBbits.LB2 = s;			//platform 2 coil 1b (RB2)
-#define plat2c2b(s) LATCbits.LC6 = s;			//platform 2 coil 2b (RB3)
+#define plat2c2b(s) LATCbits.LC6 = s;			//platform 2 coil 2b (RC6)
 #define plat2c2a(s) LATAbits.LA6 = s;			//platform 2 coil 2a (RA6)
 
 #define UVDsol(s) LATAbits.LA7 = s;				//detector wall in UVD (RA7)
@@ -72,7 +72,6 @@ unsigned char screenMode = STANDBY; //start at standby screen
 //inputs
 // #define UVDsense() PORTAbits.RA0;		    //IR sensor in UVD2 (RA0)
 // #define UVDvolt() PORTAbits.RA1;				//voltage detector in UVD1 (RA1)
-// #Define gearSense() PORTAbits.RA2;			//IR sensor at gear (RA2)
 
 #define WAIT_TIME 10			//max waiting time before operation terminates
 

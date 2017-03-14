@@ -3788,7 +3788,7 @@ extern char * strichr(const char *, int);
 extern char * strrchr(const char *, int);
 extern char * strrichr(const char *, int);
 
-# 30 "../constants.h"
+# 29 "../constants.h"
 unsigned char screenMode = 2;
 
 # 11 "../lcd.h"
@@ -3826,7 +3826,7 @@ return x;
 }
 
 unsigned char time[7];
-unsigned char opTimer, solOnTimer = 4, waitMotor;
+unsigned char opTimer, solOnTimer = 2, waitPlats;
 unsigned char doneTimer;
 unsigned char num9V, numC, numAA, numBats, numDrain;
 unsigned char min, sec;
@@ -3836,14 +3836,15 @@ unsigned int plat2Left, plat1Right, plat2Right, plat1Left;
 
 
 
-unsigned int stepGear;
-unsigned char doneSorting;
+unsigned int stepAmount;
+unsigned char stepGear, startGear;
 unsigned char step1, step2;
 unsigned char turn1BackRight, turn1BackLeft, turn2BackRight, turn2BackLeft;
+unsigned char sorting;
 
 void main(void){
 
-TRISA = 0b00000111;
+TRISA = 0b00000011;
 TRISB = 0b11110010;
 TRISC = 0x00;
 TRISD = 0x00;
@@ -3856,7 +3857,7 @@ LATD = 0x00;
 LATE = 0x00;
 
 ADCON0 = 0x00;
-ADCON1 = 0x0D;
+ADCON1 = 0x0E;
 ADCON2 = 0b10110001;
 
 
@@ -3871,19 +3872,19 @@ TMR0IF = 0;
 TMR1IE = 1;
 TMR1IF = 0;
 
-# 80
+# 81
 T0CON = 0b00000111;
 
-# 88
+# 89
 TMR0 = 55770;
 
-# 97
+# 98
 T1CON = 0b10000000;
 
-# 106
+# 107
 TMR1 = 58035;
 
-# 115
+# 116
 initLCD();
 
 I2C_Master_Init(10000);
@@ -3912,55 +3913,75 @@ _delay((unsigned long)((10)*(10000000/4000.0)));
 }
 while (screenMode == 1){
 
-# 148
+# 149
 readADC(0);
 lcdInst(0b10000000);;
 lcdInst(0b11000000);;
-printf("%04d %2d         ", (ADRESH<<8)+ADRESL, countDrain+countAA+count9V+countC);
+printf("%4d %2d         ", ADRES, countDrain+countAA+count9V+countC);
+
+if (startGear){
+_delay((unsigned long)((4000)*(10000000/4000.0)));
+startGear = 0;
+LATCbits.LC1= 0;;
+for (unsigned int i = 0; i < 420; i++){
+if (screenMode != 1)
+break;
+LATCbits.LC2 = !LATCbits.LC2;;
+_delay((unsigned long)((3)*(10000000/4000.0)));
+}
+LATCbits.LC1= 1;;
+for (unsigned char i = 0; i < 40; i++){
+if (screenMode != 1)
+break;
+LATCbits.LC2 = !LATCbits.LC2;;
+_delay((unsigned long)((3)*(10000000/4000.0)));
+}
+LATCbits.LC1= 0;;
+for (unsigned char i = 0; i < 20; i++){
+if (screenMode != 1)
+break;
+LATCbits.LC2 = !LATCbits.LC2;;
+_delay((unsigned long)((3)*(10000000/4000.0)));
+}
+doneTimer = 0;
+}
 
 
-if (((ADRESH<<8)+ADRESL)<50){
+if (ADRES<50){
+sorting = 1;
 LATAbits.LA7 = 1;;
 testBatteries();
 LATAbits.LA7 = 0;;
-if (stepGear){
-LATCbits.LC1= 1;;
-T1CONbits.TMR1ON = 1;
-}
 if (plat1Left){
-LATEbits.LE2 = 1;;
-LATAbits.LA3 = 0;;
 step1 = 1;
 turn1BackRight = 1;
 T1CONbits.TMR1ON = 1;
 }
 if (plat1Right){
-LATEbits.LE2 = 1;;
-LATAbits.LA3 = 0;;
 step1 = 4;
 turn1BackLeft = 1;
 T1CONbits.TMR1ON = 1;
 }
 if (plat2Left){
-LATBbits.LB0 = 1;;
-LATBbits.LB2 = 0;;
 step2 = 1;
 turn2BackRight = 1;
 T1CONbits.TMR1ON = 1;
 }
 if (plat2Right){
-LATBbits.LB0 = 1;;
-LATBbits.LB2 = 0;;
 step2 = 4;
 turn2BackLeft = 1;
 T1CONbits.TMR1ON = 1;
 }
-while((stepGear|plat1Left|plat2Left|plat1Right|plat2Right) && screenMode==1);
-waitMotor = 1;
-while(waitMotor && screenMode == 1);
+LATAbits.LA2 = 1;;
+LATAbits.LA3 = 0;;
+LATBbits.LB0 = 1;;
+LATBbits.LB2 = 0;;
 
+while((plat1Left|plat2Left|plat1Right|plat2Right) && screenMode==1);
+waitPlats = 2;
+while(waitPlats && screenMode == 1);
 
-LATEbits.LE2 = 1;;
+LATAbits.LA2 = 1;;
 LATAbits.LA3 = 0;;
 LATBbits.LB0 = 1;;
 LATBbits.LB2 = 0;;
@@ -3968,11 +3989,19 @@ plat1Left = turn1BackLeft;
 plat1Right = turn1BackRight;
 plat2Left = turn2BackLeft;
 plat2Right = turn2BackRight;
+stepGear = 1;
+LATCbits.LC1= 0;;
 
-while((stepGear|plat1Left|plat2Left|plat1Right|plat2Right) && screenMode==1);
+while(((stepGear!=0) | (plat1Left|plat2Left|plat1Right|plat2Right)) && screenMode==1);
+
 T1CONbits.TMR1ON = 0;
 LATCbits.LC2 = 0;;
-LATEbits.LE2 = 0;;
+LATCbits.LC1= 0;;
+turn1BackRight = 0;
+turn1BackLeft = 0;
+turn2BackRight = 0;
+turn2BackLeft = 0;
+LATAbits.LA2 = 0;;
 LATAbits.LA3 = 0;;
 LATAbits.LA4 = 0;;
 LATAbits.LA5 = 0;;
@@ -3980,10 +4009,11 @@ LATBbits.LB0 = 0;;
 LATBbits.LB2 = 0;;
 LATCbits.LC6 = 0;;
 LATAbits.LA6 = 0;;
-if (((countC + countAA + count9V + countDrain) >= 15)|doneSorting){
+if (((countC + countAA + count9V + countDrain) >= 15)){
 screenMode = 0;
 stopOperation();
 }
+sorting = 0;
 }
 _delay((unsigned long)((500)*(10000000/4000.0)));
 
@@ -4069,6 +4099,7 @@ if(screenMode == 2){
 screenMode = 1;
 T0CONbits.TMR0ON = 1;
 T1CONbits.TMR1ON = 0;
+startGear = 1;
 lcdInst(0b10000000);;
 printf("RUNNING: 00:00  ");
 LATCbits.LC0 = 1;;
@@ -4079,6 +4110,7 @@ screenMode = 2;
 else if (screenMode == 1){
 if (key == '#'){
 screenMode = 10;
+countDrain--;
 stopOperation();
 }
 }
@@ -4124,9 +4156,10 @@ sec = opTimer % 60;
 opTimer = 0;
 solOnTimer = 0;
 doneTimer = 0;
-doneSorting = 0;
-waitMotor = 0;
+waitPlats = 0;
 stepGear = 0;
+stepAmount = 0;
+sorting = 0;
 plat1Left = 0;
 plat1Right = 0;
 plat2Left = 0;
@@ -4140,7 +4173,7 @@ LATEbits.LE1 = 0;;
 LATCbits.LC5 = 0;;
 LATDbits.LD0 = 0;;
 LATDbits.LD1 = 0;;
-LATEbits.LE2 = 0;;
+LATAbits.LA2 = 0;;
 LATAbits.LA3 = 0;;
 LATAbits.LA4 = 0;;
 LATAbits.LA5 = 0;;
@@ -4155,17 +4188,16 @@ LATCbits.LC0 = 0;;
 }
 
 void testBatteries(void){
-stepGear = 1;
 LATEbits.LE0 = 1;;
 
-if (((ADRESH<<8)+ADRESL)>=706){
+if (ADRES>=706){
 LATEbits.LE0 = 0;;
 count9V++;
 plat1Right = 1;
 plat2Left = 1;
 return;
 }
-else if (((ADRESH<<8)+ADRESL)>=5){
+else if (ADRES>=5){
 LATEbits.LE0 = 0;;
 countDrain++;
 plat1Left = 1;
@@ -4177,14 +4209,14 @@ return;
 LATEbits.LE0 = 0;;
 LATEbits.LE1 = 1;;
 
-if (((ADRESH<<8)+ADRESL)>=706){
+if (ADRES>=706){
 LATEbits.LE1 = 0;;
 count9V++;
 plat1Right = 1;
 plat2Left = 1;
 return;
 }
-else if (((ADRESH<<8)+ADRESL)>=5){
+else if (ADRES>=5){
 LATEbits.LE1 = 0;;
 countDrain++;
 plat1Left = 1;
@@ -4196,14 +4228,14 @@ return;
 LATEbits.LE1 = 0;;
 LATCbits.LC5 = 1;;
 
-if (((ADRESH<<8)+ADRESL)>=54){
+if (ADRES>=54){
 LATCbits.LC5 = 0;;
 countC++;
 plat1Right = 1;
 plat2Left = 1;
 return;
 }
-else if (((ADRESH<<8)+ADRESL)>=5){
+else if (ADRES>=5){
 LATCbits.LC5 = 0;;
 countDrain++;
 plat1Left = 1;
@@ -4215,12 +4247,12 @@ return;
 LATCbits.LC5 = 0;;
 LATDbits.LD0 = 1;;
 
-if (((ADRESH<<8)+ADRESL)>=54){
+if (ADRES>=54){
 LATDbits.LD0 = 0;;
 countAA++;
 plat1Right = 1;
 }
-else if (((ADRESH<<8)+ADRESL)>=5){
+else if (ADRES>=5){
 LATDbits.LD0 = 0;;
 countDrain++;
 plat1Left = 1;
@@ -4229,7 +4261,7 @@ plat1Left = 1;
 LATDbits.LD0 = 0;;
 LATDbits.LD1 = 1;;
 
-if (((ADRESH<<8)+ADRESL)>=54){
+if (ADRES>=54){
 LATDbits.LD1 = 0;;
 countAA++;
 plat2Left = 1;
@@ -4247,11 +4279,11 @@ return;
 
 int isFluctuate(unsigned char channel){
 readADC(channel);
-int tempVoltage = (ADRESH<<8)+ADRESL;
+int tempVoltage = ADRES;
 for(unsigned char i = 0; i < 10; i++){
 _delay((unsigned long)((1)*(10000000/4000.0)));
 readADC(channel);
-if (abs((ADRESH<<8)+ADRESL-tempVoltage)>20)
+if (abs(ADRES-tempVoltage)>20)
 return 1;
 }
 return 0;
@@ -4271,12 +4303,8 @@ min = opTimer / 60;
 sec = opTimer % 60;
 lcdInst(0b10000000);;
 printf("RUNNING: %02d:%02d   ", min, sec);
-if (waitMotor){
-waitMotor++;
-if (waitMotor >= 3){
-waitMotor = 0;
-}
-}
+if (waitPlats)
+waitPlats--;
 if (opTimer >= 180){
 screenMode = 0;
 stopOperation();
@@ -4286,25 +4314,56 @@ LATCbits.LC0 = 0;;
 }
 else {
 solOnTimer++;
-if (solOnTimer >= 4){
+if (solOnTimer >= 2){
 solOnTimer = 0;
 LATCbits.LC0 = 1;;
 }
 }
-
-# 535
+if (!sorting){
+if (ADRES > 50)
+doneTimer++;
+else
+doneTimer = 0;
+if (doneTimer >= 10){
+screenMode = 0;
+stopOperation();
+}
+}
+else
+doneTimer = 0;
 }
 if (screenMode == 1 && TMR1IF){
 TMR1IF = 0;
 TMR1 = 58035;
-if (stepGear){
-stepGear++;
-if (stepGear >= 267){
-stepGear = 0;
-LATCbits.LC2 = 0;;
+if (stepGear != 0){
+if (stepGear == 1){
+stepAmount++;
+LATCbits.LC2 = !LATCbits.LC2;;
+if (stepAmount >= 420){
+stepAmount = 0;
+stepGear = 2;
+LATCbits.LC1= 1;;
+}
+}
+else if (stepGear == 2){
+stepAmount++;
+LATCbits.LC2 = !LATCbits.LC2;;
+if (stepAmount >= 40){
+stepAmount = 0;
+stepGear = 3;
 LATCbits.LC1= 0;;
 }
+}
+else if (stepGear == 3){
+stepAmount ++;
 LATCbits.LC2 = !LATCbits.LC2;;
+if (stepAmount >= 20){
+stepAmount = 0;
+stepGear = 0;
+LATCbits.LC1= 1;;
+LATCbits.LC2 = 0;;
+}
+}
 }
 if (plat1Left){
 if (step1 == 1){
@@ -4312,7 +4371,7 @@ LATAbits.LA5 = 1;;
 LATAbits.LA4 = 0;;
 }
 if (step1 == 2){
-LATEbits.LE2 = 0;;
+LATAbits.LA2 = 0;;
 LATAbits.LA3 = 1;;
 }
 if (step1 == 3){
@@ -4320,13 +4379,12 @@ LATAbits.LA5 = 0;;
 LATAbits.LA4 = 1;;
 }
 if (step1 == 4){
-LATEbits.LE2 = 1;;
+LATAbits.LA2 = 1;;
 LATAbits.LA3 = 0;;
 }
 plat1Left++;
 if (plat1Left>=512){
 plat1Left = 0;
-step1 = 1;
 }
 else if (step1>=4)
 step1 = 1;
@@ -4339,7 +4397,7 @@ LATAbits.LA5 = 0;;
 LATAbits.LA4 = 1;;
 }
 if (step1 == 3){
-LATEbits.LE2 = 0;;
+LATAbits.LA2 = 0;;
 LATAbits.LA3 = 1;;
 }
 if (step1 == 2){
@@ -4347,13 +4405,12 @@ LATAbits.LA5 = 1;;
 LATAbits.LA4 = 0;;
 }
 if (step1 == 1){
-LATEbits.LE2 = 1;;
+LATAbits.LA2 = 1;;
 LATAbits.LA3 = 0;;
 }
 plat1Right++;
 if (plat1Right>=512){
 plat1Right = 0;
-step1 = 4;
 }
 else if (step1<=1)
 step1 = 4;
@@ -4380,7 +4437,6 @@ LATBbits.LB2 = 0;;
 plat2Left++;
 if (plat2Left>=512){
 plat2Left = 0;
-step2 = 1;
 }
 else if (step2>=4)
 step2 = 1;
@@ -4407,7 +4463,6 @@ LATBbits.LB2 = 0;;
 plat2Right++;
 if (plat2Right>=512){
 plat2Right = 0;
-step2 = 4;
 }
 else if (step2<=1)
 step2 = 4;

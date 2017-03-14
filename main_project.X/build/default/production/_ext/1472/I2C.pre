@@ -3733,7 +3733,7 @@ extern char * strichr(const char *, int);
 extern char * strrchr(const char *, int);
 extern char * strrichr(const char *, int);
 
-# 13 "../I2C.c"
+# 5 "../I2C.c"
 void I2C_Master_Init(const unsigned long c)
 {
 
@@ -3756,7 +3756,7 @@ I2C_Master_Wait();
 SEN = 1;
 }
 
-# 41
+# 33
 void I2C_Master_Stop()
 {
 I2C_Master_Wait();
