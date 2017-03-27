@@ -3793,9 +3793,6 @@ void lcdInst(char data);
 void lcdNibble(char data);
 void initLCD(void);
 
-# 29 "../constants.h"
-unsigned char screenMode = 2;
-
 # 7 "../lcd.c"
 void initLCD(void) {
 _delay((unsigned long)((15)*(10000000/4000.0)));

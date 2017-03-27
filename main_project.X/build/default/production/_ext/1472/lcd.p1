@@ -2826,12 +2826,6 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;lcd.h: 11: void lcdInst(char data);
 [; ;lcd.h: 12: void lcdNibble(char data);
 [; ;lcd.h: 13: void initLCD(void);
-"29 ../constants.h
-[v _screenMode `uc ~T0 @X0 1 e ]
-[i _screenMode
--> -> 2 `i `uc
-]
-[; ;constants.h: 29: unsigned char screenMode = 2;
 "7 ../lcd.c
 [v _initLCD `(v ~T0 @X0 1 ef ]
 {

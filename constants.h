@@ -23,10 +23,12 @@
 //Stepper motor sequence
 #define STATIONARY	0
 #define DROP_BAT	1
-#define	WIGGLE		2
-#define FETCH_BAT 	3
-
-unsigned char screenMode = STANDBY; //start at standby screen
+#define WAIT  		2
+#define	WIGGLE1		3
+#define WIGGLE2		4
+#define WIGGLE3		5
+#define WIGGLE4		6
+#define FETCH_BAT 	7
 
 //permanent logs
 // #define PERM_LOGS	10
@@ -59,9 +61,9 @@ unsigned char screenMode = STANDBY; //start at standby screen
 #define plat2c1a(s) LATBbits.LB0 = s;			//platform 2 coil 1a (RB0)
 #define plat2c1b(s) LATBbits.LB2 = s;			//platform 2 coil 1b (RB2)
 #define plat2c2b(s) LATCbits.LC6 = s;			//platform 2 coil 2b (RC6)
-#define plat2c2a(s) LATAbits.LA6 = s;			//platform 2 coil 2a (RA6)
+#define plat2c2a(s) LATEbits.LE2 = s;			//platform 2 coil 2a (RE2)
 
-#define UVDsol(s) LATAbits.LA7 = s;				//detector wall in UVD (RA7)
+#define UVDsol(s) LATCbits.LC7 = s;				//detector wall in UVD (RC7)
 
 #define trans1(s) LATEbits.LE0 = s;				//first transistor for 9V (RE0)
 #define trans2(s) LATEbits.LE1 = s;				//second transistor for 9V (RE1)				
