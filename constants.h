@@ -17,10 +17,11 @@
 #define	NUM_9V		6
 #define NUM_AA		7
 #define NUM_DRAIN	8
-#define RTC_DISPLAY	9
-#define STOP		10
+#define RTC_LAST_RUN	9
+#define RTC_DISPLAY	10
+#define STOP		11
 
-//Stepper motor sequence
+//Big tepper motor spinning sequence
 #define STATIONARY	0
 #define DROP_BAT	1
 #define WAIT  		2
@@ -49,31 +50,29 @@
 
 //s = 0 or 1
 //outputs
-#define funnelSol(s) LATCbits.LC0 = s;			//initial funnel solenoid (RC0)
+#define funnelSol(s) LATBbits.LB0 = s;			//initial funnel solenoid (RB0)
 
-#define gearDir(s) LATCbits.LC1= s;				//dir pin for stepper (RC1)
-#define gearStep(s) LATCbits.LC2 = s;			//step pin for stepper (RC2)
+#define gearDir(s) LATDbits.LD0= s;				//dir pin for stepper (RD0)
+#define gearStep(s) LATDbits.LD1 = s;			//step pin for stepper (RD1)
 
-#define plat1c1a(s) LATAbits.LA2 = s;			//platform 1 coil 1a (RA2)
-#define plat1c1b(s) LATAbits.LA3 = s;			//platform 1 coil 1b (RA3)
-#define plat1c2b(s) LATAbits.LA4 = s;			//platform 1 coil 2b (RA4)
-#define plat1c2a(s) LATAbits.LA5 = s;			//platform 1 coil 2a (RA5)
-#define plat2c1a(s) LATBbits.LB0 = s;			//platform 2 coil 1a (RB0)
-#define plat2c1b(s) LATBbits.LB2 = s;			//platform 2 coil 1b (RB2)
-#define plat2c2b(s) LATCbits.LC6 = s;			//platform 2 coil 2b (RC6)
-#define plat2c2a(s) LATEbits.LE2 = s;			//platform 2 coil 2a (RE2)
+#define plat1c1a(s) LATCbits.LC1 = s;			//platform 1 coil 1a (RC1)	yellow/grey
+#define plat1c1b(s) LATCbits.LC2 = s;			//platform 1 coil 1b (RC2)
+#define plat1c2b(s) LATCbits.LC5 = s;			//platform 1 coil 2b (RC5)	orange/brown
+#define plat1c2a(s) LATCbits.LC6 = s;			//platform 1 coil 2a (RC6)
+#define plat2c1a(s) LATCbits.LC0 = s;			//platform 2 coil 1a (RC0)	brown/green
+#define plat2c1b(s) LATBbiEs.LE2 = s;			//platform 2 coil 1b (RE2)
+#define plat2c2b(s) LATEbits.LE1 = s;			//platform 2 coil 2b (RE1)	purple/blue
+#define plat2c2a(s) LATAbits.LA4 = s;			//platform 2 coil 2a (RA4)
 
-#define UVDsol(s) LATCbits.LC7 = s;				//detector wall in UVD (RC7)
+#define UVDsol(s) LATCbits.LC7 = s;				//UVD solenoid (RC7)
 
-#define trans1(s) LATEbits.LE0 = s;				//first transistor for 9V (RE0)
-#define trans2(s) LATEbits.LE1 = s;				//second transistor for 9V (RE1)				
-#define trans3(s) LATCbits.LC5 = s;				//third transistor C (RC5)
-#define trans4(s) LATDbits.LD0 = s;				//fourth transistor AA (RD0)
-#define trans5(s) LATDbits.LD1 = s;				//fifth transistor AA (RD1)
 
-//inputs
-// #define UVDsense() PORTAbits.RA0;		    //IR sensor in UVD2 (RA0)
-// #define UVDvolt() PORTAbits.RA1;				//voltage detector in UVD1 (RA1)
+/*inputs
+IR sensor: RA0	green 
+C circuit: RA1 (circuit 1)
+AA circuits: RA2 and RA3 (circuit 2 and 3)
+9V circuits: RA5 and RE0 (circuit 4 and 5)
+*/
 
 #define WAIT_TIME 10			//max waiting time before operation terminates
 

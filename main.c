@@ -32,9 +32,11 @@ void testBatteries(void);
 void wait_3ms(unsigned int x);   //delay a certain number of seconds
 
 unsigned char screenMode = STANDBY; //start at standby screen
-unsigned char time[7];		                            //used to retrieve real time/date
-unsigned char opTimer, waitPlats;       //counters for counting run time, solenoid running, and 2 second wait for platform turning, respectively
-unsigned char doneTimer;                                //done sorting flag if no battery is detected at after 10 seconds
+unsigned char realTime[7];		                            //used to retrieve real time/date
+unsigned char lastRunRTC[7];                            //store real time/date of last run
+
+unsigned char opTimer;                                  //counters for counting run time
+unsigned char doneTimer, solOnTimer;                    //done sorting flag if no battery is detected at after 10 seconds, turning on/off every second
 unsigned char num9V, numC, numAA, numBats, numDrain;    //number of batteries of each kind sorted
 unsigned char min, sec;                                 //store latest run time                              
 unsigned char countC, countAA, count9V, countDrain;     //temporary values to count batteries during sorting
@@ -44,19 +46,19 @@ unsigned int plat2Left, plat1Right, plat2Right, plat1Left; //flags for platform 
 //plat2Left --> charged, counterclockwise
 //plat2Right --> drained, clockwise
 unsigned int stepAmount;          //flags for turning gear stepper
-unsigned char stepGear, startGear;
+unsigned char stepGear, startGear;  //state of the stepper, flag for initial spinning sequence of stepper motor
 unsigned char step1, step2;     //tracking steps of the UVD platforms as per http://mechatronics.mech.northwestern.edu/design_ref/actuators/stepper_drive1.html
 unsigned char turn1BackRight, turn1BackLeft, turn2BackRight, turn2BackLeft;     //flags for turning platforms back to their original positions
-unsigned char sorting;
-unsigned int count_3ms, solOnTimer;
+unsigned char sorting, doubleAA;          //flag for when the program is sorting
+unsigned int count_3ms; //used as a general flag for timing
 
 void main(void){ 
 
-	TRISA = 0b00000011;		//RA0, RA1 used for analog inputs
-    TRISB = 0b11110010;     //inputs: RB4:7 for keypad, RB1 for keypad, RB3 for LCD
+	TRISA = 0b00101111;		//RA0:3, RA5 used for voltage readings
+    TRISB = 0b11110010;     //inputs: RB1, RB4:7 for keypad, RB3 for LCD
 	TRISC = 0x00;			//all output
 	TRISD = 0x00;			//all output 
-    TRISE = 0x00;           //all output
+    TRISE = 0b00000001;     //RE0 for voltage reading
 
 	LATA = 0x00;            //reset all pin values
     LATB = 0x00;
@@ -65,7 +67,7 @@ void main(void){
     LATE = 0x00;
 
     ADCON0 = 0x00;          //disable ADC
-	ADCON1 = 0x0E;          //set RA0, RA1 to analog, everything else to digital
+	ADCON1 = 0b00001001;    //set RA0:3, RA5, RE0 to analog (AN0:5)
     ADCON2 = 0b10110001;
     //ADFM = 1;
     //ACQ[2:0] = 110;   16T_AD = 12.8us converting acquisition time
@@ -122,7 +124,6 @@ void main(void){
     I2C_Master_Init(10000); //Initialize I2C Master with 100KHz clock
     ei(); // Enable all interrupts
 
-    
     while (1) {
         while (screenMode == STANDBY){	//standby mode
             __lcd_home();
@@ -150,66 +151,68 @@ void main(void){
             // __lcd_newline();
             // printf("%02d                ", doneTimer);
            // __lcd_home();
-           // printf("RUNNING...      ");  
-           // __lcd_home();
            // __lcd_newline();
-           // printf("%4d %2d         ", ADRES, countDrain+countAA+count9V+countC);
+           // printf("PRESS # TO STOP ");
+           __lcd_home();
+           __lcd_newline();
+           printf("%4d %2d         ", ADRES, countDrain+countAA+count9V+countC);
            if (startGear){
                 wait_3ms(1333);
                 startGear = 0;
                 gearDir(0);
                 for (unsigned int i = 0; i < 420; i++){ 
-                    gearStep(!LATCbits.LC2);
+                    gearStep(!LATDbits.LD1);
                     wait_3ms(2);
                 }
                 gearDir(1);
                 for (unsigned int i = 0; i < 40; i++){
-                    gearStep(!LATCbits.LC2);
+                    gearStep(!LATDbits.LD1);
                     wait_3ms(2);
                 }
                 gearDir(0);
                 for (unsigned int i = 0; i < 40; i++){
-                    gearStep(!LATCbits.LC2);
+                    gearStep(!LATDbits.LD1);
                     wait_3ms(2);
                 }
                 gearDir(1);
                 for (unsigned int i = 0; i < 40; i++){
-                    gearStep(!LATCbits.LC2);
+                    gearStep(!LATDbits.LD1);
                     wait_3ms(2);
                 }
                 gearDir(0);
                 for (unsigned int i = 0; i < 20; i++){
-                    gearStep(!LATCbits.LC2);
+                    gearStep(!LATDbits.LD1);
                     wait_3ms(2);
                 }
                 doneTimer = 0;
             }
-            readADC(0);
+            readADC(0); //RA0
 
-            // if (!isFluctuate(0)){  //read UVD IR sensor AN0
-            if (ADRES<50){    //if battery is present       
+            //read UVD IR sensor RA0 = AN0
+            if (ADRES < 50 | ADRES > 80){    //if battery is present   
+                wait_3ms(167);    
                 sorting = 1; 
                 UVDsol(1);          //actuate wall
-                wait_3ms(30);
+                wait_3ms(167);
                 testBatteries();    
                 UVDsol(0);          //pull back wall
                 if (plat1Left){     //flag to turn platform1 left
                     step1 = 1;
-                    turn1BackRight = 1;
+                    turn1BackRight = plat1Left;
                 }
                 if (plat1Right){    //flag to turn platform1 right
                     step1 = 4;
-                    turn1BackLeft = 1;
+                    turn1BackLeft = plat1Right;
                 }
                 if (plat2Left){     //flag to turn platform2 left
                     step2 = 1;
-                    turn2BackRight = 1;
+                    turn2BackRight = plat2Left;
                 }
                 if (plat2Right){    //flag to turn platform2 right
                     step2 = 4;
-                    turn2BackLeft = 1;
+                    turn2BackLeft = plat2Right;
                 }                
-                plat1c1a(1);                    //prep for platforms turning back          
+                plat1c1a(1);                    //prep platform turning sequence        
                 plat1c1b(0);
                 plat2c1a(1);
                 plat2c1b(0);
@@ -233,6 +236,10 @@ void main(void){
                 
                 gearStep(0);            //reset all stepper motor pins
                 gearDir(0);
+                plat1Right = 0;
+                plat2Right = 0;
+                plat1Left = 0;
+                plat2Left = 0;
                 turn1BackRight = 0;
                 turn1BackLeft = 0;
                 turn2BackRight = 0;
@@ -251,7 +258,7 @@ void main(void){
                 } 
                 sorting = 0;
             }                       
-            __delay_ms(500);                                        
+            wait_3ms(167);                                        
             // }     
         }
         while (screenMode == FINISH){	//finish screen  
@@ -296,6 +303,12 @@ void main(void){
         	__lcd_newline();
         	printf("BATTERIES: %02d     ", numDrain);
         }
+        while (screenMode == RTC_LAST_RUN){
+            __lcd_home();
+            printf("DATE: %02x/%02x/%02x  ", realTime[6],realTime[5],realTime[4]);    //Print date in YY/MM/DD
+            __lcd_newline();
+            printf("%02x/%02x/%02x, %02x:%02x:%02x  ", realTime[2],realTime[1],realTime[0]);    //HH:MM:SS     
+        }
         while (screenMode == RTC_DISPLAY){	// real time/date display
             //Reset RTC memory pointer 
 		    I2C_Master_Start(); //Start condition
@@ -306,14 +319,14 @@ void main(void){
 		    I2C_Master_Start();
 		    I2C_Master_Write(0b11010001); //7 bit RTC address + Read
 		    for(unsigned char i=0;i<0x06;i++){
-		        time[i] = I2C_Master_Read(1);
+		        realTime[i] = I2C_Master_Read(1);
 		    }
-		    time[6] = I2C_Master_Read(0);       //Final Read without ack
+		    realTime[6] = I2C_Master_Read(0);       //Final Read without ack
 		    I2C_Master_Stop();
 		    __lcd_home();
-		    printf("DATE: %02x/%02x/%02x  ", time[6],time[5],time[4]);    //Print date in YY/MM/DD
+		    printf("DATE: %02x/%02x/%02x  ", realTime[6],realTime[5],realTime[4]);    //Print date in YY/MM/DD
 		    __lcd_newline();
-		    printf("TIME: %02x:%02x:%02x  ", time[2],time[1],time[0]);    //HH:MM:SS	         
+		    printf("TIME: %02x:%02x:%02x  ", realTime[2],realTime[1],realTime[0]);    //HH:MM:SS	         
         }
         while (screenMode == STOP){
             __lcd_home();
@@ -346,7 +359,7 @@ void switchMenu(unsigned char left, unsigned char right, unsigned char key){
     else if (screenMode == OPERATING){
         if (key == '#'){     //emergency stop
             screenMode = STOP;
-            countDrain--;       //weird edge case
+            //countDrain--;       //weird edge case
             stopOperation();
         }
     }
@@ -368,7 +381,7 @@ void switchMenu(unsigned char left, unsigned char right, unsigned char key){
 
 void readADC(unsigned char channel){
 // Select A2D channel to read
-	ADCON0 = channel <<2;
+	ADCON0 = channel << 2;
 	ADCON0bits.ADON = 1;
 	ADCON0bits.GO = 1;
 	while(ADCON0bits.GO_NOT_DONE);  
@@ -383,6 +396,7 @@ void stopOperation(void){
     numC = countC;
     numAA = countAA;
     numDrain = countDrain;
+    numBats = count9V + countC + countAA + countDrain;
     count9V = 0;
     countC = 0;
     countAA = 0;
@@ -391,7 +405,6 @@ void stopOperation(void){
     sec = opTimer % 60;
     opTimer = 0;        //rest all timers and flags
     doneTimer = 0;
-    waitPlats = 0;
     stepGear = STATIONARY;
     stepAmount = 0;
     sorting = 0;
@@ -404,6 +417,7 @@ void stopOperation(void){
     turn2BackRight = 0;
     turn1BackRight = 0;
     count_3ms = 0;
+    doubleAA = 0;
     solOnTimer = 0;
     trans1(0);          //reset all pins
     trans2(0);
@@ -425,97 +439,96 @@ void stopOperation(void){
 }
 
 void testBatteries(void){
-    trans1(1);      //enable first 9V battery circuit
-    // if (!isFluctuate(1)){
-    wait_3ms(33);       //wait 1 second for transistor to charge
-    if (ADRES>=706){  // (9*0.85 - 0.75)/2 = 3.45V, 3.45/5 * 1023 = 705.9
-        trans1(0);
-        count9V++;
-        plat1Right = 1; //charged
-        plat2Left = 1;
+
+    // unsigned int i = opTimer % 2;
+    // if(i){
+    //     countDrain++;   
+    //     plat1Left = 1;
+    //     plat2Right = 1;
+    //     return;
+    // }
+    // unsigned int j = opTimer * opTimer %3;
+    // if(j == 0)
+    //     count9V++;
+    // if (j == 1)
+    //     countC++;
+    // if (j==2)
+    //     countAA++;
+    // plat1Right = 1; //charged
+    // plat2Left = 1;
+    // return;
+
+    
+    readADC(1);         //read C circuit RA1
+    if (ADRES>=54){  // (9*0.85 - 0.75)/2 = 3.45V, 3.45/5 * 1023 = 705.9
+        countC++;
+        plat1Right = 512; //charged     512 --> 90 deg
+        plat2Left = 512;
         return;
     }
     else if (ADRES>=5){      // 5 --> minimum analog reading for drained battery
-        trans1(0);
         countDrain++;   //below 85% of nominal voltage --> drained
-        plat1Left = 1;
-        plat2Right = 1;
+        plat1Left = 512;
+        plat2Right = 512;
         return;
     }
-    //return;
-    //}
-    trans1(0);
-    trans2(1);      //enable second 9V circuit
-    wait_3ms(33);       //wait 1 second for transistor to charge
+    readADC(2);         //read AA circuit RA2
     //if (!isFluctuate(1)){
-    if (ADRES>=706){  
-        trans2(0);
-        count9V++;
-        plat1Right = 1; //charged
-        plat2Left = 1;
+    if (ADRES>=54){  
+        countAA++;
+        plat1Right = 512; //charged
+        plat2Left = 512;
         return;
     }
     else if (ADRES>=5){
-        trans2(0);
         countDrain++;   //drained
-        plat1Left = 1;
-        plat2Right = 1;
+        plat1Left = 512;
+        plat2Right = 512;
         return;
     }
     //return;
     //}
-    trans2(0);
-    trans3(1);      //enable C battery circuit
-    wait_3ms(33);       //wait 1 second for transistor to charge
+    readADC(3);         //read AA circuit  RA3
     //if (!isFluctuate(1)){
     if (ADRES>=54){  // (1.5*0.85 - 0.75)/2 = 0.2625V, 0.2625/5 * 1023 = 53.7
-        trans3(0);
-        countC++;
-        plat1Right = 1;     //charged
-        plat2Left = 1;
+        countAA++;
+        plat1Right = 512;     //charged
+        plat2Left = 512;
         return;
     }
     else if (ADRES>=5){
-        trans3(0);          //drained
         countDrain++;
-        plat1Left = 1;
-        plat2Right = 1;
+        plat1Left = 512;
+        plat2Right = 512;
         return;
     }
     //return;
     //}
-    trans3(0);
-    trans4(1);      //enable AA circuit
-    wait_3ms(33);       //wait 1 second for transistor to charge
+    readADC(4);         //read 9V circuit   RA5 = AN4
     //if (!isFluctuate(1)){
-    if (ADRES>=54){  
-        trans4(0);
+    if (ADRES>=706){  
         countAA++;
-        plat1Right = 1;
+        plat1Right = 512;
     }
     else if (ADRES>=5){
-        trans4(0);
         countDrain++;
-        plat1Left = 1;
+        plat1Left = 512;
     }
    // }
-    trans4(0);
-    trans5(1);      //enable second AA circuit
-    wait_3ms(33);       //wait 1 second for transistor to charge
+    readADC(5);         //read 9V circuit RE0 = AN5
     //if (!isFluctuate(1)){
-    if (ADRES>=54){  
-        trans5(0);
+    if (ADRES>=706){  
         countAA++;
-        plat2Left = 1;
+        plat2Left = 512;
     }
     //else if (ADRES>=5){
     else{           //battery must be a drained AA
-        trans5(0);
         countDrain++;
-        plat2Right = 1;
+        plat2Right = 512;
     }
+    if (plat1Rifght && plat2Left)
+        doubleAA = 1;
     //}
-    trans5(0);
     return;
 }
 
@@ -528,6 +541,8 @@ void testBatteries(void){
 //         if (abs(ADRES-tempVoltage)>20)    //fluctuation means no battery (floating)
 //             return 1;
 //     }
+
+
 //     return 0;
 // }
 
@@ -550,13 +565,11 @@ void interrupt ISR(void) {
         sec = opTimer % 60;
         __lcd_home();
         printf("RUNNING: %02d:%02d   ", min, sec);  
-        if (waitPlats)     //turn back platforms after 2 seconds
-            waitPlats--;
         if (opTimer >= 180){    //stop operation after 3 minutes
             screenMode = FINISH;
             stopOperation();    
         }        
-        //funnelSol(!LATCbits.LC0);   //turn big solenoid on and off every second
+        //funnelSol(!LATBbits.LB0);   //turn big solenoid on and off every second
         if (!sorting){              //UVD does not detect a battery for WAIT_TIME seconds
             if (ADRES > 50)
                 doneTimer++;
@@ -573,17 +586,17 @@ void interrupt ISR(void) {
     if (screenMode == OPERATING && TMR1IF){   //timer overflows every 3 milliseconds
         TMR1IF = 0;
         TMR1 = 58035;
-        if (count_3ms)
+        if (count_3ms)                        //flag decreases every 3 ms --> used as a "timer"
             count_3ms--;
         solOnTimer++;
         if (solOnTimer >= 133){
             solOnTimer = 0;
-            funnelSol(!LATCbits.LC0);
+            funnelSol(!LATBbits.LB0);         //turn solenoid on and off every 0.5 seconds
         }
         if (stepGear != STATIONARY){ 
             if (stepGear == DROP_BAT){        //wiggle battery near the UVD hole to make it fall through
                 stepAmount++;
-                gearStep(!LATCbits.LC2);
+                gearStep(!LATDbits.LD1);
                 if (stepAmount >= 380){      //171 deg / 0.9 deg per rot = 190 rotations = stepping 380 times
                     stepGear = WAIT;
                 }
@@ -597,7 +610,7 @@ void interrupt ISR(void) {
             }           
             else if (stepGear == WIGGLE1){    //allow battery into the rotating gear
                 stepAmount++;
-                gearStep(!LATCbits.LC2);
+                gearStep(!LATDbits.LD1);
                 if (stepAmount >= 40){      //18 deg / 0.9 deg per rot = 20 rotations = stepping 40 times 
                     stepAmount = 0;
                     stepGear = WIGGLE2;
@@ -606,7 +619,7 @@ void interrupt ISR(void) {
             }
             else if (stepGear == WIGGLE2){    //allow battery into the rotating gear
                 stepAmount++;
-                gearStep(!LATCbits.LC2);
+                gearStep(!LATDbits.LD1);
                 if (stepAmount >= 40){      //18 deg / 0.9 deg per rot = 20 rotations = stepping 40 times 
                     stepAmount = 0;
                     stepGear = WIGGLE3;
@@ -615,7 +628,7 @@ void interrupt ISR(void) {
             }
             else if (stepGear == WIGGLE3){    //allow battery into the rotating gear
                 stepAmount++;
-                gearStep(!LATCbits.LC2);
+                gearStep(!LATDbits.LD1);
                 if (stepAmount >= 40){      //18 deg / 0.9 deg per rot = 20 rotations = stepping 40 times 
                     stepAmount = 0;
                     stepGear = WIGGLE4;
@@ -624,7 +637,7 @@ void interrupt ISR(void) {
             }
             else if (stepGear == WIGGLE4){    //allow battery into the rotating gear
                 stepAmount++;
-                gearStep(!LATCbits.LC2);
+                gearStep(!LATDbits.LD1);
                 if (stepAmount >= 40){      //18 deg / 0.9 deg per rot = 20 rotations = stepping 40 times 
                     stepAmount = 0;
                     stepGear = FETCH_BAT;
@@ -633,7 +646,7 @@ void interrupt ISR(void) {
             }
             else if (stepGear == FETCH_BAT){ //allow time for battery to fall through
                 stepAmount ++; 
-                gearStep(!LATCbits.LC2);
+                gearStep(!LATDbits.LD1);
                 if (stepAmount >= 20){      //9 deg / 0.9 deg per rot = 10 rotations = stepping 20 times
                     stepAmount = 0;
                     stepGear = STATIONARY;
@@ -660,11 +673,8 @@ void interrupt ISR(void) {
                 plat1c1a(1);     //step4
                 plat1c1b(0);
             }
-            plat1Left++;
-            if (plat1Left>=512){ //512 --> 90 deg
-                plat1Left = 0;  
-            }
-            else if (step1>=4)
+            plat1Left--;
+            if (step1>=4)
                 step1 = 1;
             else
                 step1++;    
@@ -686,11 +696,8 @@ void interrupt ISR(void) {
                 plat1c1a(1);    //step1
                 plat1c1b(0);
             }
-            plat1Right++;
-            if (plat1Right>=512){
-                plat1Right = 0;
-            }
-            else if (step1<=1)
+            plat1Right--;
+            if (step1<=1)
                 step1 = 4;
             else
                 step1--;
@@ -712,11 +719,8 @@ void interrupt ISR(void) {
                 plat2c1a(1);     //step4
                 plat2c1b(0);
             }
-            plat2Left++;
-            if (plat2Left>=512){
-                plat2Left = 0;
-            }
-            else if (step2>=4)
+            plat2Left--;
+            if (step2>=4)
                 step2 = 1;
             else
                 step2++;    
@@ -738,11 +742,8 @@ void interrupt ISR(void) {
                 plat2c1a(1);    //step1
                 plat2c1b(0);
             }
-            plat2Right++;
-            if (plat2Right>=512){
-                plat2Right = 0;
-            }
-            else if (step2<=1)
+            plat2Right--;
+            if (step2<=1)
                 step2 = 4;
             else
                 step2--;

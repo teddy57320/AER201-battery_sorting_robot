@@ -3817,8 +3817,8 @@ void wait_3ms(unsigned int x);
 
 unsigned char screenMode = 2;
 unsigned char time[7];
-unsigned char opTimer, waitPlats;
-unsigned char doneTimer;
+unsigned char opTimer;
+unsigned char doneTimer, solOnTimer;
 unsigned char num9V, numC, numAA, numBats, numDrain;
 unsigned char min, sec;
 unsigned char countC, countAA, count9V, countDrain;
@@ -3832,7 +3832,7 @@ unsigned char stepGear, startGear;
 unsigned char step1, step2;
 unsigned char turn1BackRight, turn1BackLeft, turn2BackRight, turn2BackLeft;
 unsigned char sorting;
-unsigned int count_3ms, solOnTimer;
+unsigned int count_3ms;
 
 void main(void){
 
@@ -3906,7 +3906,10 @@ _delay((unsigned long)((10)*(10000000/4000.0)));
 }
 while (screenMode == 1){
 
-# 157
+# 155
+lcdInst(0b10000000);;
+lcdInst(0b11000000);;
+printf("%4d %2d         ", ADRES, countDrain+countAA+count9V+countC);
 if (startGear){
 wait_3ms(1333);
 startGear = 0;
@@ -3940,27 +3943,28 @@ doneTimer = 0;
 readADC(0);
 
 
-if (ADRES<50){
+if (ADRES<50 | ADRES > 80){
+wait_3ms(167);
 sorting = 1;
 LATCbits.LC7 = 1;;
-wait_3ms(30);
+wait_3ms(167);
 testBatteries();
 LATCbits.LC7 = 0;;
 if (plat1Left){
 step1 = 1;
-turn1BackRight = 1;
+turn1BackRight = plat1Left;
 }
 if (plat1Right){
 step1 = 4;
-turn1BackLeft = 1;
+turn1BackLeft = plat1Right;
 }
 if (plat2Left){
 step2 = 1;
-turn2BackRight = 1;
+turn2BackRight = plat2Left;
 }
 if (plat2Right){
 step2 = 4;
-turn2BackLeft = 1;
+turn2BackLeft = plat2Right;
 }
 LATAbits.LA2 = 1;;
 LATAbits.LA3 = 0;;
@@ -4004,7 +4008,7 @@ stopOperation();
 }
 sorting = 0;
 }
-_delay((unsigned long)((500)*(10000000/4000.0)));
+wait_3ms(167);
 
 }
 while (screenMode == 0){
@@ -4099,7 +4103,7 @@ screenMode = 2;
 else if (screenMode == 1){
 if (key == '#'){
 screenMode = 10;
-countDrain--;
+
 stopOperation();
 }
 }
@@ -4136,6 +4140,7 @@ num9V = count9V;
 numC = countC;
 numAA = countAA;
 numDrain = countDrain;
+numBats = count9V + countC + countAA + countDrain;
 count9V = 0;
 countC = 0;
 countAA = 0;
@@ -4144,7 +4149,6 @@ min = opTimer / 60;
 sec = opTimer % 60;
 opTimer = 0;
 doneTimer = 0;
-waitPlats = 0;
 stepGear = 0;
 stepAmount = 0;
 sorting = 0;
@@ -4178,21 +4182,23 @@ LATCbits.LC0 = 0;;
 }
 
 void testBatteries(void){
+
+# 449
 LATEbits.LE0 = 1;;
 
 wait_3ms(33);
 if (ADRES>=706){
 LATEbits.LE0 = 0;;
 count9V++;
-plat1Right = 1;
-plat2Left = 1;
+plat1Right = 512;
+plat2Left = 512;
 return;
 }
 else if (ADRES>=5){
 LATEbits.LE0 = 0;;
 countDrain++;
-plat1Left = 1;
-plat2Right = 1;
+plat1Left = 512;
+plat2Right = 512;
 return;
 }
 
@@ -4204,15 +4210,15 @@ wait_3ms(33);
 if (ADRES>=706){
 LATEbits.LE1 = 0;;
 count9V++;
-plat1Right = 1;
-plat2Left = 1;
+plat1Right = 512;
+plat2Left = 512;
 return;
 }
 else if (ADRES>=5){
 LATEbits.LE1 = 0;;
 countDrain++;
-plat1Left = 1;
-plat2Right = 1;
+plat1Left = 512;
+plat2Right = 512;
 return;
 }
 
@@ -4224,15 +4230,15 @@ wait_3ms(33);
 if (ADRES>=54){
 LATCbits.LC5 = 0;;
 countC++;
-plat1Right = 1;
-plat2Left = 1;
+plat1Right = 512;
+plat2Left = 512;
 return;
 }
 else if (ADRES>=5){
 LATCbits.LC5 = 0;;
 countDrain++;
-plat1Left = 1;
-plat2Right = 1;
+plat1Left = 512;
+plat2Right = 512;
 return;
 }
 
@@ -4244,12 +4250,12 @@ wait_3ms(33);
 if (ADRES>=54){
 LATDbits.LD0 = 0;;
 countAA++;
-plat1Right = 1;
+plat1Right = 512;
 }
 else if (ADRES>=5){
 LATDbits.LD0 = 0;;
 countDrain++;
-plat1Left = 1;
+plat1Left = 512;
 }
 
 LATDbits.LD0 = 0;;
@@ -4259,20 +4265,20 @@ wait_3ms(33);
 if (ADRES>=54){
 LATDbits.LD1 = 0;;
 countAA++;
-plat2Left = 1;
+plat2Left = 512;
 }
 
 else{
 LATDbits.LD1 = 0;;
 countDrain++;
-plat2Right = 1;
+plat2Right = 512;
 }
 
 LATDbits.LD1 = 0;;
 return;
 }
 
-# 534
+# 557
 void wait_3ms(unsigned int x){
 count_3ms = x;
 while (count_3ms && screenMode == 1);
@@ -4292,8 +4298,6 @@ min = opTimer / 60;
 sec = opTimer % 60;
 lcdInst(0b10000000);;
 printf("RUNNING: %02d:%02d   ", min, sec);
-if (waitPlats)
-waitPlats--;
 if (opTimer >= 180){
 screenMode = 0;
 stopOperation();
@@ -4402,11 +4406,8 @@ if (step1 == 4){
 LATAbits.LA2 = 1;;
 LATAbits.LA3 = 0;;
 }
-plat1Left++;
-if (plat1Left>=512){
-plat1Left = 0;
-}
-else if (step1>=4)
+plat1Left--;
+if (step1>=4)
 step1 = 1;
 else
 step1++;
@@ -4428,11 +4429,8 @@ if (step1 == 1){
 LATAbits.LA2 = 1;;
 LATAbits.LA3 = 0;;
 }
-plat1Right++;
-if (plat1Right>=512){
-plat1Right = 0;
-}
-else if (step1<=1)
+plat1Right--;
+if (step1<=1)
 step1 = 4;
 else
 step1--;
@@ -4454,11 +4452,8 @@ if (step2 == 4){
 LATBbits.LB0 = 1;;
 LATBbits.LB2 = 0;;
 }
-plat2Left++;
-if (plat2Left>=512){
-plat2Left = 0;
-}
-else if (step2>=4)
+plat2Left--;
+if (step2>=4)
 step2 = 1;
 else
 step2++;
@@ -4480,11 +4475,8 @@ if (step2 == 1){
 LATBbits.LB0 = 1;;
 LATBbits.LB2 = 0;;
 }
-plat2Right++;
-if (plat2Right>=512){
-plat2Right = 0;
-}
-else if (step2<=1)
+plat2Right--;
+if (step2<=1)
 step2 = 4;
 else
 step2--;
