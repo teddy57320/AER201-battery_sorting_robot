@@ -127,9 +127,9 @@ void main(void){
     while (1) {
         while (screenMode == STANDBY){	//standby mode
             __lcd_home();
-            printf("START:   PRESS *");
+            printf("PRESS * TO START");
             __lcd_newline();
-            printf("<  VIEW  LOGS  >");
+            printf("< TOGGLE  LOGS >");
             for(unsigned char i=0;i<50;i++){
             	if (screenMode != STANDBY)	//ensure immediate scrolling
             		break;
@@ -137,9 +137,8 @@ void main(void){
             }
             __lcd_home();
             __lcd_newline();
-            printf(" < VIEW  LOGS > ");
+            printf(" <TOGGLE  LOGS> ");
             for(unsigned char i=0;i<50;i++){
-
             	if (screenMode != STANDBY)
             		break;
             	__delay_ms(10);
@@ -305,9 +304,22 @@ void main(void){
         }
         while (screenMode == RTC_LAST_RUN){
             __lcd_home();
-            printf("DATE: %02x/%02x/%02x  ", realTime[6],realTime[5],realTime[4]);    //Print date in YY/MM/DD
+            printf("LAST RUN:       ");    
             __lcd_newline();
-            printf("%02x/%02x/%02x, %02x:%02x:%02x  ", realTime[2],realTime[1],realTime[0]);    //HH:MM:SS     
+            printf("%02x/%02x/%02x        ", lastRunRTC[6],lastRunRTC[5],lastRunRTC[4]);    //YY/MM/DD
+            for(unsigned char i=0;i<200;i++){
+                if (screenMode != RTC_LAST_RUN)  //ensure immediate scrolling
+                    break;
+                __delay_ms(10);
+            }
+            __lcd_home();
+            __lcd_newline();
+            printf("%02x:%02x:%02x        ", lastRunRTC[2],lastRunRTC[1],lastRunRTC[0]);    //HH:MM:SS  
+            for(unsigned char i=0;i<200;i++){
+                if (screenMode != RTC_LAST_RUN)  //ensure immediate scrolling
+                    break;
+                __delay_ms(10);
+            }   
         }
         while (screenMode == RTC_DISPLAY){	// real time/date display
             //Reset RTC memory pointer 
@@ -330,7 +342,7 @@ void main(void){
         }
         while (screenMode == STOP){
             __lcd_home();
-            printf("EMERGENCY STOP  ");
+            printf("STOPPED         ");
             __lcd_newline();
             printf("                ");
             __delay_ms(2000); 
@@ -349,6 +361,21 @@ void switchMenu(unsigned char left, unsigned char right, unsigned char key){
             T0CONbits.TMR0ON = 1; //turn on TMR0 
             T1CONbits.TMR1ON = 1; //turn on TMR1
             startGear = 1;
+
+            //store real time/date of start of run
+            I2C_Master_Start(); //Start condition
+            I2C_Master_Write(0b11010000); //7 bit RTC address + Write
+            I2C_Master_Write(0x00); //Set memory pointer to seconds
+            I2C_Master_Stop(); //Stop condition
+            //Read Current Time
+            I2C_Master_Start();
+            I2C_Master_Write(0b11010001); //7 bit RTC address + Read
+            for(unsigned char i=0;i<0x06;i++){
+                lastRunRTC[i] = I2C_Master_Read(1);
+            }
+            lastRunRTC[6] = I2C_Master_Read(0);       //Final Read without ack
+            I2C_Master_Stop();
+
             __lcd_home();
             printf("RUNNING: 00:00  "); 
             funnelSol(1);
@@ -419,11 +446,7 @@ void stopOperation(void){
     count_3ms = 0;
     doubleAA = 0;
     solOnTimer = 0;
-    trans1(0);          //reset all pins
-    trans2(0);
-    trans3(0);
-    trans4(0);
-    trans5(0);
+    //reset all pins
     plat1c1a(0);
     plat1c1b(0);
     plat1c2b(0);
@@ -521,13 +544,18 @@ void testBatteries(void){
         countAA++;
         plat2Left = 512;
     }
-    //else if (ADRES>=5){
-    else{           //battery must be a drained AA
+    else if (ADRES>=5){          //battery must be a drained AA
         countDrain++;
         plat2Right = 512;
     }
-    if (plat1Rifght && plat2Left)
+    if (plat1Right && plat2Left)
         doubleAA = 1;
+    else if (!(plat1Left | plat1Right | plat2Left | plat2Right)){   //if not any of the above cases, assume drained
+        countDrain++;
+        plat2Right = 512;
+        plat1Left = 512;
+    }
+
     //}
     return;
 }

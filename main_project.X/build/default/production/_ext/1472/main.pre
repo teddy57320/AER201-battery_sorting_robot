@@ -3816,7 +3816,9 @@ void testBatteries(void);
 void wait_3ms(unsigned int x);
 
 unsigned char screenMode = 2;
-unsigned char time[7];
+unsigned char realTime[7];
+unsigned char lastRunRTC[7];
+
 unsigned char opTimer;
 unsigned char doneTimer, solOnTimer;
 unsigned char num9V, numC, numAA, numBats, numDrain;
@@ -3831,16 +3833,16 @@ unsigned int stepAmount;
 unsigned char stepGear, startGear;
 unsigned char step1, step2;
 unsigned char turn1BackRight, turn1BackLeft, turn2BackRight, turn2BackLeft;
-unsigned char sorting;
+unsigned char sorting, doubleAA;
 unsigned int count_3ms;
 
 void main(void){
 
-TRISA = 0b00000011;
+TRISA = 0b00101111;
 TRISB = 0b11110010;
 TRISC = 0x00;
 TRISD = 0x00;
-TRISE = 0x00;
+TRISE = 0b00000001;
 
 LATA = 0x00;
 LATB = 0x00;
@@ -3849,7 +3851,7 @@ LATD = 0x00;
 LATE = 0x00;
 
 ADCON0 = 0x00;
-ADCON1 = 0x0E;
+ADCON1 = 0b00001001;
 ADCON2 = 0b10110001;
 
 
@@ -3864,31 +3866,30 @@ TMR0IF = 0;
 TMR1IE = 1;
 TMR1IF = 0;
 
-# 85
+# 87
 T0CON = 0b00000111;
 
-# 93
+# 95
 TMR0 = 55770;
 
-# 102
+# 104
 T1CON = 0b10000000;
 
-# 111
+# 113
 TMR1 = 58035;
 
-# 120
+# 122
 initLCD();
 
 I2C_Master_Init(10000);
 (INTCONbits.GIE = 1);
 
-
 while (1) {
 while (screenMode == 2){
 lcdInst(0b10000000);;
-printf("START:   PRESS *");
+printf("PRESS * TO START");
 lcdInst(0b11000000);;
-printf("<  VIEW  LOGS  >");
+printf("< TOGGLE  LOGS >");
 for(unsigned char i=0;i<50;i++){
 if (screenMode != 2)
 break;
@@ -3896,9 +3897,8 @@ _delay((unsigned long)((10)*(10000000/4000.0)));
 }
 lcdInst(0b10000000);;
 lcdInst(0b11000000);;
-printf(" < VIEW  LOGS > ");
+printf(" <TOGGLE  LOGS> ");
 for(unsigned char i=0;i<50;i++){
-
 if (screenMode != 2)
 break;
 _delay((unsigned long)((10)*(10000000/4000.0)));
@@ -3913,29 +3913,29 @@ printf("%4d %2d         ", ADRES, countDrain+countAA+count9V+countC);
 if (startGear){
 wait_3ms(1333);
 startGear = 0;
-LATCbits.LC1= 0;;
+LATDbits.LD0= 0;;
 for (unsigned int i = 0; i < 420; i++){
-LATCbits.LC2 = !LATCbits.LC2;;
+LATDbits.LD1 = !LATDbits.LD1;;
 wait_3ms(2);
 }
-LATCbits.LC1= 1;;
+LATDbits.LD0= 1;;
 for (unsigned int i = 0; i < 40; i++){
-LATCbits.LC2 = !LATCbits.LC2;;
+LATDbits.LD1 = !LATDbits.LD1;;
 wait_3ms(2);
 }
-LATCbits.LC1= 0;;
+LATDbits.LD0= 0;;
 for (unsigned int i = 0; i < 40; i++){
-LATCbits.LC2 = !LATCbits.LC2;;
+LATDbits.LD1 = !LATDbits.LD1;;
 wait_3ms(2);
 }
-LATCbits.LC1= 1;;
+LATDbits.LD0= 1;;
 for (unsigned int i = 0; i < 40; i++){
-LATCbits.LC2 = !LATCbits.LC2;;
+LATDbits.LD1 = !LATDbits.LD1;;
 wait_3ms(2);
 }
-LATCbits.LC1= 0;;
+LATDbits.LD0= 0;;
 for (unsigned int i = 0; i < 20; i++){
-LATCbits.LC2 = !LATCbits.LC2;;
+LATDbits.LD1 = !LATDbits.LD1;;
 wait_3ms(2);
 }
 doneTimer = 0;
@@ -3943,7 +3943,7 @@ doneTimer = 0;
 readADC(0);
 
 
-if (ADRES<50 | ADRES > 80){
+if (ADRES < 50 | ADRES > 80){
 wait_3ms(167);
 sorting = 1;
 LATCbits.LC7 = 1;;
@@ -3966,42 +3966,46 @@ if (plat2Right){
 step2 = 4;
 turn2BackLeft = plat2Right;
 }
-LATAbits.LA2 = 1;;
-LATAbits.LA3 = 0;;
-LATBbits.LB0 = 1;;
-LATBbits.LB2 = 0;;
+LATCbits.LC1 = 1;;
+LATCbits.LC2 = 0;;
+LATCbits.LC0 = 1;;
+LATEbits.LE2 = 0;;
 
 while((plat1Left|plat2Left|plat1Right|plat2Right) && screenMode==1);
 
 wait_3ms(333);
 
-LATAbits.LA2 = 1;;
-LATAbits.LA3 = 0;;
-LATBbits.LB0 = 1;;
-LATBbits.LB2 = 0;;
+LATCbits.LC1 = 1;;
+LATCbits.LC2 = 0;;
+LATCbits.LC0 = 1;;
+LATEbits.LE2 = 0;;
 plat1Left = turn1BackLeft;
 plat1Right = turn1BackRight;
 plat2Left = turn2BackLeft;
 plat2Right = turn2BackRight;
 stepGear = 1;
-LATCbits.LC1= 0;;
+LATDbits.LD0= 0;;
 
 while(((stepGear!=0) | (plat1Left|plat2Left|plat1Right|plat2Right)) && screenMode==1);
 
-LATCbits.LC2 = 0;;
-LATCbits.LC1= 0;;
+LATDbits.LD1 = 0;;
+LATDbits.LD0= 0;;
+plat1Right = 0;
+plat2Right = 0;
+plat1Left = 0;
+plat2Left = 0;
 turn1BackRight = 0;
 turn1BackLeft = 0;
 turn2BackRight = 0;
 turn2BackLeft = 0;
-LATAbits.LA2 = 0;;
-LATAbits.LA3 = 0;;
-LATAbits.LA4 = 0;;
-LATAbits.LA5 = 0;;
-LATBbits.LB0 = 0;;
-LATBbits.LB2 = 0;;
+LATCbits.LC1 = 0;;
+LATCbits.LC2 = 0;;
+LATCbits.LC5 = 0;;
 LATCbits.LC6 = 0;;
+LATCbits.LC0 = 0;;
 LATEbits.LE2 = 0;;
+LATEbits.LE1 = 0;;
+LATAbits.LA4 = 0;;
 if (((countC + countAA + count9V + countDrain) >= 15)){
 screenMode = 0;
 stopOperation();
@@ -4054,6 +4058,25 @@ lcdInst(0b11000000);;
 printf("BATTERIES: %02d     ", numDrain);
 }
 while (screenMode == 9){
+lcdInst(0b10000000);;
+printf("LAST RUN:       ");
+lcdInst(0b11000000);;
+printf("%02x/%02x/%02x        ", lastRunRTC[6],lastRunRTC[5],lastRunRTC[4]);
+for(unsigned char i=0;i<200;i++){
+if (screenMode != 9)
+break;
+_delay((unsigned long)((10)*(10000000/4000.0)));
+}
+lcdInst(0b10000000);;
+lcdInst(0b11000000);;
+printf("%02x:%02x:%02x        ", lastRunRTC[2],lastRunRTC[1],lastRunRTC[0]);
+for(unsigned char i=0;i<200;i++){
+if (screenMode != 9)
+break;
+_delay((unsigned long)((10)*(10000000/4000.0)));
+}
+}
+while (screenMode == 10){
 
 I2C_Master_Start();
 I2C_Master_Write(0b11010000);
@@ -4063,18 +4086,18 @@ I2C_Master_Stop();
 I2C_Master_Start();
 I2C_Master_Write(0b11010001);
 for(unsigned char i=0;i<0x06;i++){
-time[i] = I2C_Master_Read(1);
+realTime[i] = I2C_Master_Read(1);
 }
-time[6] = I2C_Master_Read(0);
+realTime[6] = I2C_Master_Read(0);
 I2C_Master_Stop();
 lcdInst(0b10000000);;
-printf("DATE: %02x/%02x/%02x  ", time[6],time[5],time[4]);
+printf("DATE: %02x/%02x/%02x  ", realTime[6],realTime[5],realTime[4]);
 lcdInst(0b11000000);;
-printf("TIME: %02x:%02x:%02x  ", time[2],time[1],time[0]);
+printf("TIME: %02x:%02x:%02x  ", realTime[2],realTime[1],realTime[0]);
 }
-while (screenMode == 10){
+while (screenMode == 11){
 lcdInst(0b10000000);;
-printf("EMERGENCY STOP  ");
+printf("STOPPED         ");
 lcdInst(0b11000000);;
 printf("                ");
 _delay((unsigned long)((2000)*(10000000/4000.0)));
@@ -4093,16 +4116,31 @@ screenMode = 1;
 T0CONbits.TMR0ON = 1;
 T1CONbits.TMR1ON = 1;
 startGear = 1;
+
+
+I2C_Master_Start();
+I2C_Master_Write(0b11010000);
+I2C_Master_Write(0x00);
+I2C_Master_Stop();
+
+I2C_Master_Start();
+I2C_Master_Write(0b11010001);
+for(unsigned char i=0;i<0x06;i++){
+lastRunRTC[i] = I2C_Master_Read(1);
+}
+lastRunRTC[6] = I2C_Master_Read(0);
+I2C_Master_Stop();
+
 lcdInst(0b10000000);;
 printf("RUNNING: 00:00  ");
-LATCbits.LC0 = 1;;
+LATBbits.LB0 = 1;;
 }
 else if (screenMode == 0)
 screenMode = 2;
 }
 else if (screenMode == 1){
 if (key == '#'){
-screenMode = 10;
+screenMode = 11;
 
 stopOperation();
 }
@@ -4110,12 +4148,12 @@ stopOperation();
 else if (screenMode != 0){
 if (key == right){
 if (screenMode == 2)
-screenMode = 9;
+screenMode = 10;
 else
 screenMode--;
 }
 else if (key == left){
-if (screenMode == 9)
+if (screenMode == 10)
 screenMode = 2;
 else
 screenMode++;
@@ -4125,7 +4163,7 @@ screenMode++;
 
 void readADC(unsigned char channel){
 
-ADCON0 = channel <<2;
+ADCON0 = channel << 2;
 ADCON0bits.ADON = 1;
 ADCON0bits.GO = 1;
 while(ADCON0bits.GO_NOT_DONE);
@@ -4161,81 +4199,48 @@ turn1BackLeft = 0;
 turn2BackRight = 0;
 turn1BackRight = 0;
 count_3ms = 0;
+doubleAA = 0;
 solOnTimer = 0;
-LATEbits.LE0 = 0;;
-LATEbits.LE1 = 0;;
-LATCbits.LC5 = 0;;
-LATDbits.LD0 = 0;;
-LATDbits.LD1 = 0;;
-LATAbits.LA2 = 0;;
-LATAbits.LA3 = 0;;
-LATAbits.LA4 = 0;;
-LATAbits.LA5 = 0;;
-LATBbits.LB0 = 0;;
-LATBbits.LB2 = 0;;
-LATCbits.LC6 = 0;;
-LATEbits.LE2 = 0;;
-LATCbits.LC1= 0;;
-LATCbits.LC7 = 0;;
+
+LATCbits.LC1 = 0;;
 LATCbits.LC2 = 0;;
+LATCbits.LC5 = 0;;
+LATCbits.LC6 = 0;;
 LATCbits.LC0 = 0;;
+LATEbits.LE2 = 0;;
+LATEbits.LE1 = 0;;
+LATAbits.LA4 = 0;;
+LATDbits.LD0= 0;;
+LATCbits.LC7 = 0;;
+LATDbits.LD1 = 0;;
+LATBbits.LB0 = 0;;
 }
 
 void testBatteries(void){
 
-# 449
-LATEbits.LE0 = 1;;
-
-wait_3ms(33);
-if (ADRES>=706){
-LATEbits.LE0 = 0;;
-count9V++;
-plat1Right = 512;
-plat2Left = 512;
-return;
-}
-else if (ADRES>=5){
-LATEbits.LE0 = 0;;
-countDrain++;
-plat1Left = 512;
-plat2Right = 512;
-return;
-}
-
-
-LATEbits.LE0 = 0;;
-LATEbits.LE1 = 1;;
-wait_3ms(33);
-
-if (ADRES>=706){
-LATEbits.LE1 = 0;;
-count9V++;
-plat1Right = 512;
-plat2Left = 512;
-return;
-}
-else if (ADRES>=5){
-LATEbits.LE1 = 0;;
-countDrain++;
-plat1Left = 512;
-plat2Right = 512;
-return;
-}
-
-
-LATEbits.LE1 = 0;;
-LATCbits.LC5 = 1;;
-wait_3ms(33);
-
+# 485
+readADC(1);
 if (ADRES>=54){
-LATCbits.LC5 = 0;;
 countC++;
 plat1Right = 512;
 plat2Left = 512;
 return;
 }
 else if (ADRES>=5){
-LATCbits.LC5 = 0;;
+countDrain++;
+plat1Left = 512;
+plat2Right = 512;
+return;
+}
+readADC(2);
+
+if (ADRES>=54){
+countAA++;
+plat1Right = 512;
+plat2Left = 512;
+return;
+}
+else if (ADRES>=5){
 countDrain++;
 plat1Left = 512;
 plat2Right = 512;
@@ -4243,42 +4248,56 @@ return;
 }
 
 
-LATCbits.LC5 = 0;;
-LATDbits.LD0 = 1;;
-wait_3ms(33);
+readADC(3);
 
 if (ADRES>=54){
-LATDbits.LD0 = 0;;
+countAA++;
+plat1Right = 512;
+plat2Left = 512;
+return;
+}
+else if (ADRES>=5){
+countDrain++;
+plat1Left = 512;
+plat2Right = 512;
+return;
+}
+
+
+readADC(4);
+
+if (ADRES>=706){
 countAA++;
 plat1Right = 512;
 }
 else if (ADRES>=5){
-LATDbits.LD0 = 0;;
 countDrain++;
 plat1Left = 512;
 }
 
-LATDbits.LD0 = 0;;
-LATDbits.LD1 = 1;;
-wait_3ms(33);
+readADC(5);
 
-if (ADRES>=54){
-LATDbits.LD1 = 0;;
+if (ADRES>=706){
 countAA++;
 plat2Left = 512;
 }
-
-else{
-LATDbits.LD1 = 0;;
+else if (ADRES>=5){
 countDrain++;
 plat2Right = 512;
 }
+if (plat1Right && plat2Left)
+doubleAA = 1;
+else if (!(plat1Left | plat1Right | plat2Left | plat2Right)){
+countDrain++;
+plat2Right = 512;
+plat1Left = 512;
+}
 
-LATDbits.LD1 = 0;;
+
 return;
 }
 
-# 557
+# 577
 void wait_3ms(unsigned int x){
 count_3ms = x;
 while (count_3ms && screenMode == 1);
@@ -4324,12 +4343,12 @@ count_3ms--;
 solOnTimer++;
 if (solOnTimer >= 133){
 solOnTimer = 0;
-LATCbits.LC0 = !LATCbits.LC0;;
+LATBbits.LB0 = !LATBbits.LB0;;
 }
 if (stepGear != 0){
 if (stepGear == 1){
 stepAmount++;
-LATCbits.LC2 = !LATCbits.LC2;;
+LATDbits.LD1 = !LATDbits.LD1;;
 if (stepAmount >= 380){
 stepGear = 2;
 }
@@ -4343,68 +4362,68 @@ stepGear = 3;
 }
 else if (stepGear == 3){
 stepAmount++;
-LATCbits.LC2 = !LATCbits.LC2;;
+LATDbits.LD1 = !LATDbits.LD1;;
 if (stepAmount >= 40){
 stepAmount = 0;
 stepGear = 4;
-LATCbits.LC1= 1;;
+LATDbits.LD0= 1;;
 }
 }
 else if (stepGear == 4){
 stepAmount++;
-LATCbits.LC2 = !LATCbits.LC2;;
+LATDbits.LD1 = !LATDbits.LD1;;
 if (stepAmount >= 40){
 stepAmount = 0;
 stepGear = 5;
-LATCbits.LC1= 0;;
+LATDbits.LD0= 0;;
 }
 }
 else if (stepGear == 5){
 stepAmount++;
-LATCbits.LC2 = !LATCbits.LC2;;
+LATDbits.LD1 = !LATDbits.LD1;;
 if (stepAmount >= 40){
 stepAmount = 0;
 stepGear = 6;
-LATCbits.LC1= 1;;
+LATDbits.LD0= 1;;
 }
 }
 else if (stepGear == 6){
 stepAmount++;
-LATCbits.LC2 = !LATCbits.LC2;;
+LATDbits.LD1 = !LATDbits.LD1;;
 if (stepAmount >= 40){
 stepAmount = 0;
 stepGear = 7;
-LATCbits.LC1= 0;;
+LATDbits.LD0= 0;;
 }
 }
 else if (stepGear == 7){
 stepAmount ++;
-LATCbits.LC2 = !LATCbits.LC2;;
+LATDbits.LD1 = !LATDbits.LD1;;
 if (stepAmount >= 20){
 stepAmount = 0;
 stepGear = 0;
-LATCbits.LC1= 0;;
-LATCbits.LC2 = 0;;
+LATDbits.LD0= 0;;
+LATDbits.LD1 = 0;;
 }
 }
 
 }
 if (plat1Left){
 if (step1 == 1){
-LATAbits.LA5 = 1;;
-LATAbits.LA4 = 0;;
+LATCbits.LC6 = 1;;
+LATCbits.LC5 = 0;;
 }
 if (step1 == 2){
-LATAbits.LA2 = 0;;
-LATAbits.LA3 = 1;;
+LATCbits.LC1 = 0;;
+LATCbits.LC2 = 1;;
 }
 if (step1 == 3){
-LATAbits.LA5 = 0;;
-LATAbits.LA4 = 1;;
+LATCbits.LC6 = 0;;
+LATCbits.LC5 = 1;;
 }
 if (step1 == 4){
-LATAbits.LA2 = 1;;
-LATAbits.LA3 = 0;;
+LATCbits.LC1 = 1;;
+LATCbits.LC2 = 0;;
 }
 plat1Left--;
 if (step1>=4)
@@ -4414,20 +4433,20 @@ step1++;
 }
 if (plat1Right){
 if (step1 == 4){
-LATAbits.LA5 = 0;;
-LATAbits.LA4 = 1;;
+LATCbits.LC6 = 0;;
+LATCbits.LC5 = 1;;
 }
 if (step1 == 3){
-LATAbits.LA2 = 0;;
-LATAbits.LA3 = 1;;
+LATCbits.LC1 = 0;;
+LATCbits.LC2 = 1;;
 }
 if (step1 == 2){
-LATAbits.LA5 = 1;;
-LATAbits.LA4 = 0;;
+LATCbits.LC6 = 1;;
+LATCbits.LC5 = 0;;
 }
 if (step1 == 1){
-LATAbits.LA2 = 1;;
-LATAbits.LA3 = 0;;
+LATCbits.LC1 = 1;;
+LATCbits.LC2 = 0;;
 }
 plat1Right--;
 if (step1<=1)
@@ -4437,20 +4456,20 @@ step1--;
 }
 if (plat2Left){
 if (step2 == 1){
-LATEbits.LE2 = 1;;
-LATCbits.LC6 = 0;;
+LATAbits.LA4 = 1;;
+LATEbits.LE1 = 0;;
 }
 if (step2 == 2){
-LATBbits.LB0 = 0;;
-LATBbits.LB2 = 1;;
+LATCbits.LC0 = 0;;
+LATEbits.LE2 = 1;;
 }
 if (step2 == 3){
-LATEbits.LE2 = 0;;
-LATCbits.LC6 = 1;;
+LATAbits.LA4 = 0;;
+LATEbits.LE1 = 1;;
 }
 if (step2 == 4){
-LATBbits.LB0 = 1;;
-LATBbits.LB2 = 0;;
+LATCbits.LC0 = 1;;
+LATEbits.LE2 = 0;;
 }
 plat2Left--;
 if (step2>=4)
@@ -4460,20 +4479,20 @@ step2++;
 }
 if (plat2Right){
 if (step2 == 4){
-LATEbits.LE2 = 0;;
-LATCbits.LC6 = 1;;
+LATAbits.LA4 = 0;;
+LATEbits.LE1 = 1;;
 }
 if (step2 == 3){
-LATBbits.LB0 = 0;;
-LATBbits.LB2 = 1;;
+LATCbits.LC0 = 0;;
+LATEbits.LE2 = 1;;
 }
 if (step2 == 2){
-LATEbits.LE2 = 1;;
-LATCbits.LC6 = 0;;
+LATAbits.LA4 = 1;;
+LATEbits.LE1 = 0;;
 }
 if (step2 == 1){
-LATBbits.LB0 = 1;;
-LATBbits.LB2 = 0;;
+LATCbits.LC0 = 1;;
+LATEbits.LE2 = 0;;
 }
 plat2Right--;
 if (step2<=1)

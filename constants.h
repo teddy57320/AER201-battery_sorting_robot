@@ -60,7 +60,7 @@
 #define plat1c2b(s) LATCbits.LC5 = s;			//platform 1 coil 2b (RC5)	orange/brown
 #define plat1c2a(s) LATCbits.LC6 = s;			//platform 1 coil 2a (RC6)
 #define plat2c1a(s) LATCbits.LC0 = s;			//platform 2 coil 1a (RC0)	brown/green
-#define plat2c1b(s) LATBbiEs.LE2 = s;			//platform 2 coil 1b (RE2)
+#define plat2c1b(s) LATEbits.LE2 = s;			//platform 2 coil 1b (RE2)
 #define plat2c2b(s) LATEbits.LE1 = s;			//platform 2 coil 2b (RE1)	purple/blue
 #define plat2c2a(s) LATAbits.LA4 = s;			//platform 2 coil 2a (RA4)
 
@@ -69,9 +69,9 @@
 
 /*inputs
 IR sensor: RA0	green 
-C circuit: RA1 (circuit 1)
-AA circuits: RA2 and RA3 (circuit 2 and 3)
-9V circuits: RA5 and RE0 (circuit 4 and 5)
+C circuit: RA1 (circuit 1)	black
+AA circuits: RA2 and RA3 (circuit 2 and 3)	red, white
+9V circuits: RA5 and RE0 (circuit 4 and 5)	yellow, orange
 */
 
 #define WAIT_TIME 10			//max waiting time before operation terminates
