@@ -19,17 +19,6 @@
 #define NUM_DRAIN	8
 #define RTC_LAST_RUN	9
 #define RTC_DISPLAY	10
-#define STOP		11
-
-//Big tepper motor spinning sequence
-#define STATIONARY	0
-#define DROP_BAT	1
-#define WAIT  		2
-#define	WIGGLE1		3
-#define WIGGLE2		4
-#define WIGGLE3		5
-#define WIGGLE4		6
-#define FETCH_BAT 	7
 
 //permanent logs
 // #define PERM_LOGS	10
@@ -57,8 +46,8 @@
 
 #define plat1c1a(s) LATCbits.LC1 = s;			//platform 1 coil 1a (RC1)	yellow/grey
 #define plat1c1b(s) LATCbits.LC2 = s;			//platform 1 coil 1b (RC2)
-#define plat1c2b(s) LATCbits.LC5 = s;			//platform 1 coil 2b (RC5)	orange/brown
-#define plat1c2a(s) LATCbits.LC6 = s;			//platform 1 coil 2a (RC6)
+#define plat1c2a(s) LATCbits.LC5 = s;			//platform 1 coil 2b (RC5)	orange/brown
+#define plat1c2b(s) LATCbits.LC6 = s;			//platform 1 coil 2a (RC6)
 #define plat2c1a(s) LATCbits.LC0 = s;			//platform 2 coil 1a (RC0)	brown/green
 #define plat2c1b(s) LATEbits.LE2 = s;			//platform 2 coil 1b (RE2)
 #define plat2c2b(s) LATEbits.LE1 = s;			//platform 2 coil 2b (RE1)	purple/blue

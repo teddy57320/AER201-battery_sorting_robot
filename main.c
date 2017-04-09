@@ -8,8 +8,8 @@
 
 const char keys[] = "123A456B789C*0#D";
 
-void switchMenu(unsigned char left, unsigned char right, unsigned char key);
-//toggles "left" and "right" to show scroll through different logs
+void keypressed(unsigned char left, unsigned char right, unsigned char key);
+//handles all cases where key is pressed
 
 void readADC(unsigned char channel);
 //select analog channel to read
@@ -20,16 +20,7 @@ void stopOperation(void);
 void testBatteries(void);
 //logic circuit for voltage-testing in UVD
 
-// int isFluctuate(unsigned char channel);
-// //reads voltage and determines if it is fluctuating (fluctuation means no battery is being measured)
-
-// int abs(int x){     //absolute value function
-//     if (x<0)
-//         return -x;
-//     return x;
-// }
-
-void wait_3ms(unsigned int x);   //delay a certain number of seconds
+void wait_2ms(unsigned int x);   //delay a certain number of seconds
 
 unsigned char screenMode = STANDBY; //start at standby screen
 unsigned char realTime[7];		                            //used to retrieve real time/date
@@ -45,12 +36,11 @@ unsigned int plat2Left, plat1Right, plat2Right, plat1Left; //flags for platform 
 //plat1Right --> charged, clockwise
 //plat2Left --> charged, counterclockwise
 //plat2Right --> drained, clockwise
-unsigned int stepAmount;          //flags for turning gear stepper
-unsigned char stepGear, startGear;  //state of the stepper, flag for initial spinning sequence of stepper motor
+unsigned char startGear;  //state of the stepper, flag for initial spinning sequence of stepper motor
 unsigned char step1, step2;     //tracking steps of the UVD platforms as per http://mechatronics.mech.northwestern.edu/design_ref/actuators/stepper_drive1.html
-unsigned char turn1BackRight, turn1BackLeft, turn2BackRight, turn2BackLeft;     //flags for turning platforms back to their original positions
+unsigned int turn1BackRight, turn1BackLeft, turn2BackRight, turn2BackLeft;     //flags for turning platforms back to their original positions
 unsigned char sorting, doubleAA;          //flag for when the program is sorting
-unsigned int count_3ms; //used as a general flag for timing
+unsigned int count_2ms; //used as a general flag for timing
 
 void main(void){ 
 
@@ -110,8 +100,8 @@ void main(void){
     T1SYNC = 0;
     TMR1CS = 0;
     TMR1ON = 0; */
-    TMR1 = 58035;
-// time for overflow = (65535-58035)*4/10000000 = 3 milliseconds
+    TMR1 = 60535;
+// time for overflow = (65535-60535)*4/10000000 = 2 milliseconds
 //**********************************************************
 
 /***********************************************************
@@ -120,7 +110,7 @@ void main(void){
     // CFGS = 0;	//access EEPROM
 //**********************************************************
     initLCD();
-    //nRBPU = 0;
+    nRBPU = 0;
     I2C_Master_Init(10000); //Initialize I2C Master with 100KHz clock
     ei(); // Enable all interrupts
 
@@ -152,65 +142,68 @@ void main(void){
            // __lcd_home();
            // __lcd_newline();
            // printf("PRESS # TO STOP ");
+            readADC(0); //RA0
            __lcd_home();
            __lcd_newline();
            printf("%4d %2d         ", ADRES, countDrain+countAA+count9V+countC);
            if (startGear){
-                wait_3ms(1333);
+                wait_2ms(2000);
                 startGear = 0;
                 gearDir(0);
-                for (unsigned int i = 0; i < 420; i++){ 
-                    gearStep(!LATDbits.LD1);
-                    wait_3ms(2);
-                }
-                gearDir(1);
-                for (unsigned int i = 0; i < 40; i++){
-                    gearStep(!LATDbits.LD1);
-                    wait_3ms(2);
-                }
-                gearDir(0);
-                for (unsigned int i = 0; i < 40; i++){
-                    gearStep(!LATDbits.LD1);
-                    wait_3ms(2);
-                }
-                gearDir(1);
-                for (unsigned int i = 0; i < 40; i++){
-                    gearStep(!LATDbits.LD1);
-                    wait_3ms(2);
-                }
-                gearDir(0);
-                for (unsigned int i = 0; i < 20; i++){
-                    gearStep(!LATDbits.LD1);
-                    wait_3ms(2);
-                }
                 doneTimer = 0;
+
+                unsigned char steps = 0;
+                while(steps<20 && screenMode==OPERATING){    //big stepper motor turning sequence 180deg
+                    steps++;
+                    gearStep(1);
+                    __delay_ms(5);
+                    gearStep(0);
+                    __delay_ms(5);
+                }
+                steps = 0;
+                while(steps < 178 && screenMode==OPERATING){
+                    steps++;
+                    gearStep(1);
+                    __delay_ms(2);
+                    gearStep(0);
+                    __delay_ms(2);
+                }
+                steps = 0;
+                while(steps <2 && screenMode==OPERATING){
+                    steps++;
+                    gearStep(1);
+                    __delay_ms(5);
+                    gearStep(0);
+                    __delay_ms(5);
+                }
+                steps = 0;
             }
-            readADC(0); //RA0
 
             //read UVD IR sensor RA0 = AN0
-            if (ADRES < 50 | ADRES > 80){    //if battery is present   
-                wait_3ms(167);    
+            if (ADRES < 22 | ADRES > 55){    //if battery is present   
+                wait_2ms(250);    
                 sorting = 1; 
                 UVDsol(1);          //actuate wall
-                wait_3ms(167);
+                wait_2ms(500);
                 testBatteries();    
                 UVDsol(0);          //pull back wall
-                if (plat1Left){     //flag to turn platform1 left
+
+                if (doubleAA)     //turn one platform first
+                    plat1Right = 512;
+                if (plat1Left)     //flag to turn platform1 left
                     step1 = 1;
-                    turn1BackRight = plat1Left;
-                }
-                if (plat1Right){    //flag to turn platform1 right
-                    step1 = 4;
-                    turn1BackLeft = plat1Right;
-                }
-                if (plat2Left){     //flag to turn platform2 left
+                if (plat1Right)    //flag to turn platform1 right
+                    step1 = 4;                
+                if (plat2Left)     //flag to turn platform2 left
                     step2 = 1;
-                    turn2BackRight = plat2Left;
-                }
-                if (plat2Right){    //flag to turn platform2 right
+                if (plat2Right)    //flag to turn platform2 right
                     step2 = 4;
-                    turn2BackLeft = plat2Right;
-                }                
+
+                turn1BackRight = plat1Left;   
+                turn1BackLeft = plat1Right;   
+                turn2BackRight = plat2Left;  
+                turn2BackLeft = plat2Right;     
+
                 plat1c1a(1);                    //prep platform turning sequence        
                 plat1c1b(0);
                 plat2c1a(1);
@@ -218,7 +211,17 @@ void main(void){
 
                 while((plat1Left|plat2Left|plat1Right|plat2Right) && screenMode==OPERATING);  //wait for platform to turn
 
-                wait_3ms(333);
+                if (doubleAA){
+                    plat2Left = 512;
+                    step2 = 1;
+                    turn2BackRight = plat2Left;
+                }
+
+                while (plat2Left && screenMode==OPERATING);         //wait for second platform to turn for AA
+                wait_2ms(500);
+
+                if (((countC + countAA + count9V + countDrain) >= 15))   //finish condition
+                    stopOperation();
 
                 plat1c1a(1);                    //prep for platforms turning back          
                 plat1c1b(0);
@@ -227,11 +230,35 @@ void main(void){
                 plat1Left = turn1BackLeft;      //turn platforms back
                 plat1Right = turn1BackRight;
                 plat2Left = turn2BackLeft;
-                plat2Right = turn2BackRight;     
-                stepGear = DROP_BAT;            //initiate stepper routine  
-                gearDir(0);                     //counterclockwise      
-           
-                while(((stepGear!=STATIONARY) | (plat1Left|plat2Left|plat1Right|plat2Right)) && screenMode==OPERATING);  //wait for platforms to turn back
+                plat2Right = turn2BackRight;
+   
+                unsigned char steps = 0;
+                while(steps<20 && screenMode==OPERATING){    //big stepper motor turning sequence
+                    steps++;
+                    gearStep(1);
+                    __delay_ms(5);
+                    gearStep(0);
+                    __delay_ms(5);
+                }
+                steps = 0;
+                while(steps < 178 && screenMode==OPERATING){
+                    steps++;
+                    gearStep(1);
+                    __delay_ms(2);
+                    gearStep(0);
+                    __delay_ms(2);
+                }
+                steps = 0;
+                while(steps<2 && screenMode==OPERATING){
+                    steps++;
+                    gearStep(1);
+                    __delay_ms(5);
+                    gearStep(0);
+                    __delay_ms(5);
+                }
+                steps = 0;
+
+                while((plat1Left|plat2Left|plat1Right|plat2Right) && screenMode==OPERATING);  //wait for platforms to turn back
                 
                 gearStep(0);            //reset all stepper motor pins
                 gearDir(0);
@@ -251,14 +278,10 @@ void main(void){
                 plat2c1b(0);
                 plat2c2b(0);
                 plat2c2a(0);
-                if (((countC + countAA + count9V + countDrain) >= 15)){   //finish condition
-                    screenMode = FINISH;
-                    stopOperation();
-                } 
+                doubleAA = 0;
                 sorting = 0;
             }                       
-            wait_3ms(167);                                        
-            // }     
+            wait_2ms(250);       
         }
         while (screenMode == FINISH){	//finish screen  
         	__lcd_home();
@@ -340,20 +363,11 @@ void main(void){
 		    __lcd_newline();
 		    printf("TIME: %02x:%02x:%02x  ", realTime[2],realTime[1],realTime[0]);    //HH:MM:SS	         
         }
-        while (screenMode == STOP){
-            __lcd_home();
-            printf("STOPPED         ");
-            __lcd_newline();
-            printf("                ");
-            __delay_ms(2000); 
-            screenMode = STANDBY;
-        }
     }
     return;
 }
 
-void switchMenu(unsigned char left, unsigned char right, unsigned char key){
-
+void keypressed(unsigned char left, unsigned char right, unsigned char key){
     if (key == '*'){ 
         //press * to start operation or resume to standby after finish
         if(screenMode == STANDBY){
@@ -384,11 +398,9 @@ void switchMenu(unsigned char left, unsigned char right, unsigned char key){
             screenMode = STANDBY;
     }
     else if (screenMode == OPERATING){
-        if (key == '#'){     //emergency stop
-            screenMode = STOP;
+        if (key == '#')     //emergency stop
             //countDrain--;       //weird edge case
             stopOperation();
-        }
     }
     else if (screenMode != FINISH){ //edge case when user presses 4 or 6 at finish screen
         if (key == right){   	             //if "right" button is pressed, toggle "right"
@@ -418,7 +430,7 @@ void stopOperation(void){
     T0CONbits.TMR0ON = 0;   //turn off timers
     T1CONbits.TMR1ON = 0;
     TMR0 = 55770;
-    TMR1 = 58035;
+    TMR1 = 60535;
     num9V = count9V;     //update number of batteries
     numC = countC;
     numAA = countAA;
@@ -432,8 +444,6 @@ void stopOperation(void){
     sec = opTimer % 60;
     opTimer = 0;        //rest all timers and flags
     doneTimer = 0;
-    stepGear = STATIONARY;
-    stepAmount = 0;
     sorting = 0;
     plat1Left = 0;
     plat1Right = 0;
@@ -443,7 +453,7 @@ void stopOperation(void){
     turn1BackLeft = 0;
     turn2BackRight = 0;
     turn1BackRight = 0;
-    count_3ms = 0;
+    count_2ms = 0;
     doubleAA = 0;
     solOnTimer = 0;
     //reset all pins
@@ -459,6 +469,7 @@ void stopOperation(void){
     UVDsol(0);
     gearStep(0);
     funnelSol(0);
+    screenMode = FINISH;
 }
 
 void testBatteries(void){
@@ -480,109 +491,86 @@ void testBatteries(void){
     // plat1Right = 1; //charged
     // plat2Left = 1;
     // return;
-
     
     readADC(1);         //read C circuit RA1
-    if (ADRES>=54){  // (9*0.85 - 0.75)/2 = 3.45V, 3.45/5 * 1023 = 705.9
-        countC++;
-        plat1Right = 512; //charged     512 --> 90 deg
-        plat2Left = 512;
-        return;
-    }
-    else if (ADRES>=5){      // 5 --> minimum analog reading for drained battery
-        countDrain++;   //below 85% of nominal voltage --> drained
-        plat1Left = 512;
-        plat2Right = 512;
-        return;
-    }
+    unsigned int volt1 = ADRES;
     readADC(2);         //read AA circuit RA2
-    //if (!isFluctuate(1)){
-    if (ADRES>=54){  
-        countAA++;
-        plat1Right = 512; //charged
-        plat2Left = 512;
-        return;
-    }
-    else if (ADRES>=5){
-        countDrain++;   //drained
-        plat1Left = 512;
-        plat2Right = 512;
-        return;
-    }
-    //return;
-    //}
-    readADC(3);         //read AA circuit  RA3
-    //if (!isFluctuate(1)){
-    if (ADRES>=54){  // (1.5*0.85 - 0.75)/2 = 0.2625V, 0.2625/5 * 1023 = 53.7
-        countAA++;
-        plat1Right = 512;     //charged
-        plat2Left = 512;
-        return;
-    }
-    else if (ADRES>=5){
-        countDrain++;
-        plat1Left = 512;
-        plat2Right = 512;
-        return;
-    }
-    //return;
-    //}
-    readADC(4);         //read 9V circuit   RA5 = AN4
-    //if (!isFluctuate(1)){
-    if (ADRES>=706){  
-        countAA++;
+    unsigned int volt2 = ADRES;
+    readADC(3);         //read AA circuit RA3
+    unsigned int volt3 = ADRES;
+    readADC(4);         //read 9V circuit RA5
+    unsigned int volt4 = ADRES;
+    readADC(5);         //read 9V circuit RE0
+    unsigned int volt5 = ADRES;
+
+    __lcd_home();
+    printf("%04d %04d %04d", volt1, volt2, volt3);
+    __lcd_newline();
+    printf("%04d %04d       ", volt4, volt5);
+
+    if (volt1){     //charged C battery
+        countC++;
         plat1Right = 512;
-    }
-    else if (ADRES>=5){
-        countDrain++;
-        plat1Left = 512;
-    }
-   // }
-    readADC(5);         //read 9V circuit RE0 = AN5
-    //if (!isFluctuate(1)){
-    if (ADRES>=706){  
-        countAA++;
         plat2Left = 512;
+        return;
     }
-    else if (ADRES>=5){          //battery must be a drained AA
+    if (!(volt1 | volt2 | volt3 | volt4 | volt5)){  //drained battery 
         countDrain++;
-        plat2Right = 512;
-    }
-    if (plat1Right && plat2Left)
-        doubleAA = 1;
-    else if (!(plat1Left | plat1Right | plat2Left | plat2Right)){   //if not any of the above cases, assume drained
-        countDrain++;
-        plat2Right = 512;
         plat1Left = 512;
+        plat2Right = 512;
+        return;
+    }
+    if (volt2 && volt3){            //two charged AA batteries
+        countAA = countAA + 2;
+        doubleAA = 1;
+        return;
+    }     
+    if (volt4 >200 | volt5 > 200){      //charged 9V battery
+        plat1Right = 512;
+        plat2Left = 512;
+        count9V++;
+        return;
+    }
+    if (volt4 > 80 | volt5 > 80){       //drained 9V battery
+        countDrain++;
+        plat1Left = 512;
+        plat2Right = 512;
+        return;
+    }
+    if (volt2 | volt3){        //one charged AA
+        countAA++;
+        if (volt4 && volt5){
+            plat1Right = 512;
+            plat2Left = 512;
+            return;
+        }
+        if (volt2){            //charged AA on first platform
+            plat1Right = 512;   //charged
+            plat2Right = 512;   //drained
+        }
+        else{                   //charged AA on second platform
+            plat2Left = 512;    //charged
+            plat1Left = 512;    //drained
+        }
+        return;
     }
 
-    //}
+    //otherwise, assume drained
+    plat1Left = 512;
+    plat2Right = 512;
+    countDrain++;
     return;
 }
 
-// int isFluctuate(unsigned char channel){
-//     readADC(channel);                                  //read voltage
-//     int tempVoltage = ADRES;
-//     for(unsigned char i = 0; i < 10; i++){             //check for fluctuation
-//         __delay_ms(1);
-//         readADC(channel);
-//         if (abs(ADRES-tempVoltage)>20)    //fluctuation means no battery (floating)
-//             return 1;
-//     }
-
-
-//     return 0;
-// }
-
-void wait_3ms(unsigned int x){
-    count_3ms = x;
-    while (count_3ms && screenMode == OPERATING);
+void wait_2ms(unsigned int x){
+    count_2ms = x;
+    while (count_2ms && screenMode == OPERATING);
 }
 
 void interrupt ISR(void) {
     if (INT1IF){
         unsigned char keypress = (PORTB & 0xF0) >> 4;   //detect key pressed on keypad
-        switchMenu('4', '6', keys[keypress]);           //scroll logs with '4' and '6'
+        keypressed('4', '6', keys[keypress]);           //scroll logs with '4' and '6'
         INT1IF = 0;     //clear flag bit
     }
     if (screenMode == OPERATING && TMR0IF){   //timer overflows every second
@@ -591,98 +579,33 @@ void interrupt ISR(void) {
         opTimer++;
         min = opTimer / 60; //store run time
         sec = opTimer % 60;
-        __lcd_home();
-        printf("RUNNING: %02d:%02d   ", min, sec);  
-        if (opTimer >= 180){    //stop operation after 3 minutes
-            screenMode = FINISH;
-            stopOperation();    
-        }        
+        // __lcd_home();
+        // printf("RUNNING: %02d:%02d   ", min, sec); 
+
+        if (opTimer >= 180)    //stop operation after 3 minutes
+            stopOperation();            
         //funnelSol(!LATBbits.LB0);   //turn big solenoid on and off every second
         if (!sorting){              //UVD does not detect a battery for WAIT_TIME seconds
             if (ADRES > 50)
                 doneTimer++;
             else
                 doneTimer = 0;
-            if (doneTimer >= WAIT_TIME){
-                screenMode = FINISH;
+            if (doneTimer >= WAIT_TIME)
                 stopOperation();
-            }
+            
         }
         else
             doneTimer = 0;
     }
-    if (screenMode == OPERATING && TMR1IF){   //timer overflows every 3 milliseconds
+    if (screenMode == OPERATING && TMR1IF){   //timer overflows every 2 milliseconds
         TMR1IF = 0;
-        TMR1 = 58035;
-        if (count_3ms)                        //flag decreases every 3 ms --> used as a "timer"
-            count_3ms--;
+        TMR1 = 60535;
+        if (count_2ms)                        //flag decreases every 2 ms --> used as a "timer"
+            count_2ms--;
         solOnTimer++;
-        if (solOnTimer >= 133){
+        if (solOnTimer >= 150){
             solOnTimer = 0;
-            funnelSol(!LATBbits.LB0);         //turn solenoid on and off every 0.5 seconds
-        }
-        if (stepGear != STATIONARY){ 
-            if (stepGear == DROP_BAT){        //wiggle battery near the UVD hole to make it fall through
-                stepAmount++;
-                gearStep(!LATDbits.LD1);
-                if (stepAmount >= 380){      //171 deg / 0.9 deg per rot = 190 rotations = stepping 380 times
-                    stepGear = WAIT;
-                }
-            }
-            else if (stepGear == WAIT){    //allow battery into the rotating gear
-                stepAmount++;
-                if (stepAmount >= 100){      //wait 100 * 0.003s = .3s
-                    stepAmount = 0;
-                    stepGear = WIGGLE1;
-                }
-            }           
-            else if (stepGear == WIGGLE1){    //allow battery into the rotating gear
-                stepAmount++;
-                gearStep(!LATDbits.LD1);
-                if (stepAmount >= 40){      //18 deg / 0.9 deg per rot = 20 rotations = stepping 40 times 
-                    stepAmount = 0;
-                    stepGear = WIGGLE2;
-                    gearDir(1);
-                }
-            }
-            else if (stepGear == WIGGLE2){    //allow battery into the rotating gear
-                stepAmount++;
-                gearStep(!LATDbits.LD1);
-                if (stepAmount >= 40){      //18 deg / 0.9 deg per rot = 20 rotations = stepping 40 times 
-                    stepAmount = 0;
-                    stepGear = WIGGLE3;
-                    gearDir(0);
-                }
-            }
-            else if (stepGear == WIGGLE3){    //allow battery into the rotating gear
-                stepAmount++;
-                gearStep(!LATDbits.LD1);
-                if (stepAmount >= 40){      //18 deg / 0.9 deg per rot = 20 rotations = stepping 40 times 
-                    stepAmount = 0;
-                    stepGear = WIGGLE4;
-                    gearDir(1);
-                }
-            }
-            else if (stepGear == WIGGLE4){    //allow battery into the rotating gear
-                stepAmount++;
-                gearStep(!LATDbits.LD1);
-                if (stepAmount >= 40){      //18 deg / 0.9 deg per rot = 20 rotations = stepping 40 times 
-                    stepAmount = 0;
-                    stepGear = FETCH_BAT;
-                    gearDir(0);
-                }
-            }
-            else if (stepGear == FETCH_BAT){ //allow time for battery to fall through
-                stepAmount ++; 
-                gearStep(!LATDbits.LD1);
-                if (stepAmount >= 20){      //9 deg / 0.9 deg per rot = 10 rotations = stepping 20 times
-                    stepAmount = 0;
-                    stepGear = STATIONARY;
-                    gearDir(0);
-                    gearStep(0);
-                }
-            }
-            
+            funnelSol(!LATBbits.LB0);         //turn solenoid on and off every 0.4 seconds
         }
         if (plat1Left){          //drained
             if (step1 == 1){
@@ -778,4 +701,3 @@ void interrupt ISR(void) {
         }
     }	
 }
-
