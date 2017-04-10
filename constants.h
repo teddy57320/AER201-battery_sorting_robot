@@ -22,7 +22,8 @@
 #define PERM_LOGB	11
 #define PERM_LOGC	12
 #define PERM_LOGD	13
-#define RTC_DISPLAY	14	
+#define PC_LOG		14
+#define RTC_DISPLAY	15	
 
 // LCD macros
 #define __delay_1s() for(char i=0;i<100;i++){__delay_ms(10);}

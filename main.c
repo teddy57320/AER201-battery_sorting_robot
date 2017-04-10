@@ -7,6 +7,13 @@
 #include "I2C.h"
 
 const char keys[] = "123A456B789C*0#D";
+const char timeHeader[] = "Time and date of last sorting: ";  //31
+const char AAHeader[] = "Number of AA batteries sorted: ";   //31 
+const char CHeader[] = "Number of C batteries sorted: ";      //30
+const char nineVHeader[] = "Number of 9V batteries sorted: ";    //31
+const char drainHeader[] = "Number of drained batteries sorted: ";    //36
+const char totalHeader[] = "Total number of batteries sorted: ";  //34
+const char runTimeHeader[] = "Seconds the sorting lasted for: ";  //32
 
 void keypressed(unsigned char left, unsigned char right, unsigned char key);
 //handles all cases where key is pressed
@@ -26,6 +33,12 @@ uint8_t Eeprom_ReadByte(uint16_t address);          //EEPROM storage routines
 void Eeprom_WriteByte(uint16_t address, uint8_t data);
 uint16_t next_address(uint16_t address);
 void show_log(uint16_t log_address, unsigned char currScreen);
+
+void logPC(void);
+int getHundreds(unsigned int num);
+int getTens(unsigned int num);
+int getOnes(unsigned int num);
+char getChar(unsigned int num);
 
 unsigned char screenMode = STANDBY; //start at standby screen
 unsigned char realTime[7];		                            //used to retrieve real time/date
@@ -380,7 +393,15 @@ void main(void){
             printf("                ");
             show_log(289, PERM_LOGD);
         }
-
+        while (screenMode == PC_LOG){
+            __lcd_home();
+            printf("PRESS * TO      ");
+            __lcd_newline();
+            printf("SEND DATA TO PC ");
+            unsigned char keypress = (PORTB & 0xF0) >> 4;   //detect key pressed on keypad
+            if (keys[keypress] == '*')
+                logPC();
+        }
         while (screenMode == RTC_DISPLAY){	// real time/date display
             //Reset RTC memory pointer 
 		    I2C_Master_Start(); //Start condition
@@ -749,6 +770,184 @@ void show_log(uint16_t log_address, unsigned char currScreen) {
 }
 
 /******************************************************************************************************/
+
+void logPC(void) {
+
+    for(unsigned int i = 0; i < 31; i++) {
+        I2C_Master_Start(); //Start condition
+        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+        I2C_Master_Write(timeHeader[i]); //7 bit RTC address + Write
+        I2C_Master_Stop();
+    }
+    char started_time[19] = "  /  /     :  :  ";
+    started_time[0] = getChar(getTens( __bcd_to_num(lastRunRTC[6]) ));
+    started_time[1] = getChar(getOnes( __bcd_to_num(lastRunRTC[6]) ));
+    started_time[3] = getChar(getTens( __bcd_to_num(lastRunRTC[5]) ));
+    started_time[4] = getChar(getOnes( __bcd_to_num(lastRunRTC[5]) ));
+    started_time[6] = getChar(getTens( __bcd_to_num(lastRunRTC[4]) ));
+    started_time[7] = getChar(getOnes( __bcd_to_num(lastRunRTC[4]) ));
+    started_time[9] = getChar(getTens( __bcd_to_num(lastRunRTC[2]) ));
+    started_time[10] = getChar(getOnes( __bcd_to_num(lastRunRTC[2]) ));
+    started_time[12] = getChar(getTens( __bcd_to_num(lastRunRTC[1]) ));
+    started_time[13] = getChar(getOnes( __bcd_to_num(lastRunRTC[1]) ));
+    started_time[15] = getChar(getTens( __bcd_to_num(lastRunRTC[0]) ));
+    started_time[16] = getChar(getOnes( __bcd_to_num(lastRunRTC[0]) ));
+    for(unsigned int i = 0; i < 19; i++) {
+        I2C_Master_Start(); //Start condition
+        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+        I2C_Master_Write(started_time[i]); //7 bit RTC address + Write
+        I2C_Master_Stop();
+    }
+
+    I2C_Master_Start(); //Start condition
+    I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+    I2C_Master_Write('\n'); //7 bit RTC address + Write
+    I2C_Master_Stop();
+    for(unsigned int i = 0; i < 31; i++) {
+        I2C_Master_Start(); //Start condition
+        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+        I2C_Master_Write(AAHeader[i]); //7 bit RTC address + Write
+        I2C_Master_Stop();
+    }
+    char numberAA[2] = "  ";
+    numberAA[0] = getChar(getTens(numAA));
+    numberAA[1] = getChar(getOnes(numAA));
+    for(unsigned int i = 0; i < 2; i++) {
+        I2C_Master_Start(); //Start condition
+        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+        I2C_Master_Write(numberAA[i]); //7 bit RTC address + Write
+        I2C_Master_Stop();
+    }
+
+    I2C_Master_Start(); //Start condition
+    I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+    I2C_Master_Write('\n'); //7 bit RTC address + Write
+    I2C_Master_Stop();
+    for(unsigned int i = 0; i < 30; i++) {
+        I2C_Master_Start(); //Start condition
+        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+        I2C_Master_Write(CHeader[i]); //7 bit RTC address + Write
+        I2C_Master_Stop();
+    }
+    char numberC[2] = "  ";
+    numberC[0] = getChar(getTens(numC));
+    numberC[1] = getChar(getOnes(numC));
+    for(unsigned int i = 0; i < 2; i++) {
+        I2C_Master_Start(); //Start condition
+        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+        I2C_Master_Write(numberC[i]); //7 bit RTC address + Write
+        I2C_Master_Stop();
+    }
+
+    I2C_Master_Start(); //Start condition
+    I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+    I2C_Master_Write('\n'); //7 bit RTC address + Write
+    I2C_Master_Stop();
+    for(unsigned int i = 0; i < 31; i++) {
+        I2C_Master_Start(); //Start condition
+        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+        I2C_Master_Write(nineVHeader[i]); //7 bit RTC address + Write
+        I2C_Master_Stop();
+    }
+    char number9V[2] = "  ";
+    number9V[0] = getChar(getTens(num9V));
+    number9V[1] = getChar(getOnes(num9V));
+    for(unsigned int i = 0; i < 2; i++) {
+        I2C_Master_Start(); //Start condition
+        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+        I2C_Master_Write(number9V[i]); //7 bit RTC address + Write
+        I2C_Master_Stop();
+    }
+
+    I2C_Master_Start(); //Start condition
+    I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+    I2C_Master_Write('\n'); //7 bit RTC address + Write
+    I2C_Master_Stop();
+    for(unsigned int i = 0; i < 36; i++) {
+        I2C_Master_Start(); //Start condition
+        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+        I2C_Master_Write(drainHeader[i]); //7 bit RTC address + Write
+        I2C_Master_Stop();
+    }
+    char numberDrain[2] = "  ";
+    numberDrain[0] = getChar(getTens(numDrain));
+    numberDrain[1] = getChar(getOnes(numDrain));
+    for(unsigned int i = 0; i < 2; i++) {
+        I2C_Master_Start(); //Start condition
+        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+        I2C_Master_Write(numberDrain[i]); //7 bit RTC address + Write
+        I2C_Master_Stop();
+    }
+
+    I2C_Master_Start(); //Start condition
+    I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+    I2C_Master_Write('\n'); //7 bit RTC address + Write
+    I2C_Master_Stop();
+    for(unsigned int i = 0; i < 34; i++) {
+        I2C_Master_Start(); //Start condition
+        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+        I2C_Master_Write(totalHeader[i]); //7 bit RTC address + Write
+        I2C_Master_Stop();
+    }
+    char numberTotal[2] = "  ";
+    numberTotal[0] = getChar(getTens(numBats));
+    numberTotal[1] = getChar(getOnes(numBats));
+    for(unsigned int i = 0; i < 2; i++) {
+        I2C_Master_Start(); //Start condition
+        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+        I2C_Master_Write(numberTotal[i]); //7 bit RTC address + Write
+        I2C_Master_Stop();
+    }
+
+    I2C_Master_Start(); //Start condition
+    I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+    I2C_Master_Write('\n'); //7 bit RTC address + Write
+    I2C_Master_Stop();
+    for(unsigned int i = 0; i < 32; i++) {
+        I2C_Master_Start(); //Start condition
+        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+        I2C_Master_Write(runTimeHeader[i]); //7 bit RTC address + Write
+        I2C_Master_Stop();
+    }
+    char runTime[3] = "   ";
+    runTime[0] = getChar(getHundreds(min*60+sec));
+    runTime[1] = getChar(getTens(min*60+sec));
+    runTime[2] = getChar(getOnes(min*60+sec));
+    for(unsigned int i = 0; i < 3; i++) {
+        I2C_Master_Start(); //Start condition
+        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+        I2C_Master_Write(runTime[i]); //7 bit RTC address + Write
+        I2C_Master_Stop();
+    }
+    I2C_Master_Start(); //Start condition
+    I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+    I2C_Master_Write('\n'); //7 bit RTC address + Write
+    I2C_Master_Stop();
+    I2C_Master_Start(); //Start condition
+    I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+    I2C_Master_Write('\n'); //7 bit RTC address + Write
+    I2C_Master_Stop();
+}
+
+int getHundreds(unsigned int num) {
+    if(num > 99) { return (int)(num / 100); }
+    return 0;
+}
+
+int getTens(unsigned int num) {
+    if(num > 9) { return (int)(num / 10); }
+    return 0;
+}
+
+int getOnes(unsigned int num) {
+    return num % 10;
+}
+
+char getChar(unsigned int num) {
+    return num + '0'; 
+}
+
+
 
 void interrupt ISR(void) {
     if (INT1IF){

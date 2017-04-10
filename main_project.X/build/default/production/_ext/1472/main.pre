@@ -3890,6 +3890,13 @@ unsigned char I2C_Master_Read(unsigned char a);
 
 # 9 "../main.c"
 const char keys[] = "123A456B789C*0#D";
+const char timeHeader[] = "Time and date of last sorting: ";
+const char AAHeader[] = "Number of AA batteries sorted: ";
+const char CHeader[] = "Number of C batteries sorted: ";
+const char nineVHeader[] = "Number of 9V batteries sorted: ";
+const char drainHeader[] = "Number of drained batteries sorted: ";
+const char totalHeader[] = "Total number of batteries sorted: ";
+const char runTimeHeader[] = "Seconds the sorting lasted for: ";
 
 void keypressed(unsigned char left, unsigned char right, unsigned char key);
 
@@ -3909,6 +3916,12 @@ uint8_t Eeprom_ReadByte(uint16_t address);
 void Eeprom_WriteByte(uint16_t address, uint8_t data);
 uint16_t next_address(uint16_t address);
 void show_log(uint16_t log_address, unsigned char currScreen);
+
+void logPC(void);
+int getHundreds(unsigned int num);
+int getTens(unsigned int num);
+int getOnes(unsigned int num);
+char getChar(unsigned int num);
 
 unsigned char screenMode = 2;
 unsigned char realTime[7];
@@ -3962,19 +3975,19 @@ TMR0IF = 0;
 TMR1IE = 1;
 TMR1IF = 0;
 
-# 84
+# 97
 T0CON = 0b00000111;
 
-# 92
+# 105
 TMR0 = 55770;
 
-# 101
+# 114
 T1CON = 0b10000000;
 
-# 110
+# 123
 TMR1 = 60535;
 
-# 120
+# 133
 initLCD();
 nRBPU = 0;
 I2C_Master_Init(10000);
@@ -4002,7 +4015,7 @@ _delay((unsigned long)((10)*(10000000/4000.0)));
 }
 while (screenMode == 1){
 
-# 153
+# 166
 readADC(0);
 lcdInst(0b10000000);;
 lcdInst(0b11000000);;
@@ -4233,8 +4246,16 @@ lcdInst(0b11000000);;
 printf("                ");
 show_log(289, 13);
 }
-
 while (screenMode == 14){
+lcdInst(0b10000000);;
+printf("PRESS * TO      ");
+lcdInst(0b11000000);;
+printf("SEND DATA TO PC ");
+unsigned char keypress = (PORTB & 0xF0) >> 4;
+if (keys[keypress] == '*')
+logPC();
+}
+while (screenMode == 15){
 
 I2C_Master_Start();
 I2C_Master_Write(0b11010000);
@@ -4295,12 +4316,12 @@ stopOperation();
 else if (screenMode != 0){
 if (key == right){
 if (screenMode == 2)
-screenMode = 14;
+screenMode = 15;
 else
 screenMode--;
 }
 else if (key == left){
-if (screenMode == 14)
+if (screenMode == 15)
 screenMode = 2;
 else
 screenMode++;
@@ -4399,7 +4420,7 @@ screenMode = 0;
 
 void testBatteries(void){
 
-# 567
+# 588
 readADC(1);
 unsigned int volt1 = ADRES;
 readADC(2);
@@ -4582,6 +4603,184 @@ break;
 _delay((unsigned long)((10)*(10000000/4000.0)));
 }
 }
+}
+
+
+
+void logPC(void) {
+
+for(unsigned int i = 0; i < 31; i++) {
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write(timeHeader[i]);
+I2C_Master_Stop();
+}
+char started_time[19] = "  /  /     :  :  ";
+started_time[0] = getChar(getTens( (lastRunRTC[6] & 0x0F) + ((lastRunRTC[6] & 0xF0)>>4)*10 ));
+started_time[1] = getChar(getOnes( (lastRunRTC[6] & 0x0F) + ((lastRunRTC[6] & 0xF0)>>4)*10 ));
+started_time[3] = getChar(getTens( (lastRunRTC[5] & 0x0F) + ((lastRunRTC[5] & 0xF0)>>4)*10 ));
+started_time[4] = getChar(getOnes( (lastRunRTC[5] & 0x0F) + ((lastRunRTC[5] & 0xF0)>>4)*10 ));
+started_time[6] = getChar(getTens( (lastRunRTC[4] & 0x0F) + ((lastRunRTC[4] & 0xF0)>>4)*10 ));
+started_time[7] = getChar(getOnes( (lastRunRTC[4] & 0x0F) + ((lastRunRTC[4] & 0xF0)>>4)*10 ));
+started_time[9] = getChar(getTens( (lastRunRTC[2] & 0x0F) + ((lastRunRTC[2] & 0xF0)>>4)*10 ));
+started_time[10] = getChar(getOnes( (lastRunRTC[2] & 0x0F) + ((lastRunRTC[2] & 0xF0)>>4)*10 ));
+started_time[12] = getChar(getTens( (lastRunRTC[1] & 0x0F) + ((lastRunRTC[1] & 0xF0)>>4)*10 ));
+started_time[13] = getChar(getOnes( (lastRunRTC[1] & 0x0F) + ((lastRunRTC[1] & 0xF0)>>4)*10 ));
+started_time[15] = getChar(getTens( (lastRunRTC[0] & 0x0F) + ((lastRunRTC[0] & 0xF0)>>4)*10 ));
+started_time[16] = getChar(getOnes( (lastRunRTC[0] & 0x0F) + ((lastRunRTC[0] & 0xF0)>>4)*10 ));
+for(unsigned int i = 0; i < 19; i++) {
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write(started_time[i]);
+I2C_Master_Stop();
+}
+
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write('\n');
+I2C_Master_Stop();
+for(unsigned int i = 0; i < 31; i++) {
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write(AAHeader[i]);
+I2C_Master_Stop();
+}
+char numberAA[2] = "  ";
+numberAA[0] = getChar(getTens(numAA));
+numberAA[1] = getChar(getOnes(numAA));
+for(unsigned int i = 0; i < 2; i++) {
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write(numberAA[i]);
+I2C_Master_Stop();
+}
+
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write('\n');
+I2C_Master_Stop();
+for(unsigned int i = 0; i < 30; i++) {
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write(CHeader[i]);
+I2C_Master_Stop();
+}
+char numberC[2] = "  ";
+numberC[0] = getChar(getTens(numC));
+numberC[1] = getChar(getOnes(numC));
+for(unsigned int i = 0; i < 2; i++) {
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write(numberC[i]);
+I2C_Master_Stop();
+}
+
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write('\n');
+I2C_Master_Stop();
+for(unsigned int i = 0; i < 31; i++) {
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write(nineVHeader[i]);
+I2C_Master_Stop();
+}
+char number9V[2] = "  ";
+number9V[0] = getChar(getTens(num9V));
+number9V[1] = getChar(getOnes(num9V));
+for(unsigned int i = 0; i < 2; i++) {
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write(number9V[i]);
+I2C_Master_Stop();
+}
+
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write('\n');
+I2C_Master_Stop();
+for(unsigned int i = 0; i < 36; i++) {
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write(drainHeader[i]);
+I2C_Master_Stop();
+}
+char numberDrain[2] = "  ";
+numberDrain[0] = getChar(getTens(numDrain));
+numberDrain[1] = getChar(getOnes(numDrain));
+for(unsigned int i = 0; i < 2; i++) {
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write(numberDrain[i]);
+I2C_Master_Stop();
+}
+
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write('\n');
+I2C_Master_Stop();
+for(unsigned int i = 0; i < 34; i++) {
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write(totalHeader[i]);
+I2C_Master_Stop();
+}
+char numberTotal[2] = "  ";
+numberTotal[0] = getChar(getTens(numBats));
+numberTotal[1] = getChar(getOnes(numBats));
+for(unsigned int i = 0; i < 2; i++) {
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write(numberTotal[i]);
+I2C_Master_Stop();
+}
+
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write('\n');
+I2C_Master_Stop();
+for(unsigned int i = 0; i < 32; i++) {
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write(runTimeHeader[i]);
+I2C_Master_Stop();
+}
+char runTime[3] = "   ";
+runTime[0] = getChar(getHundreds(min*60+sec));
+runTime[1] = getChar(getTens(min*60+sec));
+runTime[2] = getChar(getOnes(min*60+sec));
+for(unsigned int i = 0; i < 3; i++) {
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write(runTime[i]);
+I2C_Master_Stop();
+}
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write('\n');
+I2C_Master_Stop();
+I2C_Master_Start();
+I2C_Master_Write(0b00010000);
+I2C_Master_Write('\n');
+I2C_Master_Stop();
+}
+
+int getHundreds(unsigned int num) {
+if(num > 99) { return (int)(num / 100); }
+return 0;
+}
+
+int getTens(unsigned int num) {
+if(num > 9) { return (int)(num / 10); }
+return 0;
+}
+
+int getOnes(unsigned int num) {
+return num % 10;
+}
+
+char getChar(unsigned int num) {
+return num + '0';
 }
 
 
