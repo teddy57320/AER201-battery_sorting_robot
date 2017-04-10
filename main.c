@@ -1,10 +1,10 @@
 #include <xc.h>
 #include <stdio.h>
+#include <stdint.h>
 #include "configBits.h"
 #include "constants.h"
 #include "lcd.h"
 #include "I2C.h"
-#include "eeprom_routines.h"
 
 const char keys[] = "123A456B789C*0#D";
 
@@ -21,6 +21,11 @@ void testBatteries(void);
 //logic circuit for voltage-testing in UVD
 
 void wait_2ms(unsigned int x);   //delay a certain number of seconds
+
+uint8_t Eeprom_ReadByte(uint16_t address);          //EEPROM storage routines
+void Eeprom_WriteByte(uint16_t address, uint8_t data);
+uint16_t next_address(uint16_t address);
+void show_log(uint16_t log_address, unsigned char currScreen);
 
 unsigned char screenMode = STANDBY; //start at standby screen
 unsigned char realTime[7];		                            //used to retrieve real time/date
@@ -62,6 +67,8 @@ void main(void){
     //ADFM = 1;
     //ACQ[2:0] = 110;   16T_AD = 12.8us converting acquisition time
     //ADCS[2:0] = 001;  T_AD = 8*T_OSC = 0.8us > 0.7us minimum for pic18
+    CVRCON = 0x00; // Disable CCP reference voltage output
+    CMCONbits.CIS = 0;
  
     GIE = 1;        //globally enable interrupt
     PEIE = 1;       //enable peripheral interrupt
@@ -108,6 +115,7 @@ void main(void){
 	EEPROM SETUP*/
     // EEPGD = 0;	//enable access to EEPROM
     // CFGS = 0;	//access EEPROM
+    //Eeprom_WriteByte(0, 0);
 //**********************************************************
     initLCD();
     nRBPU = 0;
@@ -344,6 +352,35 @@ void main(void){
                 __delay_ms(10);
             }   
         }
+        while(screenMode == PERM_LOGA){
+            __lcd_home();
+            printf("PERMANENT LOG A:");
+            __lcd_newline();
+            printf("                ");
+            show_log(1, PERM_LOGA);
+        }
+        while(screenMode == PERM_LOGB){
+            __lcd_home();
+            printf("PERMANENT LOG B:");
+            __lcd_newline();
+            printf("                ");
+            show_log(97, PERM_LOGB);
+        }
+        while(screenMode == PERM_LOGC){
+            __lcd_home();
+            printf("PERMANENT LOG C:");
+            __lcd_newline();
+            printf("                ");
+            show_log(193, PERM_LOGC);
+        }
+        while(screenMode == PERM_LOGD){
+            __lcd_home();
+            printf("PERMANENT LOG D:");
+            __lcd_newline();
+            printf("                ");
+            show_log(289, PERM_LOGD);
+        }
+
         while (screenMode == RTC_DISPLAY){	// real time/date display
             //Reset RTC memory pointer 
 		    I2C_Master_Start(); //Start condition
@@ -431,11 +468,46 @@ void stopOperation(void){
     T1CONbits.TMR1ON = 0;
     TMR0 = 55770;
     TMR1 = 60535;
+
     num9V = count9V;     //update number of batteries
     numC = countC;
     numAA = countAA;
     numDrain = countDrain;
     numBats = count9V + countC + countAA + countDrain;
+
+    unsigned char address_code = Eeprom_ReadByte(0);
+    uint16_t address = address_code * 96 + 1;
+    Eeprom_WriteByte(address, lastRunRTC[6]);   //year
+    address = next_address(address);
+    Eeprom_WriteByte(address, lastRunRTC[5]);   //month
+    address = next_address(address);
+    Eeprom_WriteByte(address, lastRunRTC[4]);   //day
+    address = next_address(address);
+    Eeprom_WriteByte(address, lastRunRTC[2]);   //hour
+    address = next_address(address);
+    Eeprom_WriteByte(address, lastRunRTC[1]);   //minute
+    address = next_address(address);
+    Eeprom_WriteByte(address, lastRunRTC[0]);   //second
+    address = next_address(address);
+
+    Eeprom_WriteByte(address, countAA);         //# of AAs
+    address = next_address(address);
+    Eeprom_WriteByte(address, countC);          //# of Cs
+    address = next_address(address);
+    Eeprom_WriteByte(address, count9V);         //# of 9Vs
+    address = next_address(address);
+    Eeprom_WriteByte(address, countDrain);      //# of drained
+    address = next_address(address);
+    Eeprom_WriteByte(address, numBats);         //total #
+    address = next_address(address);
+    Eeprom_WriteByte(address, opTimer);         //run time in seconds
+           
+    address_code++;
+    if (address_code > 3)
+        Eeprom_WriteByte(0, 0);
+    else 
+        Eeprom_WriteByte(0, address_code);
+
     count9V = 0;
     countC = 0;
     countAA = 0;
@@ -566,6 +638,117 @@ void wait_2ms(unsigned int x){
     count_2ms = x;
     while (count_2ms && screenMode == OPERATING);
 }
+
+/******************************************************************************************************/
+/* EEPROM storage codes */
+
+uint8_t Eeprom_ReadByte(uint16_t address) {
+    // Set address registers
+    EEADRH = (uint8_t)(address >> 8);
+    EEADR = (uint8_t)address;
+
+    EECON1bits.EEPGD = 0;       // Select EEPROM Data Memory
+    EECON1bits.CFGS = 0;        // Access flash/EEPROM NOT config. registers
+    EECON1bits.RD = 1;          // Start a read cycle
+
+    // A read should only take one cycle, and then the hardware will clear
+    // the RD bit
+    while(EECON1bits.RD == 1);
+
+    return EEDATA;              // Return data
+}
+
+
+void Eeprom_WriteByte(uint16_t address, uint8_t data) {    
+    // Set address registers
+    EEADRH = (uint8_t)(address >> 8);
+    EEADR = (uint8_t)address;
+
+    EEDATA = data;          // Write data we want to write to SFR
+    EECON1bits.EEPGD = 0;   // Select EEPROM data memory
+    EECON1bits.CFGS = 0;    // Access flash/EEPROM NOT config. registers
+    EECON1bits.WREN = 1;    // Enable writing of EEPROM (this is disabled again after the write completes)
+
+    // The next three lines of code perform the required operations to
+    // initiate a EEPROM write
+    EECON2 = 0x55;          // Part of required sequence for write to internal EEPROM
+    EECON2 = 0xAA;          // Part of required sequence for write to internal EEPROM
+    EECON1bits.WR = 1;      // Part of required sequence for write to internal EEPROM
+
+    // Loop until write operation is complete
+    while(PIR2bits.EEIF == 0)
+    {
+        continue;   // Do nothing, are just waiting
+    }
+
+    PIR2bits.EEIF = 0;      //Clearing EEIF bit (this MUST be cleared in software after each write)
+    EECON1bits.WREN = 0;    // Disable write (for safety, it is re-enabled next time a EEPROM write is performed)
+}
+
+
+uint16_t next_address(uint16_t address) {
+    return address + 8;
+}
+
+void show_log(uint16_t log_address, unsigned char currScreen) {
+    // read in log address and start fetching historical data
+    
+    for(unsigned char i=0;i<200;i++){
+            if (screenMode != currScreen)  //ensure immediate scrolling
+                break;
+            __delay_ms(10);
+    }
+    uint16_t address = log_address;
+    unsigned char year = Eeprom_ReadByte(address);      //time retrieval
+    address = next_address(address);
+    unsigned char month = Eeprom_ReadByte(address);
+    address = next_address(address);
+    unsigned char day = Eeprom_ReadByte(address);
+    address = next_address(address);
+    unsigned char hour = Eeprom_ReadByte(address);
+    address = next_address(address);
+    unsigned char minute = Eeprom_ReadByte(address);
+    address = next_address(address);
+    unsigned char second = Eeprom_ReadByte(address);
+    address = next_address(address);
+
+    unsigned int AA_num = Eeprom_ReadByte(address);
+    address = next_address(address);
+    unsigned int C_num = Eeprom_ReadByte(address);
+    address = next_address(address);
+    unsigned int Nine_num = Eeprom_ReadByte(address);
+    address = next_address(address);
+    unsigned int Drain_num = Eeprom_ReadByte(address);
+    address = next_address(address);
+    unsigned int total_num = Eeprom_ReadByte(address);
+    address = next_address(address);
+    unsigned int elapsed_time = Eeprom_ReadByte(address);
+
+    while (screenMode == currScreen){
+        __lcd_home();
+        printf("%02x/%02x/%02x        ", year,month,day);    //YY/MM/DD
+        __lcd_newline();
+        printf("%02x:%02x:%02x        ", hour,minute, second);    //HH:MM:SS
+        for(unsigned char i=0;i<200;i++){
+            if (screenMode != currScreen)  //ensure immediate scrolling
+                break;
+            __delay_ms(10);
+        }
+        __lcd_home();
+        printf("AA:%02d C:%02d 9V:%02d", AA_num, C_num, Nine_num);
+        __lcd_newline();
+        printf("X:%02d TIME:%ds    ", Drain_num, elapsed_time);
+
+         
+        for(unsigned char i=0;i<200;i++){
+            if (screenMode != currScreen)  //ensure immediate scrolling
+                break;
+            __delay_ms(10);
+        }   
+    }
+}
+
+/******************************************************************************************************/
 
 void interrupt ISR(void) {
     if (INT1IF){

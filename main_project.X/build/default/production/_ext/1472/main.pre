@@ -3700,6 +3700,96 @@ extern int vsscanf(const char *, const char *, va_list) __attribute__((unsupport
 extern int sprintf(char *, const char *, ...);
 extern int printf(const char *, ...);
 
+# 13 "C:\Program Files (x86)\Microchip\xc8\v1.40\include\stdint.h"
+typedef signed char int8_t;
+
+# 20
+typedef signed int int16_t;
+
+# 28
+typedef signed short long int int24_t;
+
+# 36
+typedef signed long int int32_t;
+
+# 43
+typedef unsigned char uint8_t;
+
+# 49
+typedef unsigned int uint16_t;
+
+# 56
+typedef unsigned short long int uint24_t;
+
+# 63
+typedef unsigned long int uint32_t;
+
+# 71
+typedef signed char int_least8_t;
+
+# 78
+typedef signed int int_least16_t;
+
+# 90
+typedef signed short long int int_least24_t;
+
+# 98
+typedef signed long int int_least32_t;
+
+# 105
+typedef unsigned char uint_least8_t;
+
+# 111
+typedef unsigned int uint_least16_t;
+
+# 121
+typedef unsigned short long int uint_least24_t;
+
+# 128
+typedef unsigned long int uint_least32_t;
+
+# 137
+typedef signed char int_fast8_t;
+
+# 144
+typedef signed int int_fast16_t;
+
+# 156
+typedef signed short long int int_fast24_t;
+
+# 164
+typedef signed long int int_fast32_t;
+
+# 171
+typedef unsigned char uint_fast8_t;
+
+# 177
+typedef unsigned int uint_fast16_t;
+
+# 187
+typedef unsigned short long int uint_fast24_t;
+
+# 194
+typedef unsigned long int uint_fast32_t;
+
+# 200
+typedef int32_t intmax_t;
+
+
+
+
+typedef uint32_t uintmax_t;
+
+
+
+
+typedef int16_t intptr_t;
+
+
+
+
+typedef uint16_t uintptr_t;
+
 
 # 9 "../configBits.h"
 #pragma config OSC = HS
@@ -3815,6 +3905,11 @@ void testBatteries(void);
 
 void wait_2ms(unsigned int x);
 
+uint8_t Eeprom_ReadByte(uint16_t address);
+void Eeprom_WriteByte(uint16_t address, uint8_t data);
+uint16_t next_address(uint16_t address);
+void show_log(uint16_t log_address, unsigned char currScreen);
+
 unsigned char screenMode = 2;
 unsigned char realTime[7];
 unsigned char lastRunRTC[7];
@@ -3855,6 +3950,8 @@ ADCON2 = 0b10110001;
 
 
 
+CVRCON = 0x00;
+CMCONbits.CIS = 0;
 
 GIE = 1;
 PEIE = 1;
@@ -3865,19 +3962,19 @@ TMR0IF = 0;
 TMR1IE = 1;
 TMR1IF = 0;
 
-# 77
+# 84
 T0CON = 0b00000111;
 
-# 85
+# 92
 TMR0 = 55770;
 
-# 94
+# 101
 T1CON = 0b10000000;
 
-# 103
+# 110
 TMR1 = 60535;
 
-# 112
+# 120
 initLCD();
 nRBPU = 0;
 I2C_Master_Init(10000);
@@ -3905,7 +4002,7 @@ _delay((unsigned long)((10)*(10000000/4000.0)));
 }
 while (screenMode == 1){
 
-# 145
+# 153
 readADC(0);
 lcdInst(0b10000000);;
 lcdInst(0b11000000);;
@@ -4108,7 +4205,36 @@ break;
 _delay((unsigned long)((10)*(10000000/4000.0)));
 }
 }
-while (screenMode == 10){
+while(screenMode == 10){
+lcdInst(0b10000000);;
+printf("PERMANENT LOG A:");
+lcdInst(0b11000000);;
+printf("                ");
+show_log(1, 10);
+}
+while(screenMode == 11){
+lcdInst(0b10000000);;
+printf("PERMANENT LOG B:");
+lcdInst(0b11000000);;
+printf("                ");
+show_log(97, 11);
+}
+while(screenMode == 12){
+lcdInst(0b10000000);;
+printf("PERMANENT LOG C:");
+lcdInst(0b11000000);;
+printf("                ");
+show_log(193, 12);
+}
+while(screenMode == 13){
+lcdInst(0b10000000);;
+printf("PERMANENT LOG D:");
+lcdInst(0b11000000);;
+printf("                ");
+show_log(289, 13);
+}
+
+while (screenMode == 14){
 
 I2C_Master_Start();
 I2C_Master_Write(0b11010000);
@@ -4169,12 +4295,12 @@ stopOperation();
 else if (screenMode != 0){
 if (key == right){
 if (screenMode == 2)
-screenMode = 10;
+screenMode = 14;
 else
 screenMode--;
 }
 else if (key == left){
-if (screenMode == 10)
+if (screenMode == 14)
 screenMode = 2;
 else
 screenMode++;
@@ -4195,11 +4321,46 @@ T0CONbits.TMR0ON = 0;
 T1CONbits.TMR1ON = 0;
 TMR0 = 55770;
 TMR1 = 60535;
+
 num9V = count9V;
 numC = countC;
 numAA = countAA;
 numDrain = countDrain;
 numBats = count9V + countC + countAA + countDrain;
+
+unsigned char address_code = Eeprom_ReadByte(0);
+uint16_t address = address_code * 96 + 1;
+Eeprom_WriteByte(address, lastRunRTC[6]);
+address = next_address(address);
+Eeprom_WriteByte(address, lastRunRTC[5]);
+address = next_address(address);
+Eeprom_WriteByte(address, lastRunRTC[4]);
+address = next_address(address);
+Eeprom_WriteByte(address, lastRunRTC[2]);
+address = next_address(address);
+Eeprom_WriteByte(address, lastRunRTC[1]);
+address = next_address(address);
+Eeprom_WriteByte(address, lastRunRTC[0]);
+address = next_address(address);
+
+Eeprom_WriteByte(address, countAA);
+address = next_address(address);
+Eeprom_WriteByte(address, countC);
+address = next_address(address);
+Eeprom_WriteByte(address, count9V);
+address = next_address(address);
+Eeprom_WriteByte(address, countDrain);
+address = next_address(address);
+Eeprom_WriteByte(address, numBats);
+address = next_address(address);
+Eeprom_WriteByte(address, opTimer);
+
+address_code++;
+if (address_code > 3)
+Eeprom_WriteByte(0, 0);
+else
+Eeprom_WriteByte(0, address_code);
+
 count9V = 0;
 countC = 0;
 countAA = 0;
@@ -4238,7 +4399,7 @@ screenMode = 0;
 
 void testBatteries(void){
 
-# 495
+# 567
 readADC(1);
 unsigned int volt1 = ADRES;
 readADC(2);
@@ -4313,6 +4474,117 @@ void wait_2ms(unsigned int x){
 count_2ms = x;
 while (count_2ms && screenMode == 1);
 }
+
+
+
+
+uint8_t Eeprom_ReadByte(uint16_t address) {
+
+EEADRH = (uint8_t)(address >> 8);
+EEADR = (uint8_t)address;
+
+EECON1bits.EEPGD = 0;
+EECON1bits.CFGS = 0;
+EECON1bits.RD = 1;
+
+
+
+while(EECON1bits.RD == 1);
+
+return EEDATA;
+}
+
+
+void Eeprom_WriteByte(uint16_t address, uint8_t data) {
+
+EEADRH = (uint8_t)(address >> 8);
+EEADR = (uint8_t)address;
+
+EEDATA = data;
+EECON1bits.EEPGD = 0;
+EECON1bits.CFGS = 0;
+EECON1bits.WREN = 1;
+
+
+
+EECON2 = 0x55;
+EECON2 = 0xAA;
+EECON1bits.WR = 1;
+
+
+while(PIR2bits.EEIF == 0)
+{
+continue;
+}
+
+PIR2bits.EEIF = 0;
+EECON1bits.WREN = 0;
+}
+
+
+uint16_t next_address(uint16_t address) {
+return address + 8;
+}
+
+void show_log(uint16_t log_address, unsigned char currScreen) {
+
+
+for(unsigned char i=0;i<200;i++){
+if (screenMode != currScreen)
+break;
+_delay((unsigned long)((10)*(10000000/4000.0)));
+}
+uint16_t address = log_address;
+unsigned char year = Eeprom_ReadByte(address);
+address = next_address(address);
+unsigned char month = Eeprom_ReadByte(address);
+address = next_address(address);
+unsigned char day = Eeprom_ReadByte(address);
+address = next_address(address);
+unsigned char hour = Eeprom_ReadByte(address);
+address = next_address(address);
+unsigned char minute = Eeprom_ReadByte(address);
+address = next_address(address);
+unsigned char second = Eeprom_ReadByte(address);
+address = next_address(address);
+
+unsigned int AA_num = Eeprom_ReadByte(address);
+address = next_address(address);
+unsigned int C_num = Eeprom_ReadByte(address);
+address = next_address(address);
+unsigned int Nine_num = Eeprom_ReadByte(address);
+address = next_address(address);
+unsigned int Drain_num = Eeprom_ReadByte(address);
+address = next_address(address);
+unsigned int total_num = Eeprom_ReadByte(address);
+address = next_address(address);
+unsigned int elapsed_time = Eeprom_ReadByte(address);
+
+while (screenMode == currScreen){
+lcdInst(0b10000000);;
+printf("%02x/%02x/%02x        ", year,month,day);
+lcdInst(0b11000000);;
+printf("%02x:%02x:%02x        ", hour,minute, second);
+for(unsigned char i=0;i<200;i++){
+if (screenMode != currScreen)
+break;
+_delay((unsigned long)((10)*(10000000/4000.0)));
+}
+lcdInst(0b10000000);;
+printf("AA:%02d C:%02d 9V:%02d", AA_num, C_num, Nine_num);
+lcdInst(0b11000000);;
+printf("X:%02d TIME:%ds    ", Drain_num, elapsed_time);
+
+
+for(unsigned char i=0;i<200;i++){
+if (screenMode != currScreen)
+break;
+_delay((unsigned long)((10)*(10000000/4000.0)));
+}
+}
+}
+
+
 
 void interrupt ISR(void) {
 if (INT1IF){

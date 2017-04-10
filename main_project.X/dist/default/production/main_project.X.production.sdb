@@ -31,20 +31,31 @@
 "28
 [v _lcdNibble lcdNibble `(v  1 e 1 0 ]
 [v i2_lcdNibble lcdNibble `(v  1 e 1 0 ]
-"45 C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+"50 C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
 [v _main main `(v  1 e 1 0 ]
-"370
+"407
 [v _keypressed keypressed `(v  1 e 1 0 ]
-"421
+"458
 [v _readADC readADC `(v  1 e 1 0 ]
-"429
+"466
 [v _stopOperation stopOperation `(v  1 e 1 0 ]
 [v i2_stopOperation stopOperation `(v  1 e 1 0 ]
-"475
+"547
 [v _testBatteries testBatteries `(v  1 e 1 0 ]
-"565
+"637
 [v _wait_2ms wait_2ms `(v  1 e 1 0 ]
-"570
+"645
+[v _Eeprom_ReadByte Eeprom_ReadByte `(uc  1 e 1 0 ]
+[v i2_Eeprom_ReadByte Eeprom_ReadByte `(uc  1 e 1 0 ]
+"662
+[v _Eeprom_WriteByte Eeprom_WriteByte `(v  1 e 1 0 ]
+[v i2_Eeprom_WriteByte Eeprom_WriteByte `(v  1 e 1 0 ]
+"689
+[v _next_address next_address `(ui  1 e 2 0 ]
+[v i2_next_address next_address `(ui  1 e 2 0 ]
+"693
+[v _show_log show_log `(v  1 e 1 0 ]
+"753
 [v _ISR ISR `II(v  1 e 1 0 ]
 "8 C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\awdiv.c
 [v ___awdiv __awdiv `(i  1 e 2 0 ]
@@ -91,56 +102,56 @@
 [v ___lmul __lmul `(ul  1 e 4 0 ]
 "9 C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
 [v _keys keys `C[17]uc  1 e 17 0 ]
-"25
-[v _screenMode screenMode `uc  1 e 1 0 ]
-"26
-[v _realTime realTime `[7]uc  1 e 7 0 ]
-"27
-[v _lastRunRTC lastRunRTC `[7]uc  1 e 7 0 ]
-"29
-[v _opTimer opTimer `uc  1 e 1 0 ]
 "30
+[v _screenMode screenMode `uc  1 e 1 0 ]
+"31
+[v _realTime realTime `[7]uc  1 e 7 0 ]
+"32
+[v _lastRunRTC lastRunRTC `[7]uc  1 e 7 0 ]
+"34
+[v _opTimer opTimer `uc  1 e 1 0 ]
+"35
 [v _doneTimer doneTimer `uc  1 e 1 0 ]
 [v _solOnTimer solOnTimer `uc  1 e 1 0 ]
-"31
+"36
 [v _num9V num9V `uc  1 e 1 0 ]
 [v _numC numC `uc  1 e 1 0 ]
 [v _numAA numAA `uc  1 e 1 0 ]
 [v _numBats numBats `uc  1 e 1 0 ]
 [v _numDrain numDrain `uc  1 e 1 0 ]
-"32
+"37
 [v _min min `uc  1 e 1 0 ]
 [v _sec sec `uc  1 e 1 0 ]
-"33
+"38
 [v _countC countC `uc  1 e 1 0 ]
 [v _countAA countAA `uc  1 e 1 0 ]
 [v _count9V count9V `uc  1 e 1 0 ]
 [v _countDrain countDrain `uc  1 e 1 0 ]
-"34
+"39
 [v _plat2Left plat2Left `ui  1 e 2 0 ]
 [v _plat1Right plat1Right `ui  1 e 2 0 ]
 [v _plat2Right plat2Right `ui  1 e 2 0 ]
 [v _plat1Left plat1Left `ui  1 e 2 0 ]
-"39
+"44
 [v _startGear startGear `uc  1 e 1 0 ]
-"40
+"45
 [v _step1 step1 `uc  1 e 1 0 ]
 [v _step2 step2 `uc  1 e 1 0 ]
-"41
+"46
 [v _turn1BackRight turn1BackRight `ui  1 e 2 0 ]
 [v _turn1BackLeft turn1BackLeft `ui  1 e 2 0 ]
 [v _turn2BackRight turn2BackRight `ui  1 e 2 0 ]
 [v _turn2BackLeft turn2BackLeft `ui  1 e 2 0 ]
-"42
+"47
 [v _sorting sorting `uc  1 e 1 0 ]
 [v _doubleAA doubleAA `uc  1 e 1 0 ]
-"43
+"48
 [v _count_2ms count_2ms `ui  1 e 2 0 ]
 "185 C:\Program Files (x86)\Microchip\xc8\v1.40\include\pic18f4620.h
 [v _PORTB PORTB `VEuc  1 e 1 @3969 ]
 "872
 [v _LATA LATA `VEuc  1 e 1 @3977 ]
-[s S303 . 1 `uc 1 LATA0 1 0 :1:0 
+[s S339 . 1 `uc 1 LATA0 1 0 :1:0 
 `uc 1 LATA1 1 0 :1:1 
 `uc 1 LATA2 1 0 :1:2 
 `uc 1 LATA3 1 0 :1:3 
@@ -150,7 +161,7 @@
 `uc 1 LATA7 1 0 :1:7 
 ]
 "899
-[s S312 . 1 `uc 1 LA0 1 0 :1:0 
+[s S348 . 1 `uc 1 LA0 1 0 :1:0 
 `uc 1 LA1 1 0 :1:1 
 `uc 1 LA2 1 0 :1:2 
 `uc 1 LA3 1 0 :1:3 
@@ -159,11 +170,11 @@
 `uc 1 LA6 1 0 :1:6 
 `uc 1 LA7 1 0 :1:7 
 ]
-[u S321 . 1 `S303 1 . 1 0 `S312 1 . 1 0 ]
-[v _LATAbits LATAbits `VES321  1 e 1 @3977 ]
+[u S357 . 1 `S339 1 . 1 0 `S348 1 . 1 0 ]
+[v _LATAbits LATAbits `VES357  1 e 1 @3977 ]
 "983
 [v _LATB LATB `VEuc  1 e 1 @3978 ]
-[s S427 . 1 `uc 1 LATB0 1 0 :1:0 
+[s S469 . 1 `uc 1 LATB0 1 0 :1:0 
 `uc 1 LATB1 1 0 :1:1 
 `uc 1 LATB2 1 0 :1:2 
 `uc 1 LATB3 1 0 :1:3 
@@ -173,7 +184,7 @@
 `uc 1 LATB7 1 0 :1:7 
 ]
 "1010
-[s S436 . 1 `uc 1 LB0 1 0 :1:0 
+[s S478 . 1 `uc 1 LB0 1 0 :1:0 
 `uc 1 LB1 1 0 :1:1 
 `uc 1 LB2 1 0 :1:2 
 `uc 1 LB3 1 0 :1:3 
@@ -182,11 +193,11 @@
 `uc 1 LB6 1 0 :1:6 
 `uc 1 LB7 1 0 :1:7 
 ]
-[u S445 . 1 `S427 1 . 1 0 `S436 1 . 1 0 ]
-[v _LATBbits LATBbits `VES445  1 e 1 @3978 ]
+[u S487 . 1 `S469 1 . 1 0 `S478 1 . 1 0 ]
+[v _LATBbits LATBbits `VES487  1 e 1 @3978 ]
 "1094
 [v _LATC LATC `VEuc  1 e 1 @3979 ]
-[s S235 . 1 `uc 1 LATC0 1 0 :1:0 
+[s S271 . 1 `uc 1 LATC0 1 0 :1:0 
 `uc 1 LATC1 1 0 :1:1 
 `uc 1 LATC2 1 0 :1:2 
 `uc 1 LATC3 1 0 :1:3 
@@ -196,7 +207,7 @@
 `uc 1 LATC7 1 0 :1:7 
 ]
 "1121
-[s S244 . 1 `uc 1 LC0 1 0 :1:0 
+[s S280 . 1 `uc 1 LC0 1 0 :1:0 
 `uc 1 LC1 1 0 :1:1 
 `uc 1 LC2 1 0 :1:2 
 `uc 1 LC3 1 0 :1:3 
@@ -205,8 +216,8 @@
 `uc 1 LC6 1 0 :1:6 
 `uc 1 LC7 1 0 :1:7 
 ]
-[u S253 . 1 `S235 1 . 1 0 `S244 1 . 1 0 ]
-[v _LATCbits LATCbits `VES253  1 e 1 @3979 ]
+[u S289 . 1 `S271 1 . 1 0 `S280 1 . 1 0 ]
+[v _LATCbits LATCbits `VES289  1 e 1 @3979 ]
 "1205
 [v _LATD LATD `VEuc  1 e 1 @3980 ]
 [s S55 . 1 `uc 1 LATD0 1 0 :1:0 
@@ -232,17 +243,17 @@
 [v _LATDbits LATDbits `VES73  1 e 1 @3980 ]
 "1316
 [v _LATE LATE `VEuc  1 e 1 @3981 ]
-[s S279 . 1 `uc 1 LATE0 1 0 :1:0 
+[s S315 . 1 `uc 1 LATE0 1 0 :1:0 
 `uc 1 LATE1 1 0 :1:1 
 `uc 1 LATE2 1 0 :1:2 
 ]
 "1333
-[s S283 . 1 `uc 1 LE0 1 0 :1:0 
+[s S319 . 1 `uc 1 LE0 1 0 :1:0 
 `uc 1 LE1 1 0 :1:1 
 `uc 1 LE2 1 0 :1:2 
 ]
-[u S287 . 1 `S279 1 . 1 0 `S283 1 . 1 0 ]
-[v _LATEbits LATEbits `VES287  1 e 1 @3981 ]
+[u S323 . 1 `S315 1 . 1 0 `S319 1 . 1 0 ]
+[v _LATEbits LATEbits `VES323  1 e 1 @3981 ]
 "1367
 [v _TRISA TRISA `VEuc  1 e 1 @3986 ]
 "1588
@@ -253,44 +264,102 @@
 [v _TRISD TRISD `VEuc  1 e 1 @3989 ]
 "2251
 [v _TRISE TRISE `VEuc  1 e 1 @3990 ]
+[s S625 . 1 `uc 1 CCP2IF 1 0 :1:0 
+`uc 1 TMR3IF 1 0 :1:1 
+`uc 1 HLVDIF 1 0 :1:2 
+`uc 1 BCLIF 1 0 :1:3 
+`uc 1 EEIF 1 0 :1:4 
+`uc 1 . 1 0 :1:5 
+`uc 1 CMIF 1 0 :1:6 
+`uc 1 OSCFIF 1 0 :1:7 
+]
+"2792
+[s S634 . 1 `uc 1 . 1 0 :2:0 
+`uc 1 LVDIF 1 0 :1:2 
+]
+[u S637 . 1 `S625 1 . 1 0 `S634 1 . 1 0 ]
+[v _PIR2bits PIR2bits `VES637  1 e 1 @4001 ]
+[s S595 . 1 `uc 1 RD 1 0 :1:0 
+`uc 1 WR 1 0 :1:1 
+`uc 1 WREN 1 0 :1:2 
+`uc 1 WRERR 1 0 :1:3 
+`uc 1 FREE 1 0 :1:4 
+`uc 1 . 1 0 :1:5 
+`uc 1 CFGS 1 0 :1:6 
+`uc 1 EEPGD 1 0 :1:7 
+]
+"2922
+[s S604 . 1 `uc 1 . 1 0 :6:0 
+`uc 1 EEFS 1 0 :1:6 
+]
+[u S607 . 1 `S595 1 . 1 0 `S604 1 . 1 0 ]
+[v _EECON1bits EECON1bits `VES607  1 e 1 @4006 ]
+"2966
+[v _EECON2 EECON2 `VEuc  1 e 1 @4007 ]
+"2972
+[v _EEDATA EEDATA `VEuc  1 e 1 @4008 ]
+"2978
+[v _EEADR EEADR `VEuc  1 e 1 @4009 ]
+"2984
+[v _EEADRH EEADRH `VEuc  1 e 1 @4010 ]
+[s S131 . 1 `uc 1 CM 1 0 :3:0 
+`uc 1 CIS 1 0 :1:3 
+`uc 1 C1INV 1 0 :1:4 
+`uc 1 C2INV 1 0 :1:5 
+`uc 1 C1OUT 1 0 :1:6 
+`uc 1 C2OUT 1 0 :1:7 
+]
+"3647
+[s S138 . 1 `uc 1 CM0 1 0 :1:0 
+`uc 1 CM1 1 0 :1:1 
+`uc 1 CM2 1 0 :1:2 
+]
+[s S142 . 1 `uc 1 CMEN0 1 0 :1:0 
+`uc 1 CMEN1 1 0 :1:1 
+`uc 1 CMEN2 1 0 :1:2 
+]
+[u S146 . 1 `S131 1 . 1 0 `S138 1 . 1 0 `S142 1 . 1 0 ]
+[v _CMCONbits CMCONbits `VES146  1 e 1 @4020 ]
+"3711
+[v _CVRCON CVRCON `VEuc  1 e 1 @4021 ]
 "4320
 [v _ADCON2 ADCON2 `VEuc  1 e 1 @4032 ]
 "4390
 [v _ADCON1 ADCON1 `VEuc  1 e 1 @4033 ]
 "4474
 [v _ADCON0 ADCON0 `VEuc  1 e 1 @4034 ]
-[s S467 . 1 `uc 1 . 1 0 :1:0 
+[s S509 . 1 `uc 1 . 1 0 :1:0 
 `uc 1 GO_NOT_DONE 1 0 :1:1 
 ]
 "4518
-[s S470 . 1 `uc 1 ADON 1 0 :1:0 
+[s S512 . 1 `uc 1 ADON 1 0 :1:0 
 `uc 1 GO_nDONE 1 0 :1:1 
 `uc 1 CHS 1 0 :4:2 
 ]
-[s S474 . 1 `uc 1 . 1 0 :1:0 
+[s S516 . 1 `uc 1 . 1 0 :1:0 
 `uc 1 GO 1 0 :1:1 
 `uc 1 CHS0 1 0 :1:2 
 `uc 1 CHS1 1 0 :1:3 
 `uc 1 CHS2 1 0 :1:4 
 `uc 1 CHS3 1 0 :1:5 
 ]
-[s S481 . 1 `uc 1 . 1 0 :1:0 
+[s S523 . 1 `uc 1 . 1 0 :1:0 
 `uc 1 DONE 1 0 :1:1 
 ]
-[s S484 . 1 `uc 1 . 1 0 :1:0 
+[s S526 . 1 `uc 1 . 1 0 :1:0 
 `uc 1 NOT_DONE 1 0 :1:1 
 ]
-[s S487 . 1 `uc 1 . 1 0 :1:0 
+[s S529 . 1 `uc 1 . 1 0 :1:0 
 `uc 1 nDONE 1 0 :1:1 
 ]
-[s S490 . 1 `uc 1 . 1 0 :1:0 
+[s S532 . 1 `uc 1 . 1 0 :1:0 
 `uc 1 GO_DONE 1 0 :1:1 
 ]
-[s S493 . 1 `uc 1 . 1 0 :1:0 
+[s S535 . 1 `uc 1 . 1 0 :1:0 
 `uc 1 GODONE 1 0 :1:1 
 ]
-[u S496 . 1 `S467 1 . 1 0 `S470 1 . 1 0 `S474 1 . 1 0 `S481 1 . 1 0 `S484 1 . 1 0 `S487 1 . 1 0 `S490 1 . 1 0 `S493 1 . 1 0 ]
-[v _ADCON0bits ADCON0bits `VES496  1 e 1 @4034 ]
+[u S538 . 1 `S509 1 . 1 0 `S512 1 . 1 0 `S516 1 . 1 0 `S523 1 . 1 0 `S526 1 . 1 0 `S529 1 . 1 0 `S532 1 . 1 0 `S535 1 . 1 0 ]
+[v _ADCON0bits ADCON0bits `VES538  1 e 1 @4034 ]
 "4592
 [v _ADRES ADRES `VEus  1 e 2 @4035 ]
 "4610
@@ -305,11 +374,11 @@
 [v _SSPBUF SSPBUF `VEuc  1 e 1 @4041 ]
 "5157
 [v _T1CON T1CON `VEuc  1 e 1 @4045 ]
-[s S377 . 1 `uc 1 . 1 0 :2:0 
+[s S419 . 1 `uc 1 . 1 0 :2:0 
 `uc 1 NOT_T1SYNC 1 0 :1:2 
 ]
 "5190
-[s S380 . 1 `uc 1 TMR1ON 1 0 :1:0 
+[s S422 . 1 `uc 1 TMR1ON 1 0 :1:0 
 `uc 1 TMR1CS 1 0 :1:1 
 `uc 1 nT1SYNC 1 0 :1:2 
 `uc 1 T1OSCEN 1 0 :1:3 
@@ -317,24 +386,24 @@
 `uc 1 T1RUN 1 0 :1:6 
 `uc 1 RD16 1 0 :1:7 
 ]
-[s S388 . 1 `uc 1 . 1 0 :2:0 
+[s S430 . 1 `uc 1 . 1 0 :2:0 
 `uc 1 T1SYNC 1 0 :1:2 
 `uc 1 . 1 0 :1:3 
 `uc 1 T1CKPS0 1 0 :1:4 
 `uc 1 T1CKPS1 1 0 :1:5 
 ]
-[s S394 . 1 `uc 1 . 1 0 :3:0 
+[s S436 . 1 `uc 1 . 1 0 :3:0 
 `uc 1 SOSCEN 1 0 :1:3 
 `uc 1 . 1 0 :3:4 
 `uc 1 T1RD16 1 0 :1:7 
 ]
-[u S399 . 1 `S377 1 . 1 0 `S380 1 . 1 0 `S388 1 . 1 0 `S394 1 . 1 0 ]
-[v _T1CONbits T1CONbits `VES399  1 e 1 @4045 ]
+[u S441 . 1 `S419 1 . 1 0 `S422 1 . 1 0 `S430 1 . 1 0 `S436 1 . 1 0 ]
+[v _T1CONbits T1CONbits `VES441  1 e 1 @4045 ]
 "5259
 [v _TMR1 TMR1 `VEus  1 e 2 @4046 ]
 "5781
 [v _T0CON T0CON `VEuc  1 e 1 @4053 ]
-[s S347 . 1 `uc 1 T0PS 1 0 :3:0 
+[s S389 . 1 `uc 1 T0PS 1 0 :3:0 
 `uc 1 PSA 1 0 :1:3 
 `uc 1 T0SE 1 0 :1:4 
 `uc 1 T0CS 1 0 :1:5 
@@ -342,17 +411,17 @@
 `uc 1 TMR0ON 1 0 :1:7 
 ]
 "5803
-[s S354 . 1 `uc 1 T0PS0 1 0 :1:0 
+[s S396 . 1 `uc 1 T0PS0 1 0 :1:0 
 `uc 1 T0PS1 1 0 :1:1 
 `uc 1 T0PS2 1 0 :1:2 
 `uc 1 . 1 0 :3:3 
 `uc 1 T016BIT 1 0 :1:6 
 ]
-[u S360 . 1 `S347 1 . 1 0 `S354 1 . 1 0 ]
-[v _T0CONbits T0CONbits `VES360  1 e 1 @4053 ]
+[u S402 . 1 `S389 1 . 1 0 `S396 1 . 1 0 ]
+[v _T0CONbits T0CONbits `VES402  1 e 1 @4053 ]
 "5857
 [v _TMR0 TMR0 `VEus  1 e 2 @4054 ]
-[s S145 . 1 `uc 1 RBIF 1 0 :1:0 
+[s S181 . 1 `uc 1 RBIF 1 0 :1:0 
 `uc 1 INT0IF 1 0 :1:1 
 `uc 1 TMR0IF 1 0 :1:2 
 `uc 1 RBIE 1 0 :1:3 
@@ -362,7 +431,7 @@
 `uc 1 GIE_GIEH 1 0 :1:7 
 ]
 "6298
-[s S154 . 1 `uc 1 . 1 0 :1:0 
+[s S190 . 1 `uc 1 . 1 0 :1:0 
 `uc 1 INT0F 1 0 :1:1 
 `uc 1 T0IF 1 0 :1:2 
 `uc 1 . 1 0 :1:3 
@@ -371,12 +440,12 @@
 `uc 1 PEIE 1 0 :1:6 
 `uc 1 GIE 1 0 :1:7 
 ]
-[s S163 . 1 `uc 1 . 1 0 :6:0 
+[s S199 . 1 `uc 1 . 1 0 :6:0 
 `uc 1 GIEL 1 0 :1:6 
 `uc 1 GIEH 1 0 :1:7 
 ]
-[u S167 . 1 `S145 1 . 1 0 `S154 1 . 1 0 `S163 1 . 1 0 ]
-[v _INTCONbits INTCONbits `VES167  1 e 1 @4082 ]
+[u S203 . 1 `S181 1 . 1 0 `S190 1 . 1 0 `S199 1 . 1 0 ]
+[v _INTCONbits INTCONbits `VES203  1 e 1 @4082 ]
 "6604
 [v _ACKDT ACKDT `VEb  1 e 0 @32301 ]
 "6606
@@ -413,54 +482,134 @@
 [v _dpowers dpowers `C[5]ui  1 s 10 dpowers ]
 "362
 [v _hexpowers hexpowers `C[4]ui  1 s 8 hexpowers ]
-"45 C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+"50 C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
 [v _main main `(v  1 e 1 0 ]
 {
-"356
-[v main@i_636 i `uc  1 a 1 30 ]
+"393
+[v main@i_768 i `uc  1 a 1 46 ]
+"349
+[v main@i_756 i `uc  1 a 1 45 ]
 "341
-[v main@i_632 i `uc  1 a 1 29 ]
-"333
-[v main@i_630 i `uc  1 a 1 28 ]
-"235
-[v main@steps_605 steps `uc  1 a 1 32 ]
-"155
-[v main@steps steps `uc  1 a 1 31 ]
+[v main@i_754 i `uc  1 a 1 44 ]
+"243
+[v main@steps_729 steps `uc  1 a 1 48 ]
+"163
+[v main@steps steps `uc  1 a 1 47 ]
+"139
+[v main@i_707 i `uc  1 a 1 43 ]
 "131
-[v main@i_583 i `uc  1 a 1 27 ]
-"123
-[v main@i i `uc  1 a 1 26 ]
-"368
+[v main@i i `uc  1 a 1 42 ]
+"405
 } 0
-"565
+"637
 [v _wait_2ms wait_2ms `(v  1 e 1 0 ]
 {
 [v wait_2ms@x x `ui  1 p 2 48 ]
-"568
+"640
 } 0
-"475
+"547
 [v _testBatteries testBatteries `(v  1 e 1 0 ]
 {
-"504
+"576
 [v testBatteries@volt5 volt5 `ui  1 a 2 22 ]
-"502
+"574
 [v testBatteries@volt4 volt4 `ui  1 a 2 20 ]
-"498
+"570
 [v testBatteries@volt2 volt2 `ui  1 a 2 18 ]
-"500
+"572
 [v testBatteries@volt3 volt3 `ui  1 a 2 16 ]
-"496
+"568
 [v testBatteries@volt1 volt1 `ui  1 a 2 14 ]
-"563
+"635
 } 0
-"421
+"458
 [v _readADC readADC `(v  1 e 1 0 ]
 {
 [v readADC@channel channel `uc  1 a 1 wreg ]
 [v readADC@channel channel `uc  1 a 1 wreg ]
-"423
+"460
 [v readADC@channel channel `uc  1 a 1 48 ]
-"427
+"464
+} 0
+"466
+[v _stopOperation stopOperation `(v  1 e 1 0 ]
+{
+"479
+[v stopOperation@address address `ui  1 a 2 57 ]
+"478
+[v stopOperation@address_code address_code `uc  1 a 1 56 ]
+"545
+} 0
+"8 C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\awmod.c
+[v ___awmod __awmod `(i  1 e 2 0 ]
+{
+"11
+[v ___awmod@sign sign `uc  1 a 1 53 ]
+[v ___awmod@counter counter `uc  1 a 1 52 ]
+"8
+[v ___awmod@dividend dividend `i  1 p 2 48 ]
+[v ___awmod@divisor divisor `i  1 p 2 50 ]
+"35
+} 0
+"8 C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\awdiv.c
+[v ___awdiv __awdiv `(i  1 e 2 0 ]
+{
+"11
+[v ___awdiv@quotient quotient `i  1 a 2 54 ]
+"12
+[v ___awdiv@sign sign `uc  1 a 1 53 ]
+[v ___awdiv@counter counter `uc  1 a 1 52 ]
+"8
+[v ___awdiv@dividend dividend `i  1 p 2 48 ]
+[v ___awdiv@divisor divisor `i  1 p 2 50 ]
+"42
+} 0
+"662 C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+[v _Eeprom_WriteByte Eeprom_WriteByte `(v  1 e 1 0 ]
+{
+[v Eeprom_WriteByte@address address `ui  1 p 2 48 ]
+[v Eeprom_WriteByte@data data `uc  1 p 1 50 ]
+"686
+} 0
+"693
+[v _show_log show_log `(v  1 e 1 0 ]
+{
+"743
+[v show_log@i_870 i `uc  1 a 1 37 ]
+"732
+[v show_log@i_867 i `uc  1 a 1 36 ]
+"696
+[v show_log@i i `uc  1 a 1 35 ]
+"701
+[v show_log@address address `ui  1 a 2 38 ]
+"725
+[v show_log@elapsed_time elapsed_time `ui  1 a 2 27 ]
+"721
+[v show_log@Drain_num Drain_num `ui  1 a 2 25 ]
+"719
+[v show_log@Nine_num Nine_num `ui  1 a 2 23 ]
+"717
+[v show_log@C_num C_num `ui  1 a 2 21 ]
+"715
+[v show_log@AA_num AA_num `ui  1 a 2 19 ]
+"723
+[v show_log@total_num total_num `ui  1 a 2 17 ]
+"712
+[v show_log@second second `uc  1 a 1 34 ]
+"710
+[v show_log@minute minute `uc  1 a 1 33 ]
+"708
+[v show_log@hour hour `uc  1 a 1 32 ]
+"706
+[v show_log@day day `uc  1 a 1 31 ]
+"704
+[v show_log@month month `uc  1 a 1 30 ]
+"702
+[v show_log@year year `uc  1 a 1 29 ]
+"693
+[v show_log@log_address log_address `ui  1 p 2 14 ]
+[v show_log@currScreen currScreen `uc  1 p 1 16 ]
+"749
 } 0
 "464 C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\doprnt.c
 [v _printf printf `(i  1 e 2 0 ]
@@ -532,34 +681,17 @@
 [v ___lwdiv@divisor divisor `ui  1 p 2 50 ]
 "31
 } 0
-"429 C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-[v _stopOperation stopOperation `(v  1 e 1 0 ]
+"689 C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+[v _next_address next_address `(ui  1 e 2 0 ]
 {
-"473
+[v next_address@address address `ui  1 p 2 48 ]
+"691
 } 0
-"8 C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\awmod.c
-[v ___awmod __awmod `(i  1 e 2 0 ]
+"645
+[v _Eeprom_ReadByte Eeprom_ReadByte `(uc  1 e 1 0 ]
 {
-"11
-[v ___awmod@sign sign `uc  1 a 1 53 ]
-[v ___awmod@counter counter `uc  1 a 1 52 ]
-"8
-[v ___awmod@dividend dividend `i  1 p 2 48 ]
-[v ___awmod@divisor divisor `i  1 p 2 50 ]
-"35
-} 0
-"8 C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\awdiv.c
-[v ___awdiv __awdiv `(i  1 e 2 0 ]
-{
-"11
-[v ___awdiv@quotient quotient `i  1 a 2 54 ]
-"12
-[v ___awdiv@sign sign `uc  1 a 1 53 ]
-[v ___awdiv@counter counter `uc  1 a 1 52 ]
-"8
-[v ___awdiv@dividend dividend `i  1 p 2 48 ]
-[v ___awdiv@divisor divisor `i  1 p 2 50 ]
-"42
+[v Eeprom_ReadByte@address address `ui  1 p 2 48 ]
+"659
 } 0
 "7 C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/lcd.c
 [v _initLCD initLCD `(v  1 e 1 0 ]
@@ -637,30 +769,38 @@
 [v ___lldiv@divisor divisor `ul  1 p 4 52 ]
 "31
 } 0
-"570 C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+"753 C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
 [v _ISR ISR `II(v  1 e 1 0 ]
 {
-"572
+"755
 [v ISR@keypress keypress `uc  1 a 1 47 ]
-"703
+"886
 } 0
-"370
+"407
 [v _keypressed keypressed `(v  1 e 1 0 ]
 {
 [v keypressed@left left `uc  1 a 1 wreg ]
-"387
+"424
 [v keypressed@i i `uc  1 a 1 31 ]
-"370
+"407
 [v keypressed@left left `uc  1 a 1 wreg ]
 [v keypressed@right right `uc  1 p 1 28 ]
 [v keypressed@key key `uc  1 p 1 29 ]
 [v keypressed@left left `uc  1 a 1 30 ]
-"419
+"456
 } 0
-"429
+"466
 [v i2_stopOperation stopOperation `(v  1 e 1 0 ]
 {
-"473
+[v i2stopOperation@address stopOperation `ui  1 a 2 9 ]
+[v i2stopOperation@address_code stopOperation `uc  1 a 1 8 ]
+"545
+} 0
+"689
+[v i2_next_address next_address `(ui  1 e 2 0 ]
+{
+[v i2next_address@address address `ui  1 p 2 0 ]
+"691
 } 0
 "8 C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\awmod.c
 [v i2___awmod __awmod `(i  1 e 2 0 ]
@@ -680,6 +820,19 @@
 [v i2___awdiv@dividend dividend `i  1 p 2 0 ]
 [v i2___awdiv@divisor divisor `i  1 p 2 2 ]
 "42
+} 0
+"662 C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+[v i2_Eeprom_WriteByte Eeprom_WriteByte `(v  1 e 1 0 ]
+{
+[v i2Eeprom_WriteByte@address address `ui  1 p 2 0 ]
+[v i2Eeprom_WriteByte@data data `uc  1 p 1 2 ]
+"686
+} 0
+"645
+[v i2_Eeprom_ReadByte Eeprom_ReadByte `(uc  1 e 1 0 ]
+{
+[v i2Eeprom_ReadByte@address address `ui  1 p 2 0 ]
+"659
 } 0
 "464 C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\doprnt.c
 [v i2_printf printf `(i  1 e 2 0 ]

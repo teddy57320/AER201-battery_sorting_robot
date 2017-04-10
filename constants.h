@@ -18,14 +18,11 @@
 #define NUM_AA		7
 #define NUM_DRAIN	8
 #define RTC_LAST_RUN	9
-#define RTC_DISPLAY	10
-
-//permanent logs
-// #define PERM_LOGS	10
-// #define RUN1		20
-// #define RUN2		30
-// #define RUN3		40
-// #define RUN4		50
+#define PERM_LOGA	10
+#define PERM_LOGB	11
+#define PERM_LOGC	12
+#define PERM_LOGD	13
+#define RTC_DISPLAY	14	
 
 // LCD macros
 #define __delay_1s() for(char i=0;i<100;i++){__delay_ms(10);}
