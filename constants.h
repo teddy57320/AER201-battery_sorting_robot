@@ -42,6 +42,8 @@
 #define gearDir(s) LATDbits.LD0= s;				//dir pin for stepper (RD0)
 #define gearStep(s) LATDbits.LD1 = s;			//step pin for stepper (RD1)
 
+#define setServo(s) LATBbits.LB2 = s;			//servo Pin     (RB2)
+
 #define plat1c1a(s) LATCbits.LC1 = s;			//platform 1 coil 1a (RC1)	yellow/grey
 #define plat1c1b(s) LATCbits.LC2 = s;			//platform 1 coil 1b (RC2)
 #define plat1c2a(s) LATCbits.LC5 = s;			//platform 1 coil 2b (RC5)	orange/brown

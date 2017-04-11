@@ -91,6 +91,8 @@ void main(void){
     TMR0IF = 0;	    //turn off TMR0 overflow interrupt flag
     TMR1IE = 1;     //enable TMR1 overflow interrupt
     TMR1IF = 0;     //turn off TMR1 overflow interrupt flag
+    TMR2IE = 1;
+    TMR2IF = 0;
 
 /***********************************************************
     TMR0 SETUP*/
@@ -121,6 +123,21 @@ void main(void){
     TMR1CS = 0;
     TMR1ON = 0; */
     TMR1 = 60535;
+// time for overflow = (65535-60535)*4/10000000 = 2 milliseconds
+//**********************************************************
+
+/***********************************************************
+    TMR1 SETUP*/
+    T2CON = 0b00000010; 
+    /*implement the following in register T1CON:   
+    RD16 = 1;
+    T1RUN = 0;   //use only internal oscillator
+    T1CKPS[1:0] = 00, 1:1 prescale; 
+    T1OSCEN = 0;
+    T1SYNC = 0;
+    TMR1CS = 0;
+    TMR1ON = 0; */
+    TMR2 = 155;
 // time for overflow = (65535-60535)*4/10000000 = 2 milliseconds
 //**********************************************************
 
@@ -160,13 +177,13 @@ void main(void){
             // printf("RUNNING...      ");     
             // __lcd_newline();
             // printf("%02d                ", doneTimer);
-           // __lcd_home();
-           // __lcd_newline();
-           // printf("PRESS # TO STOP ");
-            readADC(0); //RA0
            __lcd_home();
            __lcd_newline();
-           printf("%4d %2d         ", ADRES, countDrain+countAA+count9V+countC);
+           printf("PRESS # TO STOP ");
+           
+           // __lcd_home();
+           // __lcd_newline();
+           // printf("%4d %2d         ", ADRES, countDrain+countAA+count9V+countC);
            if (startGear){
                 wait_2ms(2000);
                 startGear = 0;
@@ -190,7 +207,7 @@ void main(void){
                     __delay_ms(2);
                 }
                 steps = 0;
-                while(steps <2 && screenMode==OPERATING){
+                while(steps <5 && screenMode==OPERATING){
                     steps++;
                     gearStep(1);
                     __delay_ms(5);
@@ -198,16 +215,46 @@ void main(void){
                     __delay_ms(5);
                 }
                 steps = 0;
+                gearDir(1);
+                while(steps <3 && screenMode==OPERATING){
+                    steps++;
+                    gearStep(1);
+                    __delay_ms(5);
+                    gearStep(0);
+                    __delay_ms(5);
+                }
+                gearDir(0);
+                steps = 0;
+                wait_2ms(150);
+
+                UVDsol(1);
+                wait_2ms(100);
+                UVDsol(0);
+                plat1Right = 120;
+                plat2Left = 120;
+                while (screenMode == OPERATING && (plat1Right | plat2Left));
+                plat1Left = 120;
+                plat2Right = 120;
+                while (screenMode == OPERATING && (plat1Left | plat2Right));
             }
 
+             readADC(0); //RA0
             //read UVD IR sensor RA0 = AN0
+           //  __lcd_home();
+           // __lcd_newline();
+           // printf("%4d %2d         ", ADRES, countDrain+countAA+count9V+countC);
             if (ADRES < 22 | ADRES > 55){    //if battery is present   
                 wait_2ms(250);    
                 sorting = 1; 
                 UVDsol(1);          //actuate wall
                 wait_2ms(500);
                 testBatteries();    
+                turn1BackRight = plat1Left;   
+                turn1BackLeft = plat1Right;   
+                turn2BackRight = plat2Left;  
+                turn2BackLeft = plat2Right; 
                 UVDsol(0);          //pull back wall
+                wait_2ms(100);
 
                 if (doubleAA)     //turn one platform first
                     plat1Right = 512;
@@ -218,12 +265,7 @@ void main(void){
                 if (plat2Left)     //flag to turn platform2 left
                     step2 = 1;
                 if (plat2Right)    //flag to turn platform2 right
-                    step2 = 4;
-
-                turn1BackRight = plat1Left;   
-                turn1BackLeft = plat1Right;   
-                turn2BackRight = plat2Left;  
-                turn2BackLeft = plat2Right;     
+                    step2 = 4;    
 
                 plat1c1a(1);                    //prep platform turning sequence        
                 plat1c1b(0);
@@ -281,6 +323,18 @@ void main(void){
 
                 while((plat1Left|plat2Left|plat1Right|plat2Right) && screenMode==OPERATING);  //wait for platforms to turn back
                 
+                wait_2ms(150);
+
+                UVDsol(1);
+                wait_2ms(100);
+                UVDsol(0);
+                plat1Right = 120;
+                plat2Left = 120;
+                while (screenMode == OPERATING && (plat1Right | plat2Left));
+                plat1Left = 120;
+                plat2Right = 120;
+                while (screenMode == OPERATING && (plat1Left | plat2Right));
+
                 gearStep(0);            //reset all stepper motor pins
                 gearDir(0);
                 plat1Right = 0;
@@ -302,7 +356,34 @@ void main(void){
                 doubleAA = 0;
                 sorting = 0;
             }                       
-            wait_2ms(250);       
+            wait_2ms(250);
+            if (doneTimer >= 5){
+                unsigned char steps = 0;
+                while(steps<20 && screenMode==OPERATING){    //big stepper motor turning sequence
+                    steps++;
+                    gearStep(1);
+                    __delay_ms(5);
+                    gearStep(0);
+                    __delay_ms(5);
+                }
+                steps = 0;
+                while(steps < 178 && screenMode==OPERATING){
+                    steps++;
+                    gearStep(1);
+                    __delay_ms(2);
+                    gearStep(0);
+                    __delay_ms(2);
+                }
+                steps = 0;
+                while(steps<2 && screenMode==OPERATING){
+                    steps++;
+                    gearStep(1);
+                    __delay_ms(5);
+                    gearStep(0);
+                    __delay_ms(5);
+                }
+                steps = 0;
+            }       
         }
         while (screenMode == FINISH){	//finish screen  
         	__lcd_home();
@@ -432,6 +513,7 @@ void keypressed(unsigned char left, unsigned char right, unsigned char key){
             screenMode = OPERATING;
             T0CONbits.TMR0ON = 1; //turn on TMR0 
             T1CONbits.TMR1ON = 1; //turn on TMR1
+            TMR2ON = 1;
             startGear = 1;
 
             //store real time/date of start of run
@@ -487,8 +569,10 @@ void readADC(unsigned char channel){
 void stopOperation(void){
     T0CONbits.TMR0ON = 0;   //turn off timers
     T1CONbits.TMR1ON = 0;
+    TMR2ON = 0;
     TMR0 = 55770;
     TMR1 = 60535;
+    TMR2 = 155;
 
     num9V = count9V;     //update number of batteries
     numC = countC;
@@ -596,10 +680,10 @@ void testBatteries(void){
     readADC(5);         //read 9V circuit RE0
     unsigned int volt5 = ADRES;
 
-    __lcd_home();
-    printf("%04d %04d %04d", volt1, volt2, volt3);
-    __lcd_newline();
-    printf("%04d %04d       ", volt4, volt5);
+    // __lcd_home();
+    // printf("%04d %04d %04d", volt1, volt2, volt3);
+    // __lcd_newline();
+    // printf("%04d %04d       ", volt4, volt5);
 
     if (volt1){     //charged C battery
         countC++;
@@ -639,10 +723,10 @@ void testBatteries(void){
         }
         if (volt2){            //charged AA on first platform
             plat1Right = 512;   //charged
-            plat2Right = 512;   //drained
+            plat2Left = 512;   //drained ******************
         }
         else{                   //charged AA on second platform
-            plat2Left = 512;    //charged
+            plat2Right = 512;    //charged  *********
             plat1Left = 512;    //drained
         }
         return;
@@ -947,8 +1031,6 @@ char getChar(unsigned int num) {
     return num + '0'; 
 }
 
-
-
 void interrupt ISR(void) {
     if (INT1IF){
         unsigned char keypress = (PORTB & 0xF0) >> 4;   //detect key pressed on keypad
@@ -961,8 +1043,8 @@ void interrupt ISR(void) {
         opTimer++;
         min = opTimer / 60; //store run time
         sec = opTimer % 60;
-        // __lcd_home();
-        // printf("RUNNING: %02d:%02d   ", min, sec); 
+        __lcd_home();
+        printf("RUNNING: %02d:%02d   ", min, sec); 
 
         if (opTimer >= 180)    //stop operation after 3 minutes
             stopOperation();            
@@ -1082,4 +1164,9 @@ void interrupt ISR(void) {
                 step2--;
         }
     }	
+    if (screenMode == OPERATING && TMR2IF){
+        TMR2IF = 0;
+        TMR2 = 155;
+        servoPin(!LATBbits.LB2);
+    }
 }

@@ -3974,20 +3974,28 @@ TMR0IE = 1;
 TMR0IF = 0;
 TMR1IE = 1;
 TMR1IF = 0;
+TMR2IE = 1;
+TMR2IF = 0;
 
-# 97
+# 99
 T0CON = 0b00000111;
 
-# 105
+# 107
 TMR0 = 55770;
 
-# 114
+# 116
 T1CON = 0b10000000;
 
-# 123
+# 125
 TMR1 = 60535;
 
-# 133
+# 131
+T2CON = 0b00000010;
+
+# 140
+TMR2 = 155;
+
+# 150
 initLCD();
 nRBPU = 0;
 I2C_Master_Init(10000);
@@ -4015,11 +4023,16 @@ _delay((unsigned long)((10)*(10000000/4000.0)));
 }
 while (screenMode == 1){
 
-# 166
-readADC(0);
+
+
+
 lcdInst(0b10000000);;
 lcdInst(0b11000000);;
-printf("%4d %2d         ", ADRES, countDrain+countAA+count9V+countC);
+printf("PRESS # TO STOP ");
+
+
+
+
 if (startGear){
 wait_2ms(2000);
 startGear = 0;
@@ -4043,7 +4056,7 @@ LATDbits.LD1 = 0;;
 _delay((unsigned long)((2)*(10000000/4000.0)));
 }
 steps = 0;
-while(steps <2 && screenMode==1){
+while(steps <5 && screenMode==1){
 steps++;
 LATDbits.LD1 = 1;;
 _delay((unsigned long)((5)*(10000000/4000.0)));
@@ -4051,7 +4064,32 @@ LATDbits.LD1 = 0;;
 _delay((unsigned long)((5)*(10000000/4000.0)));
 }
 steps = 0;
+LATDbits.LD0= 1;;
+while(steps <3 && screenMode==1){
+steps++;
+LATDbits.LD1 = 1;;
+_delay((unsigned long)((5)*(10000000/4000.0)));
+LATDbits.LD1 = 0;;
+_delay((unsigned long)((5)*(10000000/4000.0)));
 }
+LATDbits.LD0= 0;;
+steps = 0;
+wait_2ms(150);
+
+LATCbits.LC7 = 1;;
+wait_2ms(100);
+LATCbits.LC7 = 0;;
+plat1Right = 120;
+plat2Left = 120;
+while (screenMode == 1 && (plat1Right | plat2Left));
+plat1Left = 120;
+plat2Right = 120;
+while (screenMode == 1 && (plat1Left | plat2Right));
+}
+
+readADC(0);
+
+
 
 
 if (ADRES < 22 | ADRES > 55){
@@ -4060,7 +4098,12 @@ sorting = 1;
 LATCbits.LC7 = 1;;
 wait_2ms(500);
 testBatteries();
+turn1BackRight = plat1Left;
+turn1BackLeft = plat1Right;
+turn2BackRight = plat2Left;
+turn2BackLeft = plat2Right;
 LATCbits.LC7 = 0;;
+wait_2ms(100);
 
 if (doubleAA)
 plat1Right = 512;
@@ -4072,11 +4115,6 @@ if (plat2Left)
 step2 = 1;
 if (plat2Right)
 step2 = 4;
-
-turn1BackRight = plat1Left;
-turn1BackLeft = plat1Right;
-turn2BackRight = plat2Left;
-turn2BackLeft = plat2Right;
 
 LATCbits.LC1 = 1;;
 LATCbits.LC2 = 0;;
@@ -4134,6 +4172,18 @@ steps = 0;
 
 while((plat1Left|plat2Left|plat1Right|plat2Right) && screenMode==1);
 
+wait_2ms(150);
+
+LATCbits.LC7 = 1;;
+wait_2ms(100);
+LATCbits.LC7 = 0;;
+plat1Right = 120;
+plat2Left = 120;
+while (screenMode == 1 && (plat1Right | plat2Left));
+plat1Left = 120;
+plat2Right = 120;
+while (screenMode == 1 && (plat1Left | plat2Right));
+
 LATDbits.LD1 = 0;;
 LATDbits.LD0= 0;;
 plat1Right = 0;
@@ -4156,6 +4206,33 @@ doubleAA = 0;
 sorting = 0;
 }
 wait_2ms(250);
+if (doneTimer >= 5){
+unsigned char steps = 0;
+while(steps<20 && screenMode==1){
+steps++;
+LATDbits.LD1 = 1;;
+_delay((unsigned long)((5)*(10000000/4000.0)));
+LATDbits.LD1 = 0;;
+_delay((unsigned long)((5)*(10000000/4000.0)));
+}
+steps = 0;
+while(steps < 178 && screenMode==1){
+steps++;
+LATDbits.LD1 = 1;;
+_delay((unsigned long)((2)*(10000000/4000.0)));
+LATDbits.LD1 = 0;;
+_delay((unsigned long)((2)*(10000000/4000.0)));
+}
+steps = 0;
+while(steps<2 && screenMode==1){
+steps++;
+LATDbits.LD1 = 1;;
+_delay((unsigned long)((5)*(10000000/4000.0)));
+LATDbits.LD1 = 0;;
+_delay((unsigned long)((5)*(10000000/4000.0)));
+}
+steps = 0;
+}
 }
 while (screenMode == 0){
 lcdInst(0b10000000);;
@@ -4285,6 +4362,7 @@ if(screenMode == 2){
 screenMode = 1;
 T0CONbits.TMR0ON = 1;
 T1CONbits.TMR1ON = 1;
+TMR2ON = 1;
 startGear = 1;
 
 
@@ -4340,8 +4418,10 @@ while(ADCON0bits.GO_NOT_DONE);
 void stopOperation(void){
 T0CONbits.TMR0ON = 0;
 T1CONbits.TMR1ON = 0;
+TMR2ON = 0;
 TMR0 = 55770;
 TMR1 = 60535;
+TMR2 = 155;
 
 num9V = count9V;
 numC = countC;
@@ -4420,7 +4500,7 @@ screenMode = 0;
 
 void testBatteries(void){
 
-# 588
+# 672
 readADC(1);
 unsigned int volt1 = ADRES;
 readADC(2);
@@ -4432,11 +4512,7 @@ unsigned int volt4 = ADRES;
 readADC(5);
 unsigned int volt5 = ADRES;
 
-lcdInst(0b10000000);;
-printf("%04d %04d %04d", volt1, volt2, volt3);
-lcdInst(0b11000000);;
-printf("%04d %04d       ", volt4, volt5);
-
+# 688
 if (volt1){
 countC++;
 plat1Right = 512;
@@ -4475,10 +4551,10 @@ return;
 }
 if (volt2){
 plat1Right = 512;
-plat2Right = 512;
+plat2Left = 512;
 }
 else{
-plat2Left = 512;
+plat2Right = 512;
 plat1Left = 512;
 }
 return;
@@ -4797,8 +4873,8 @@ TMR0 = 55770;
 opTimer++;
 min = opTimer / 60;
 sec = opTimer % 60;
-
-
+lcdInst(0b10000000);;
+printf("RUNNING: %02d:%02d   ", min, sec);
 
 if (opTimer >= 180)
 stopOperation();
@@ -4818,6 +4894,7 @@ doneTimer = 0;
 if (screenMode == 1 && TMR1IF){
 TMR1IF = 0;
 TMR1 = 60535;
+
 if (count_2ms)
 count_2ms--;
 solOnTimer++;
@@ -4917,5 +4994,10 @@ step2 = 4;
 else
 step2--;
 }
+}
+if (screenMode == 1 && TMR2IF){
+TMR2IF = 0;
+TMR2 = 155;
+LATBbits.LB2 = !LATBbits.LB2;;
 }
 }
