@@ -78,7 +78,7 @@ dataBANK0 BANK0 1 ED ED E 1
 dataCOMRAM COMRAM 1 35 35 13 1
 bssCOMRAM COMRAM 1 48 48 E 1
 mediumconst MEDIUMCONST 0 FC9E FC9E 362 1
-$C:\Users\teddy\AppData\Local\Temp\sdvs.obj
+$C:\Users\teddy\AppData\Local\Temp\sdes.obj
 idloc IDLOC 0 200000 200000 8 1
 init CODE 0 E E 4 1
 reset_vec CODE 0 0 0 4 1
@@ -138,7 +138,7 @@ MEDIUMCONST 383E-FC9D 1
 # All other numeric values are in decimal.
 %LINETAB
 $dist/default/production\main_project.X.production.obj
-8 intcode CODE >1036:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+8 intcode CODE >1034:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
 8 intcode CODE >31:C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\lldiv.c
 379C text52 CODE >16:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/I2C.c
 379C text52 CODE >18:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/I2C.c
@@ -474,111 +474,111 @@ $dist/default/production\main_project.X.production.obj
 2ED6 text33 CODE >554:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
 2EDE text33 CODE >556:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
 2EE2 text33 CODE >559:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-28C2 intcode_body CODE >1036:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-28FC intcode_body CODE >1037:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2900 intcode_body CODE >1038:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2908 intcode_body CODE >1039:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2928 intcode_body CODE >1040:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-292A intcode_body CODE >1042:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2934 intcode_body CODE >1043:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2936 intcode_body CODE >1044:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-293E intcode_body CODE >1045:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2940 intcode_body CODE >1046:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2958 intcode_body CODE >1047:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2970 intcode_body CODE >1048:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2976 intcode_body CODE >1049:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-298E intcode_body CODE >1051:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2994 intcode_body CODE >1052:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2998 intcode_body CODE >1054:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-299E intcode_body CODE >1055:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-29AA intcode_body CODE >1056:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-29B0 intcode_body CODE >1058:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-29B6 intcode_body CODE >1059:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-29BE intcode_body CODE >1060:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-29C2 intcode_body CODE >1062:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-29C4 intcode_body CODE >1064:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-29CA intcode_body CODE >1066:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-29D4 intcode_body CODE >1067:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-29D6 intcode_body CODE >1068:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-29DE intcode_body CODE >1070:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-29E6 intcode_body CODE >1071:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-29EC intcode_body CODE >1072:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-29EE intcode_body CODE >1073:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-29F4 intcode_body CODE >1074:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-29F8 intcode_body CODE >1075:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A0E intcode_body CODE >1077:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A1A intcode_body CODE >1078:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A20 intcode_body CODE >1079:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A22 intcode_body CODE >1080:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A24 intcode_body CODE >1082:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A2C intcode_body CODE >1083:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A2E intcode_body CODE >1084:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A30 intcode_body CODE >1086:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A38 intcode_body CODE >1087:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A3A intcode_body CODE >1088:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A3C intcode_body CODE >1090:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A44 intcode_body CODE >1091:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A46 intcode_body CODE >1092:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A48 intcode_body CODE >1094:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A50 intcode_body CODE >1095:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A56 intcode_body CODE >1096:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A5C intcode_body CODE >1098:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A5E intcode_body CODE >1100:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A6A intcode_body CODE >1101:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A72 intcode_body CODE >1102:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A74 intcode_body CODE >1103:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A76 intcode_body CODE >1105:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A7E intcode_body CODE >1106:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A80 intcode_body CODE >1107:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A82 intcode_body CODE >1109:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A8A intcode_body CODE >1110:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A8C intcode_body CODE >1111:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A8E intcode_body CODE >1113:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A94 intcode_body CODE >1114:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A96 intcode_body CODE >1115:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2A98 intcode_body CODE >1117:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2AA0 intcode_body CODE >1118:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2AA6 intcode_body CODE >1119:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2AAC intcode_body CODE >1121:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2AAE intcode_body CODE >1123:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2ABA intcode_body CODE >1124:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2AC0 intcode_body CODE >1125:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2AC2 intcode_body CODE >1126:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2AC4 intcode_body CODE >1128:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2ACC intcode_body CODE >1129:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2ACE intcode_body CODE >1130:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2AD0 intcode_body CODE >1132:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2AD8 intcode_body CODE >1133:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2ADA intcode_body CODE >1134:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2ADC intcode_body CODE >1136:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2AE4 intcode_body CODE >1137:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2AE6 intcode_body CODE >1138:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2AE8 intcode_body CODE >1140:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2AF0 intcode_body CODE >1141:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2AF6 intcode_body CODE >1142:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2AFC intcode_body CODE >1144:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2AFE intcode_body CODE >1146:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B0A intcode_body CODE >1147:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B12 intcode_body CODE >1148:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B14 intcode_body CODE >1149:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B16 intcode_body CODE >1151:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B1E intcode_body CODE >1152:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B20 intcode_body CODE >1153:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B22 intcode_body CODE >1155:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B2A intcode_body CODE >1156:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B2C intcode_body CODE >1157:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B2E intcode_body CODE >1159:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B34 intcode_body CODE >1160:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B36 intcode_body CODE >1161:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B38 intcode_body CODE >1163:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B40 intcode_body CODE >1164:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B46 intcode_body CODE >1165:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B4C intcode_body CODE >1167:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B4E intcode_body CODE >1170:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B58 intcode_body CODE >1171:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B5A intcode_body CODE >1172:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B5E intcode_body CODE >1173:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-2B78 intcode_body CODE >1175:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+28C2 intcode_body CODE >1034:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+28FC intcode_body CODE >1035:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2900 intcode_body CODE >1036:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2908 intcode_body CODE >1037:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2928 intcode_body CODE >1038:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+292A intcode_body CODE >1040:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2934 intcode_body CODE >1041:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2936 intcode_body CODE >1042:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+293E intcode_body CODE >1043:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2940 intcode_body CODE >1044:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2958 intcode_body CODE >1045:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2970 intcode_body CODE >1046:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2976 intcode_body CODE >1047:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+298E intcode_body CODE >1049:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2994 intcode_body CODE >1050:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2998 intcode_body CODE >1052:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+299E intcode_body CODE >1053:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+29AA intcode_body CODE >1054:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+29B0 intcode_body CODE >1056:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+29B6 intcode_body CODE >1057:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+29BE intcode_body CODE >1058:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+29C2 intcode_body CODE >1060:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+29C4 intcode_body CODE >1062:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+29CA intcode_body CODE >1064:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+29D4 intcode_body CODE >1065:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+29D6 intcode_body CODE >1066:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+29DE intcode_body CODE >1067:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+29E6 intcode_body CODE >1068:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+29EC intcode_body CODE >1069:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+29EE intcode_body CODE >1070:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+29F4 intcode_body CODE >1071:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+29F8 intcode_body CODE >1072:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A0E intcode_body CODE >1074:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A1A intcode_body CODE >1075:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A20 intcode_body CODE >1076:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A22 intcode_body CODE >1077:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A24 intcode_body CODE >1079:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A2C intcode_body CODE >1080:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A2E intcode_body CODE >1081:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A30 intcode_body CODE >1083:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A38 intcode_body CODE >1084:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A3A intcode_body CODE >1085:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A3C intcode_body CODE >1087:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A44 intcode_body CODE >1088:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A46 intcode_body CODE >1089:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A48 intcode_body CODE >1091:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A50 intcode_body CODE >1092:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A56 intcode_body CODE >1093:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A5C intcode_body CODE >1095:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A5E intcode_body CODE >1097:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A6A intcode_body CODE >1098:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A72 intcode_body CODE >1099:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A74 intcode_body CODE >1100:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A76 intcode_body CODE >1102:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A7E intcode_body CODE >1103:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A80 intcode_body CODE >1104:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A82 intcode_body CODE >1106:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A8A intcode_body CODE >1107:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A8C intcode_body CODE >1108:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A8E intcode_body CODE >1110:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A94 intcode_body CODE >1111:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A96 intcode_body CODE >1112:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2A98 intcode_body CODE >1114:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2AA0 intcode_body CODE >1115:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2AA6 intcode_body CODE >1116:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2AAC intcode_body CODE >1118:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2AAE intcode_body CODE >1120:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2ABA intcode_body CODE >1121:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2AC0 intcode_body CODE >1122:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2AC2 intcode_body CODE >1123:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2AC4 intcode_body CODE >1125:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2ACC intcode_body CODE >1126:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2ACE intcode_body CODE >1127:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2AD0 intcode_body CODE >1129:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2AD8 intcode_body CODE >1130:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2ADA intcode_body CODE >1131:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2ADC intcode_body CODE >1133:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2AE4 intcode_body CODE >1134:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2AE6 intcode_body CODE >1135:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2AE8 intcode_body CODE >1137:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2AF0 intcode_body CODE >1138:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2AF6 intcode_body CODE >1139:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2AFC intcode_body CODE >1141:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2AFE intcode_body CODE >1143:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B0A intcode_body CODE >1144:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B12 intcode_body CODE >1145:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B14 intcode_body CODE >1146:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B16 intcode_body CODE >1148:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B1E intcode_body CODE >1149:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B20 intcode_body CODE >1150:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B22 intcode_body CODE >1152:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B2A intcode_body CODE >1153:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B2C intcode_body CODE >1154:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B2E intcode_body CODE >1156:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B34 intcode_body CODE >1157:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B36 intcode_body CODE >1158:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B38 intcode_body CODE >1160:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B40 intcode_body CODE >1161:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B46 intcode_body CODE >1162:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B4C intcode_body CODE >1164:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B4E intcode_body CODE >1167:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B58 intcode_body CODE >1168:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B5A intcode_body CODE >1169:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B5E intcode_body CODE >1170:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+2B78 intcode_body CODE >1172:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
 2FA2 text31 CODE >8:C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\lldiv.c
 2FA2 text31 CODE >14:C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\lldiv.c
 2FB4 text31 CODE >15:C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\lldiv.c
@@ -1506,56 +1506,56 @@ CF0 text0 CODE >501:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot
 D18 text0 CODE >502:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
 D1E text0 CODE >503:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
 D46 text0 CODE >486:C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
-326C cinit CODE >2253:C:\Users\teddy\AppData\Local\Temp\sdvs.
-326C cinit CODE >2255:C:\Users\teddy\AppData\Local\Temp\sdvs.
-326C cinit CODE >2258:C:\Users\teddy\AppData\Local\Temp\sdvs.
-326C cinit CODE >2406:C:\Users\teddy\AppData\Local\Temp\sdvs.
-326E cinit CODE >2407:C:\Users\teddy\AppData\Local\Temp\sdvs.
-3270 cinit CODE >2408:C:\Users\teddy\AppData\Local\Temp\sdvs.
-3272 cinit CODE >2409:C:\Users\teddy\AppData\Local\Temp\sdvs.
-3274 cinit CODE >2410:C:\Users\teddy\AppData\Local\Temp\sdvs.
-3276 cinit CODE >2411:C:\Users\teddy\AppData\Local\Temp\sdvs.
-3278 cinit CODE >2412:C:\Users\teddy\AppData\Local\Temp\sdvs.
-327C cinit CODE >2413:C:\Users\teddy\AppData\Local\Temp\sdvs.
-3280 cinit CODE >2414:C:\Users\teddy\AppData\Local\Temp\sdvs.
-3280 cinit CODE >2415:C:\Users\teddy\AppData\Local\Temp\sdvs.
-3282 cinit CODE >2416:C:\Users\teddy\AppData\Local\Temp\sdvs.
-3286 cinit CODE >2417:C:\Users\teddy\AppData\Local\Temp\sdvs.
-3288 cinit CODE >2418:C:\Users\teddy\AppData\Local\Temp\sdvs.
-328A cinit CODE >2419:C:\Users\teddy\AppData\Local\Temp\sdvs.
-328C cinit CODE >2423:C:\Users\teddy\AppData\Local\Temp\sdvs.
-328E cinit CODE >2424:C:\Users\teddy\AppData\Local\Temp\sdvs.
-3290 cinit CODE >2425:C:\Users\teddy\AppData\Local\Temp\sdvs.
-3292 cinit CODE >2426:C:\Users\teddy\AppData\Local\Temp\sdvs.
-3294 cinit CODE >2427:C:\Users\teddy\AppData\Local\Temp\sdvs.
-3296 cinit CODE >2428:C:\Users\teddy\AppData\Local\Temp\sdvs.
-3298 cinit CODE >2429:C:\Users\teddy\AppData\Local\Temp\sdvs.
-329C cinit CODE >2430:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32A0 cinit CODE >2431:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32A0 cinit CODE >2432:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32A2 cinit CODE >2433:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32A6 cinit CODE >2434:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32A8 cinit CODE >2435:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32AA cinit CODE >2436:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32AC cinit CODE >2440:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32B0 cinit CODE >2441:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32B2 cinit CODE >2442:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32B2 cinit CODE >2443:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32B4 cinit CODE >2444:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32B6 cinit CODE >2445:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32B8 cinit CODE >2448:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32BC cinit CODE >2449:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32BE cinit CODE >2450:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32BE cinit CODE >2451:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32C0 cinit CODE >2452:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32C2 cinit CODE >2453:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32C4 cinit CODE >2459:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32C4 cinit CODE >2461:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32C6 cinit CODE >2462:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32C8 cinit CODE >2464:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32CA cinit CODE >2465:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32CC cinit CODE >2466:C:\Users\teddy\AppData\Local\Temp\sdvs.
-32CE cinit CODE >2467:C:\Users\teddy\AppData\Local\Temp\sdvs.
+326C cinit CODE >2255:C:\Users\teddy\AppData\Local\Temp\sdes.
+326C cinit CODE >2257:C:\Users\teddy\AppData\Local\Temp\sdes.
+326C cinit CODE >2260:C:\Users\teddy\AppData\Local\Temp\sdes.
+326C cinit CODE >2408:C:\Users\teddy\AppData\Local\Temp\sdes.
+326E cinit CODE >2409:C:\Users\teddy\AppData\Local\Temp\sdes.
+3270 cinit CODE >2410:C:\Users\teddy\AppData\Local\Temp\sdes.
+3272 cinit CODE >2411:C:\Users\teddy\AppData\Local\Temp\sdes.
+3274 cinit CODE >2412:C:\Users\teddy\AppData\Local\Temp\sdes.
+3276 cinit CODE >2413:C:\Users\teddy\AppData\Local\Temp\sdes.
+3278 cinit CODE >2414:C:\Users\teddy\AppData\Local\Temp\sdes.
+327C cinit CODE >2415:C:\Users\teddy\AppData\Local\Temp\sdes.
+3280 cinit CODE >2416:C:\Users\teddy\AppData\Local\Temp\sdes.
+3280 cinit CODE >2417:C:\Users\teddy\AppData\Local\Temp\sdes.
+3282 cinit CODE >2418:C:\Users\teddy\AppData\Local\Temp\sdes.
+3286 cinit CODE >2419:C:\Users\teddy\AppData\Local\Temp\sdes.
+3288 cinit CODE >2420:C:\Users\teddy\AppData\Local\Temp\sdes.
+328A cinit CODE >2421:C:\Users\teddy\AppData\Local\Temp\sdes.
+328C cinit CODE >2425:C:\Users\teddy\AppData\Local\Temp\sdes.
+328E cinit CODE >2426:C:\Users\teddy\AppData\Local\Temp\sdes.
+3290 cinit CODE >2427:C:\Users\teddy\AppData\Local\Temp\sdes.
+3292 cinit CODE >2428:C:\Users\teddy\AppData\Local\Temp\sdes.
+3294 cinit CODE >2429:C:\Users\teddy\AppData\Local\Temp\sdes.
+3296 cinit CODE >2430:C:\Users\teddy\AppData\Local\Temp\sdes.
+3298 cinit CODE >2431:C:\Users\teddy\AppData\Local\Temp\sdes.
+329C cinit CODE >2432:C:\Users\teddy\AppData\Local\Temp\sdes.
+32A0 cinit CODE >2433:C:\Users\teddy\AppData\Local\Temp\sdes.
+32A0 cinit CODE >2434:C:\Users\teddy\AppData\Local\Temp\sdes.
+32A2 cinit CODE >2435:C:\Users\teddy\AppData\Local\Temp\sdes.
+32A6 cinit CODE >2436:C:\Users\teddy\AppData\Local\Temp\sdes.
+32A8 cinit CODE >2437:C:\Users\teddy\AppData\Local\Temp\sdes.
+32AA cinit CODE >2438:C:\Users\teddy\AppData\Local\Temp\sdes.
+32AC cinit CODE >2442:C:\Users\teddy\AppData\Local\Temp\sdes.
+32B0 cinit CODE >2443:C:\Users\teddy\AppData\Local\Temp\sdes.
+32B2 cinit CODE >2444:C:\Users\teddy\AppData\Local\Temp\sdes.
+32B2 cinit CODE >2445:C:\Users\teddy\AppData\Local\Temp\sdes.
+32B4 cinit CODE >2446:C:\Users\teddy\AppData\Local\Temp\sdes.
+32B6 cinit CODE >2447:C:\Users\teddy\AppData\Local\Temp\sdes.
+32B8 cinit CODE >2450:C:\Users\teddy\AppData\Local\Temp\sdes.
+32BC cinit CODE >2451:C:\Users\teddy\AppData\Local\Temp\sdes.
+32BE cinit CODE >2452:C:\Users\teddy\AppData\Local\Temp\sdes.
+32BE cinit CODE >2453:C:\Users\teddy\AppData\Local\Temp\sdes.
+32C0 cinit CODE >2454:C:\Users\teddy\AppData\Local\Temp\sdes.
+32C2 cinit CODE >2455:C:\Users\teddy\AppData\Local\Temp\sdes.
+32C4 cinit CODE >2461:C:\Users\teddy\AppData\Local\Temp\sdes.
+32C4 cinit CODE >2463:C:\Users\teddy\AppData\Local\Temp\sdes.
+32C6 cinit CODE >2464:C:\Users\teddy\AppData\Local\Temp\sdes.
+32C8 cinit CODE >2466:C:\Users\teddy\AppData\Local\Temp\sdes.
+32CA cinit CODE >2467:C:\Users\teddy\AppData\Local\Temp\sdes.
+32CC cinit CODE >2468:C:\Users\teddy\AppData\Local\Temp\sdes.
+32CE cinit CODE >2469:C:\Users\teddy\AppData\Local\Temp\sdes.
 # %SYMTAB Section
 # An enumeration of all symbols in the program.
 # The beginning of the section is indicated by %SYMTAB.
@@ -1584,7 +1584,7 @@ _lcdNibble 3334 0 CODE 0 text27 dist/default/production\main_project.X.productio
 keypressed@key 22 0 COMRAM 1 cstackCOMRAM dist/default/production\main_project.X.production.obj
 __Hibigdata 0 0 CODE 0 ibigdata dist/default/production\main_project.X.production.obj
 __size_of_wait_2ms 0 0 ABS 0 - dist/default/production\main_project.X.production.obj
-__mediumconst FC9E 0 MEDIUMCONST 0 mediumconst C:\Users\teddy\AppData\Local\Temp\sdvs.obj
+__mediumconst FC9E 0 MEDIUMCONST 0 mediumconst C:\Users\teddy\AppData\Local\Temp\sdes.obj
 __size_ofi2_Eeprom_WriteByte 0 0 ABS 0 - dist/default/production\main_project.X.production.obj
 I2C_Master_Init@c 8D 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
 __Heeprom_data 0 0 EEDATA 0 eeprom_data dist/default/production\main_project.X.production.obj
@@ -1604,7 +1604,7 @@ _RCEN 7E2B 0 ABS 0 - dist/default/production\main_project.X.production.obj
 _TMR0 FD6 0 ABS 0 - dist/default/production\main_project.X.production.obj
 _TMR1 FCE 0 ABS 0 - dist/default/production\main_project.X.production.obj
 _TMR2 FCC 0 ABS 0 - dist/default/production\main_project.X.production.obj
-___sp 0 0 STACK 2 stack C:\Users\teddy\AppData\Local\Temp\sdvs.obj
+___sp 0 0 STACK 2 stack C:\Users\teddy\AppData\Local\Temp\sdes.obj
 _keys FD87 0 MEDIUMCONST 0 mediumconst dist/default/production\main_project.X.production.obj
 _main 12 0 CODE 0 text0 dist/default/production\main_project.X.production.obj
 _numC E9 0 BANK0 1 bssBANK0 dist/default/production\main_project.X.production.obj
@@ -1615,7 +1615,7 @@ testBatteries@volt2 87 0 BANK0 1 cstackBANK0 dist/default/production\main_projec
 testBatteries@volt3 85 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
 testBatteries@volt4 89 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
 testBatteries@volt5 8B 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
-start E 0 CODE 0 init C:\Users\teddy\AppData\Local\Temp\sdvs.obj
+start E 0 CODE 0 init C:\Users\teddy\AppData\Local\Temp\sdes.obj
 i2___lwdiv@quotient 5 0 COMRAM 1 cstackCOMRAM dist/default/production\main_project.X.production.obj
 __size_of___awdiv 0 0 ABS 0 - dist/default/production\main_project.X.production.obj
 __size_of___awmod 0 0 ABS 0 - dist/default/production\main_project.X.production.obj
@@ -1645,11 +1645,11 @@ ___awmod@sign 85 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.pr
 I2C_Master_Read@a 81 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
 _T0CONbits FD5 0 ABS 0 - dist/default/production\main_project.X.production.obj
 __HdataCOMRAM 0 0 ABS 0 dataCOMRAM dist/default/production\main_project.X.production.obj
-__accesstop 80 0 ABS 0 - C:\Users\teddy\AppData\Local\Temp\sdvs.obj
-intlevel0 0 0 CODE 0 text C:\Users\teddy\AppData\Local\Temp\sdvs.obj
-intlevel1 0 0 CODE 0 text C:\Users\teddy\AppData\Local\Temp\sdvs.obj
-intlevel2 0 0 CODE 0 text C:\Users\teddy\AppData\Local\Temp\sdvs.obj
-intlevel3 0 0 CODE 0 text C:\Users\teddy\AppData\Local\Temp\sdvs.obj
+__accesstop 80 0 ABS 0 - C:\Users\teddy\AppData\Local\Temp\sdes.obj
+intlevel0 0 0 CODE 0 text C:\Users\teddy\AppData\Local\Temp\sdes.obj
+intlevel1 0 0 CODE 0 text C:\Users\teddy\AppData\Local\Temp\sdes.obj
+intlevel2 0 0 CODE 0 text C:\Users\teddy\AppData\Local\Temp\sdes.obj
+intlevel3 0 0 CODE 0 text C:\Users\teddy\AppData\Local\Temp\sdes.obj
 __LbssCOMRAM 0 0 ABS 0 bssCOMRAM dist/default/production\main_project.X.production.obj
 __LnvFARRAM 0 0 FARRAM 0 nvFARRAM dist/default/production\main_project.X.production.obj
 _CMCONbits FB4 0 ABS 0 - dist/default/production\main_project.X.production.obj
@@ -1685,9 +1685,9 @@ i2___wmul@multiplier 1 0 COMRAM 1 cstackCOMRAM dist/default/production\main_proj
 _plat2Right D5 0 BANK0 1 bssBANK0 dist/default/production\main_project.X.production.obj
 __end_of_lcdInst 37CE 0 CODE 0 text26 dist/default/production\main_project.X.production.obj
 ___awdiv@dividend 80 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
-___inthi_sp 0 0 STACK 2 stack C:\Users\teddy\AppData\Local\Temp\sdvs.obj
+___inthi_sp 0 0 STACK 2 stack C:\Users\teddy\AppData\Local\Temp\sdes.obj
 printf@width 9F 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
-___intlo_sp 0 0 STACK 2 stack C:\Users\teddy\AppData\Local\Temp\sdvs.obj
+___intlo_sp 0 0 STACK 2 stack C:\Users\teddy\AppData\Local\Temp\sdes.obj
 __size_ofi2___wmul 0 0 ABS 0 - dist/default/production\main_project.X.production.obj
 _getHundreds 355C 0 CODE 0 text19 dist/default/production\main_project.X.production.obj
 _drainHeader FC9F 0 MEDIUMCONST 0 mediumconst dist/default/production\main_project.X.production.obj
@@ -1791,19 +1791,19 @@ logPC@F3246 F8 0 BANK0 1 dataBANK0 dist/default/production\main_project.X.produc
 logPC@F3250 ED 0 BANK0 1 dataBANK0 dist/default/production\main_project.X.production.obj
 _readADC 3718 0 CODE 0 text3 dist/default/production\main_project.X.production.obj
 _AAHeader FD08 0 MEDIUMCONST 0 mediumconst dist/default/production\main_project.X.production.obj
-logPC@i_913 122 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
-logPC@i_914 124 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
-logPC@i_917 126 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
-logPC@i_918 128 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
-logPC@i_921 12A 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
-logPC@i_922 12C 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
-logPC@i_925 12E 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
-logPC@i_926 130 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
-logPC@i_929 132 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
-logPC@i_930 134 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
-logPC@i_933 136 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
-logPC@i_934 138 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
-logPC@i_937 13A 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
+logPC@i_944 122 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
+logPC@i_945 124 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
+logPC@i_948 126 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
+logPC@i_949 128 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
+logPC@i_952 12A 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
+logPC@i_953 12C 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
+logPC@i_956 12E 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
+logPC@i_957 130 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
+logPC@i_960 132 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
+logPC@i_961 134 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
+logPC@i_964 136 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
+logPC@i_965 138 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
+logPC@i_968 13A 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
 __end_of_initLCD 34DE 0 CODE 0 text25 dist/default/production\main_project.X.production.obj
 __Hbank0 0 0 ABS 0 bank0 dist/default/production\main_project.X.production.obj
 __Hbank1 0 0 ABS 0 bank1 dist/default/production\main_project.X.production.obj
@@ -1846,7 +1846,7 @@ __Hbank15 0 0 ABS 0 bank15 dist/default/production\main_project.X.production.obj
 __end_of_AAHeader FD28 0 MEDIUMCONST 0 mediumconst dist/default/production\main_project.X.production.obj
 __Hbigbss 0 0 BIGRAM 1 bigbss dist/default/production\main_project.X.production.obj
 __Hbigram 0 0 ABS 0 bigram dist/default/production\main_project.X.production.obj
-__smallconst 0 0 SMALLCONST 0 smallconst C:\Users\teddy\AppData\Local\Temp\sdvs.obj
+__smallconst 0 0 SMALLCONST 0 smallconst C:\Users\teddy\AppData\Local\Temp\sdes.obj
 __Hcomram 0 0 ABS 0 comram dist/default/production\main_project.X.production.obj
 __Hconfig 30000E 0 CONFIG 0 config dist/default/production\main_project.X.production.obj
 __CFG_LPT1OSC$OFF 0 0 ABS 0 - dist/default/production\main_project.X.production.obj
@@ -1942,8 +1942,8 @@ lcdInst@data 82 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.pro
 i2Eeprom_WriteByte@address 1 0 COMRAM 1 cstackCOMRAM dist/default/production\main_project.X.production.obj
 __end_of_ISR 2BB4 0 CODE 0 intcode_body dist/default/production\main_project.X.production.obj
 int_func 28C2 0 CODE 0 intcode_body dist/default/production\main_project.X.production.obj
-main@steps_765 C5 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
-main@steps_774 C6 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
+main@steps_793 C5 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
+main@steps_802 C6 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
 __CFG_CCP2MX$PORTC 0 0 ABS 0 - dist/default/production\main_project.X.production.obj
 logPC@numberDrain 11C 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
 __end_of_totalHeader FCE7 0 MEDIUMCONST 0 mediumconst dist/default/production\main_project.X.production.obj
@@ -2084,7 +2084,7 @@ __end_of_CHeader FD87 0 MEDIUMCONST 0 mediumconst dist/default/production\main_p
 __Lcomram 0 0 ABS 0 comram dist/default/production\main_project.X.production.obj
 __Lconfig 300000 0 CONFIG 0 config dist/default/production\main_project.X.production.obj
 _printf 18B2 0 CODE 0 text9 dist/default/production\main_project.X.production.obj
-i2_isdigit$1200 2 0 COMRAM 1 cstackCOMRAM dist/default/production\main_project.X.production.obj
+i2_isdigit$1231 2 0 COMRAM 1 cstackCOMRAM dist/default/production\main_project.X.production.obj
 show_log@log_address A2 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
 Eeprom_WriteByte@address 80 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
 ___wmul@multiplier 80 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
@@ -2098,10 +2098,10 @@ __end_of_show_log 1FA2 0 CODE 0 text8 dist/default/production\main_project.X.pro
 __size_ofi2_lcdInst 0 0 ABS 0 - dist/default/production\main_project.X.production.obj
 __Lfarbss 0 0 FARRAM 0 farbss dist/default/production\main_project.X.production.obj
 ___lwdiv@divisor 82 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
-main@i_743 C1 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
-main@i_791 C2 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
-main@i_793 C3 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
-main@i_808 C4 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
+main@i_771 C1 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
+main@i_819 C2 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
+main@i_821 C3 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
+main@i_836 C4 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
 __size_ofi2_I2C_Master_Start 0 0 ABS 0 - dist/default/production\main_project.X.production.obj
 main@steps C7 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
 __Lfardata 0 0 FARRAM 0 fardata dist/default/production\main_project.X.production.obj
@@ -2111,8 +2111,8 @@ _timeHeader FD48 0 MEDIUMCONST 0 mediumconst dist/default/production\main_projec
 _doneTimer E3 0 BANK0 1 bssBANK0 dist/default/production\main_project.X.production.obj
 i2_Eeprom_WriteByte 364E 0 CODE 0 text38 dist/default/production\main_project.X.production.obj
 i2I2C_Master_Read@temp 3 0 COMRAM 1 cstackCOMRAM dist/default/production\main_project.X.production.obj
-stackhi F7F 0 ABS 0 - C:\Users\teddy\AppData\Local\Temp\sdvs.obj
-stacklo 13C 0 ABS 0 - C:\Users\teddy\AppData\Local\Temp\sdvs.obj
+stackhi F7F 0 ABS 0 - C:\Users\teddy\AppData\Local\Temp\sdes.obj
+stacklo 13C 0 ABS 0 - C:\Users\teddy\AppData\Local\Temp\sdes.obj
 __end_of_nineVHeader FD48 0 MEDIUMCONST 0 mediumconst dist/default/production\main_project.X.production.obj
 __Lintcode 8 0 CODE 0 intcode dist/default/production\main_project.X.production.obj
 __end_ofi2_stopOperation 28C2 0 CODE 0 text34 dist/default/production\main_project.X.production.obj
@@ -2246,9 +2246,9 @@ __Ltext49 0 0 ABS 0 text49 dist/default/production\main_project.X.production.obj
 __Ltext50 0 0 ABS 0 text50 dist/default/production\main_project.X.production.obj
 __Ltext51 0 0 ABS 0 text51 dist/default/production\main_project.X.production.obj
 __Ltext52 0 0 ABS 0 text52 dist/default/production\main_project.X.production.obj
-__ramtop 1000 0 RAM 0 ramtop C:\Users\teddy\AppData\Local\Temp\sdvs.obj
-show_log@i_905 B9 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
-show_log@i_908 BA 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
+__ramtop 1000 0 RAM 0 ramtop C:\Users\teddy\AppData\Local\Temp\sdes.obj
+show_log@i_936 B9 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
+show_log@i_939 BA 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
 show_log@month B3 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
 __end_of_Eeprom_ReadByte 3748 0 CODE 0 text14 dist/default/production\main_project.X.production.obj
 __Lpowerup E 0 CODE 0 powerup dist/default/production\main_project.X.production.obj
@@ -2327,7 +2327,7 @@ _ACKEN 7E2C 0 ABS 0 - dist/default/production\main_project.X.production.obj
 _ADRES FC3 0 ABS 0 - dist/default/production\main_project.X.production.obj
 __end_of_dpowers FDA2 0 MEDIUMCONST 0 mediumconst dist/default/production\main_project.X.production.obj
 _EEADR FA9 0 ABS 0 - dist/default/production\main_project.X.production.obj
-_isdigit$1200 81 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
+_isdigit$1231 81 0 BANK0 1 cstackBANK0 dist/default/production\main_project.X.production.obj
 _PORTB F81 0 ABS 0 - dist/default/production\main_project.X.production.obj
 __end_of_logPC 18B2 0 CODE 0 text15 dist/default/production\main_project.X.production.obj
 _T0CON FD5 0 ABS 0 - dist/default/production\main_project.X.production.obj
@@ -2371,6 +2371,7 @@ __size_ofi2_lcdNibble 0 0 ABS 0 - dist/default/production\main_project.X.product
 logPC@started_time 100 0 BANK1 1 cstackBANK1 dist/default/production\main_project.X.production.obj
 __pbssBANK0 C8 0 BANK0 1 bssBANK0 dist/default/production\main_project.X.production.obj
 __pdataCOMRAM 35 0 COMRAM 1 dataCOMRAM dist/default/production\main_project.X.production.obj
+_T2CONbits FCA 0 ABS 0 - dist/default/production\main_project.X.production.obj
 i2___awdiv@counter 5 0 COMRAM 1 cstackCOMRAM dist/default/production\main_project.X.production.obj
 i2___lwmod@counter C 0 COMRAM 1 cstackCOMRAM dist/default/production\main_project.X.production.obj
 i2I2C_Master_Write@d 2 0 COMRAM 1 cstackCOMRAM dist/default/production\main_project.X.production.obj

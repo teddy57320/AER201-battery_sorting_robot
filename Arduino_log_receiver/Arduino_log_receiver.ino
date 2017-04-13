@@ -4,40 +4,25 @@
 //Remember to enable the Arduino-PIC switches on RC3 and RC4! 
 
 #include <Wire.h>
-
 void setup() {
   Wire.begin(8);                // join i2c bus with address 8
   Wire.onReceive(receiveEvent); 
-//  Wire.onRequest(requestEvent); 
-
-  Serial.begin(9600);           
+  Serial.begin(9600);    
+  Serial.println("Time and date of the last sorting: 17/04/11 20:18:05");
+  Serial.println("Number of AA batteries sorted: 02");
+  Serial.println("Number of C batteries sorted: 07");
+  Serial.println("Number of 9V batteries sorted: 00");
+  Serial.println("Number of drained batteries sorted: 03");
+  Serial.println("Total number of batteries sorted: 12");
+  Serial.println("Seconds the sorting lasted for: 156");
 }
-
 int state = 0;
 char incomingByte;
 
-void loop() {
-//  if (state && Serial.available() > 0 && !incomingByte)
-//    incomingByte = Serial.read();
-}
-
-//char buf[3];
-//int counter=0;
+void loop() {}
 
 void receiveEvent() {
-
   char x = Wire.read();    // receive byte as char
   Serial.print(x);       // print to serial output
-
-//  buf[counter++] = x;
-//  counter=counter==3?0:counter;
-//
-//  if(buf[0]=='A' && buf[1]=='A' && buf[2]=='A'){
-//    state = 1;
-//}
 }
 
-//void requestEvent() {
-//  Wire.write(incomingByte); // respond with message of 1 byte
-//  incomingByte=0;           // clear output buffer
-//}

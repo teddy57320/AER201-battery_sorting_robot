@@ -22,8 +22,8 @@
 #define PERM_LOGB	11
 #define PERM_LOGC	12
 #define PERM_LOGD	13
-#define PC_LOG		14
-#define RTC_DISPLAY	15	
+// #define PC_LOG		14
+#define RTC_DISPLAY	14
 
 // LCD macros
 #define __delay_1s() for(char i=0;i<100;i++){__delay_ms(10);}
@@ -37,12 +37,10 @@
 
 //s = 0 or 1
 //outputs
-#define funnelSol(s) LATBbits.LB0 = s;			//initial funnel solenoid (RB0)
+#define initialSol(s) LATBbits.LB0 = s;			//initial funnel solenoid (RB0)
 
-#define gearDir(s) LATDbits.LD0= s;				//dir pin for stepper (RD0)
-#define gearStep(s) LATDbits.LD1 = s;			//step pin for stepper (RD1)
-
-#define setServo(s) LATBbits.LB2 = s;			//servo Pin     (RB2)
+#define chamberDir(s) LATDbits.LD0= s;				//dir pin for stepper (RD0)
+#define chamberStep(s) LATDbits.LD1 = s;			//step pin for stepper (RD1)
 
 #define plat1c1a(s) LATCbits.LC1 = s;			//platform 1 coil 1a (RC1)	yellow/grey
 #define plat1c1b(s) LATCbits.LC2 = s;			//platform 1 coil 1b (RC2)

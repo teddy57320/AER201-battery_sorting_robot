@@ -4356,13 +4356,13 @@ return;
 }
 
 void keypressed(unsigned char left, unsigned char right, unsigned char key){
-if (key == '*'){
+if (key == '7'){
 
 if(screenMode == 2){
 screenMode = 1;
 T0CONbits.TMR0ON = 1;
 T1CONbits.TMR1ON = 1;
-TMR2ON = 1;
+T2CONbits.TMR2ON = 1;
 startGear = 1;
 
 
@@ -4387,7 +4387,7 @@ else if (screenMode == 0)
 screenMode = 2;
 }
 else if (screenMode == 1){
-if (key == '#')
+if (key == 'C')
 
 stopOperation();
 }
@@ -4859,8 +4859,6 @@ char getChar(unsigned int num) {
 return num + '0';
 }
 
-
-
 void interrupt ISR(void) {
 if (INT1IF){
 unsigned char keypress = (PORTB & 0xF0) >> 4;
@@ -4894,7 +4892,6 @@ doneTimer = 0;
 if (screenMode == 1 && TMR1IF){
 TMR1IF = 0;
 TMR1 = 60535;
-
 if (count_2ms)
 count_2ms--;
 solOnTimer++;

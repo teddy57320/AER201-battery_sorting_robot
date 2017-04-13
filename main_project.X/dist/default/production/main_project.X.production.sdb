@@ -65,7 +65,7 @@
 [v _getOnes getOnes `(i  1 e 2 0 ]
 "1030
 [v _getChar getChar `(uc  1 e 1 0 ]
-"1036
+"1034
 [v _ISR ISR `II(v  1 e 1 0 ]
 "8 C:\Program Files (x86)\Microchip\xc8\v1.40\sources\common\awdiv.c
 [v ___awdiv __awdiv `(i  1 e 2 0 ]
@@ -198,7 +198,7 @@
 [v _LATAbits LATAbits `VES361  1 e 1 @3977 ]
 "983
 [v _LATB LATB `VEuc  1 e 1 @3978 ]
-[s S479 . 1 `uc 1 LATB0 1 0 :1:0 
+[s S506 . 1 `uc 1 LATB0 1 0 :1:0 
 `uc 1 LATB1 1 0 :1:1 
 `uc 1 LATB2 1 0 :1:2 
 `uc 1 LATB3 1 0 :1:3 
@@ -208,7 +208,7 @@
 `uc 1 LATB7 1 0 :1:7 
 ]
 "1010
-[s S488 . 1 `uc 1 LB0 1 0 :1:0 
+[s S515 . 1 `uc 1 LB0 1 0 :1:0 
 `uc 1 LB1 1 0 :1:1 
 `uc 1 LB2 1 0 :1:2 
 `uc 1 LB3 1 0 :1:3 
@@ -217,8 +217,8 @@
 `uc 1 LB6 1 0 :1:6 
 `uc 1 LB7 1 0 :1:7 
 ]
-[u S497 . 1 `S479 1 . 1 0 `S488 1 . 1 0 ]
-[v _LATBbits LATBbits `VES497  1 e 1 @3978 ]
+[u S524 . 1 `S506 1 . 1 0 `S515 1 . 1 0 ]
+[v _LATBbits LATBbits `VES524  1 e 1 @3978 ]
 "1094
 [v _LATC LATC `VEuc  1 e 1 @3979 ]
 [s S269 . 1 `uc 1 LATC0 1 0 :1:0 
@@ -288,7 +288,7 @@
 [v _TRISD TRISD `VEuc  1 e 1 @3989 ]
 "2251
 [v _TRISE TRISE `VEuc  1 e 1 @3990 ]
-[s S635 . 1 `uc 1 CCP2IF 1 0 :1:0 
+[s S663 . 1 `uc 1 CCP2IF 1 0 :1:0 
 `uc 1 TMR3IF 1 0 :1:1 
 `uc 1 HLVDIF 1 0 :1:2 
 `uc 1 BCLIF 1 0 :1:3 
@@ -298,12 +298,12 @@
 `uc 1 OSCFIF 1 0 :1:7 
 ]
 "2792
-[s S644 . 1 `uc 1 . 1 0 :2:0 
+[s S672 . 1 `uc 1 . 1 0 :2:0 
 `uc 1 LVDIF 1 0 :1:2 
 ]
-[u S647 . 1 `S635 1 . 1 0 `S644 1 . 1 0 ]
-[v _PIR2bits PIR2bits `VES647  1 e 1 @4001 ]
-[s S605 . 1 `uc 1 RD 1 0 :1:0 
+[u S675 . 1 `S663 1 . 1 0 `S672 1 . 1 0 ]
+[v _PIR2bits PIR2bits `VES675  1 e 1 @4001 ]
+[s S633 . 1 `uc 1 RD 1 0 :1:0 
 `uc 1 WR 1 0 :1:1 
 `uc 1 WREN 1 0 :1:2 
 `uc 1 WRERR 1 0 :1:3 
@@ -313,11 +313,11 @@
 `uc 1 EEPGD 1 0 :1:7 
 ]
 "2922
-[s S614 . 1 `uc 1 . 1 0 :6:0 
+[s S642 . 1 `uc 1 . 1 0 :6:0 
 `uc 1 EEFS 1 0 :1:6 
 ]
-[u S617 . 1 `S605 1 . 1 0 `S614 1 . 1 0 ]
-[v _EECON1bits EECON1bits `VES617  1 e 1 @4006 ]
+[u S645 . 1 `S633 1 . 1 0 `S642 1 . 1 0 ]
+[v _EECON1bits EECON1bits `VES645  1 e 1 @4006 ]
 "2966
 [v _EECON2 EECON2 `VEuc  1 e 1 @4007 ]
 "2972
@@ -352,38 +352,38 @@
 [v _ADCON1 ADCON1 `VEuc  1 e 1 @4033 ]
 "4474
 [v _ADCON0 ADCON0 `VEuc  1 e 1 @4034 ]
-[s S519 . 1 `uc 1 . 1 0 :1:0 
+[s S546 . 1 `uc 1 . 1 0 :1:0 
 `uc 1 GO_NOT_DONE 1 0 :1:1 
 ]
 "4518
-[s S522 . 1 `uc 1 ADON 1 0 :1:0 
+[s S549 . 1 `uc 1 ADON 1 0 :1:0 
 `uc 1 GO_nDONE 1 0 :1:1 
 `uc 1 CHS 1 0 :4:2 
 ]
-[s S526 . 1 `uc 1 . 1 0 :1:0 
+[s S553 . 1 `uc 1 . 1 0 :1:0 
 `uc 1 GO 1 0 :1:1 
 `uc 1 CHS0 1 0 :1:2 
 `uc 1 CHS1 1 0 :1:3 
 `uc 1 CHS2 1 0 :1:4 
 `uc 1 CHS3 1 0 :1:5 
 ]
-[s S533 . 1 `uc 1 . 1 0 :1:0 
+[s S560 . 1 `uc 1 . 1 0 :1:0 
 `uc 1 DONE 1 0 :1:1 
 ]
-[s S536 . 1 `uc 1 . 1 0 :1:0 
+[s S563 . 1 `uc 1 . 1 0 :1:0 
 `uc 1 NOT_DONE 1 0 :1:1 
 ]
-[s S539 . 1 `uc 1 . 1 0 :1:0 
+[s S566 . 1 `uc 1 . 1 0 :1:0 
 `uc 1 nDONE 1 0 :1:1 
 ]
-[s S542 . 1 `uc 1 . 1 0 :1:0 
+[s S569 . 1 `uc 1 . 1 0 :1:0 
 `uc 1 GO_DONE 1 0 :1:1 
 ]
-[s S545 . 1 `uc 1 . 1 0 :1:0 
+[s S572 . 1 `uc 1 . 1 0 :1:0 
 `uc 1 GODONE 1 0 :1:1 
 ]
-[u S548 . 1 `S519 1 . 1 0 `S522 1 . 1 0 `S526 1 . 1 0 `S533 1 . 1 0 `S536 1 . 1 0 `S539 1 . 1 0 `S542 1 . 1 0 `S545 1 . 1 0 ]
-[v _ADCON0bits ADCON0bits `VES548  1 e 1 @4034 ]
+[u S575 . 1 `S546 1 . 1 0 `S549 1 . 1 0 `S553 1 . 1 0 `S560 1 . 1 0 `S563 1 . 1 0 `S566 1 . 1 0 `S569 1 . 1 0 `S572 1 . 1 0 ]
+[v _ADCON0bits ADCON0bits `VES575  1 e 1 @4034 ]
 "4592
 [v _ADRES ADRES `VEus  1 e 2 @4035 ]
 "4610
@@ -398,6 +398,21 @@
 [v _SSPBUF SSPBUF `VEuc  1 e 1 @4041 ]
 "4972
 [v _T2CON T2CON `VEuc  1 e 1 @4042 ]
+[s S478 . 1 `uc 1 T2CKPS 1 0 :2:0 
+`uc 1 TMR2ON 1 0 :1:2 
+`uc 1 TOUTPS 1 0 :4:3 
+]
+"4993
+[s S482 . 1 `uc 1 T2CKPS0 1 0 :1:0 
+`uc 1 T2CKPS1 1 0 :1:1 
+`uc 1 . 1 0 :1:2 
+`uc 1 T2OUTPS0 1 0 :1:3 
+`uc 1 T2OUTPS1 1 0 :1:4 
+`uc 1 T2OUTPS2 1 0 :1:5 
+`uc 1 T2OUTPS3 1 0 :1:6 
+]
+[u S490 . 1 `S478 1 . 1 0 `S482 1 . 1 0 ]
+[v _T2CONbits T2CONbits `VES490  1 e 1 @4042 ]
 "5151
 [v _TMR2 TMR2 `VEuc  1 e 1 @4044 ]
 "5157
@@ -520,19 +535,19 @@
 [v _main main `(v  1 e 1 0 ]
 {
 "495
-[v main@i_808 i `uc  1 a 1 68 ]
+[v main@i_836 i `uc  1 a 1 68 ]
 "443
-[v main@i_793 i `uc  1 a 1 67 ]
+[v main@i_821 i `uc  1 a 1 67 ]
 "435
-[v main@i_791 i `uc  1 a 1 66 ]
+[v main@i_819 i `uc  1 a 1 66 ]
 "361
-[v main@steps_774 steps `uc  1 a 1 70 ]
+[v main@steps_802 steps `uc  1 a 1 70 ]
 "298
-[v main@steps_765 steps `uc  1 a 1 69 ]
+[v main@steps_793 steps `uc  1 a 1 69 ]
 "193
 [v main@steps steps `uc  1 a 1 71 ]
 "169
-[v main@i_743 i `uc  1 a 1 65 ]
+[v main@i_771 i `uc  1 a 1 65 ]
 "161
 [v main@i i `uc  1 a 1 64 ]
 "482
@@ -613,9 +628,9 @@
 [v _show_log show_log `(v  1 e 1 0 ]
 {
 "848
-[v show_log@i_908 i `uc  1 a 1 58 ]
+[v show_log@i_939 i `uc  1 a 1 58 ]
 "837
-[v show_log@i_905 i `uc  1 a 1 57 ]
+[v show_log@i_936 i `uc  1 a 1 57 ]
 "801
 [v show_log@i i `uc  1 a 1 56 ]
 "806
@@ -713,31 +728,31 @@
 [v _logPC logPC `(v  1 e 1 0 ]
 {
 "1000
-[v logPC@i_937 i `ui  1 a 2 58 ]
+[v logPC@i_968 i `ui  1 a 2 58 ]
 "990
-[v logPC@i_934 i `ui  1 a 2 56 ]
+[v logPC@i_965 i `ui  1 a 2 56 ]
 "979
-[v logPC@i_933 i `ui  1 a 2 54 ]
+[v logPC@i_964 i `ui  1 a 2 54 ]
 "970
-[v logPC@i_930 i `ui  1 a 2 52 ]
+[v logPC@i_961 i `ui  1 a 2 52 ]
 "959
-[v logPC@i_929 i `ui  1 a 2 50 ]
+[v logPC@i_960 i `ui  1 a 2 50 ]
 "950
-[v logPC@i_926 i `ui  1 a 2 48 ]
+[v logPC@i_957 i `ui  1 a 2 48 ]
 "939
-[v logPC@i_925 i `ui  1 a 2 46 ]
+[v logPC@i_956 i `ui  1 a 2 46 ]
 "930
-[v logPC@i_922 i `ui  1 a 2 44 ]
+[v logPC@i_953 i `ui  1 a 2 44 ]
 "919
-[v logPC@i_921 i `ui  1 a 2 42 ]
+[v logPC@i_952 i `ui  1 a 2 42 ]
 "910
-[v logPC@i_918 i `ui  1 a 2 40 ]
+[v logPC@i_949 i `ui  1 a 2 40 ]
 "899
-[v logPC@i_917 i `ui  1 a 2 38 ]
+[v logPC@i_948 i `ui  1 a 2 38 ]
 "890
-[v logPC@i_914 i `ui  1 a 2 36 ]
+[v logPC@i_945 i `ui  1 a 2 36 ]
 "879
-[v logPC@i_913 i `ui  1 a 2 34 ]
+[v logPC@i_944 i `ui  1 a 2 34 ]
 "860
 [v logPC@i i `ui  1 a 2 32 ]
 "866
@@ -892,12 +907,12 @@
 [v ___lldiv@divisor divisor `ul  1 p 4 4 ]
 "31
 } 0
-"1036 C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
+"1034 C:\Users\teddy\Desktop\programming\Git\battery_sorting_robot/main.c
 [v _ISR ISR `II(v  1 e 1 0 ]
 {
-"1038
+"1036
 [v ISR@keypress keypress `uc  1 a 1 51 ]
-"1175
+"1172
 } 0
 "509
 [v _keypressed keypressed `(v  1 e 1 0 ]

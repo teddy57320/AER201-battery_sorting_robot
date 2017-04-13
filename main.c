@@ -7,19 +7,19 @@
 #include "I2C.h"
 
 const char keys[] = "123A456B789C*0#D";
-const char timeHeader[] = "Time and date of last sorting: ";  //31
-const char AAHeader[] = "Number of AA batteries sorted: ";   //31 
-const char CHeader[] = "Number of C batteries sorted: ";      //30
-const char nineVHeader[] = "Number of 9V batteries sorted: ";    //31
-const char drainHeader[] = "Number of drained batteries sorted: ";    //36
-const char totalHeader[] = "Total number of batteries sorted: ";  //34
-const char runTimeHeader[] = "Seconds the sorting lasted for: ";  //32
+// const char timeHeader[] = "Time and date of last sorting: ";  //31 charaters long
+// const char AAHeader[] = "Number of AA batteries sorted: ";   //31 
+// const char CHeader[] = "Number of C batteries sorted: ";      //30
+// const char nineVHeader[] = "Number of 9V batteries sorted: ";    //31
+// const char drainHeader[] = "Number of drained batteries sorted: ";    //36
+// const char totalHeader[] = "Total number of batteries sorted: ";  //34
+// const char runTimeHeader[] = "Seconds the sorting lasted for: ";  //32
 
 void keypressed(unsigned char left, unsigned char right, unsigned char key);
 //handles all cases where key is pressed
 
 void readADC(unsigned char channel);
-//select analog channel to read
+//select analog channel to read from 
 
 void stopOperation(void);
 //stop battery sorting
@@ -34,15 +34,18 @@ void Eeprom_WriteByte(uint16_t address, uint8_t data);
 uint16_t next_address(uint16_t address);
 void show_log(uint16_t log_address, unsigned char currScreen);
 
-void logPC(void);
+void logPC(void);               //PC interface functions 
 int getHundreds(unsigned int num);
 int getTens(unsigned int num);
 int getOnes(unsigned int num);
 char getChar(unsigned int num);
 
+void rotateChamber(void);   //rotate the chambers by specified spinning sequence
+void unClogSequence(void);  //start unclogging sequence by the platforms and UVD wall solenoid
+
 unsigned char screenMode = STANDBY; //start at standby screen
-unsigned char realTime[7];		                            //used to retrieve real time/date
-unsigned char lastRunRTC[7];                            //store real time/date of last run
+unsigned char realTime[7];		    //used to retrieve real time/date
+unsigned char lastRunRTC[7];        //store real time/date of last run
 
 unsigned char opTimer;                                  //counters for counting run time
 unsigned char doneTimer, solOnTimer;                    //done sorting flag if no battery is detected at after 10 seconds, turning on/off every second
@@ -50,15 +53,15 @@ unsigned char num9V, numC, numAA, numBats, numDrain;    //number of batteries of
 unsigned char min, sec;                                 //store latest run time                              
 unsigned char countC, countAA, count9V, countDrain;     //temporary values to count batteries during sorting
 unsigned int plat2Left, plat1Right, plat2Right, plat1Left; //flags for platform motors
-//plat1Left --> drained, counterclockwise
-//plat1Right --> charged, clockwise
-//plat2Left --> charged, counterclockwise
-//plat2Right --> drained, clockwise
+//plat1Left --> drained
+//plat1Right --> charged
+//plat2Left --> charged
+//plat2Right --> drained
 unsigned char startGear;  //state of the stepper, flag for initial spinning sequence of stepper motor
 unsigned char step1, step2;     //tracking steps of the UVD platforms as per http://mechatronics.mech.northwestern.edu/design_ref/actuators/stepper_drive1.html
 unsigned int turn1BackRight, turn1BackLeft, turn2BackRight, turn2BackLeft;     //flags for turning platforms back to their original positions
 unsigned char sorting, doubleAA;          //flag for when the program is sorting
-unsigned int count_2ms; //used as a general flag for timing
+unsigned int count_2ms; //used as a general flag for timing 2ms
 
 void main(void){ 
 
@@ -77,9 +80,10 @@ void main(void){
     ADCON0 = 0x00;          //disable ADC
 	ADCON1 = 0b00001001;    //set RA0:3, RA5, RE0 to analog (AN0:5)
     ADCON2 = 0b10110001;
-    //ADFM = 1;
+    //ADFM = 1;             right justified
     //ACQ[2:0] = 110;   16T_AD = 12.8us converting acquisition time
-    //ADCS[2:0] = 001;  T_AD = 8*T_OSC = 0.8us > 0.7us minimum for pic18
+    //ADCS[2:0] = 001;  T_AD = 8*T_OSC = 0.8us > 0.7us minimum for PIC18
+
     CVRCON = 0x00; // Disable CCP reference voltage output
     CMCONbits.CIS = 0;
  
@@ -91,8 +95,6 @@ void main(void){
     TMR0IF = 0;	    //turn off TMR0 overflow interrupt flag
     TMR1IE = 1;     //enable TMR1 overflow interrupt
     TMR1IF = 0;     //turn off TMR1 overflow interrupt flag
-    TMR2IE = 1;
-    TMR2IF = 0;
 
 /***********************************************************
     TMR0 SETUP*/
@@ -101,7 +103,7 @@ void main(void){
     TMR0ON = 0; //turn off timer
     T08BIT = 0; //use 16-bit timer
     T0CS = 0;   //use internal clock
-    //TOSE not changed
+    TOSE = 0;   //interrupt on rising edge
     PSA = 0;    //enable prescalar
     T0PS2:T0PS0 = 111 //prescale 1:256 */
     TMR0 = 55770;
@@ -126,27 +128,6 @@ void main(void){
 // time for overflow = (65535-60535)*4/10000000 = 2 milliseconds
 //**********************************************************
 
-/***********************************************************
-    TMR1 SETUP*/
-    T2CON = 0b00000010; 
-    /*implement the following in register T1CON:   
-    RD16 = 1;
-    T1RUN = 0;   //use only internal oscillator
-    T1CKPS[1:0] = 00, 1:1 prescale; 
-    T1OSCEN = 0;
-    T1SYNC = 0;
-    TMR1CS = 0;
-    TMR1ON = 0; */
-    TMR2 = 155;
-// time for overflow = (65535-60535)*4/10000000 = 2 milliseconds
-//**********************************************************
-
-/***********************************************************
-	EEPROM SETUP*/
-    // EEPGD = 0;	//enable access to EEPROM
-    // CFGS = 0;	//access EEPROM
-    //Eeprom_WriteByte(0, 0);
-//**********************************************************
     initLCD();
     nRBPU = 0;
     I2C_Master_Init(10000); //Initialize I2C Master with 100KHz clock
@@ -173,77 +154,21 @@ void main(void){
             }
         }
         while (screenMode == OPERATING){	//machine is running
-            // __lcd_home();
-            // printf("RUNNING...      ");     
-            // __lcd_newline();
-            // printf("%02d                ", doneTimer);
            __lcd_home();
            __lcd_newline();
            printf("PRESS # TO STOP ");
-           
-           // __lcd_home();
-           // __lcd_newline();
-           // printf("%4d %2d         ", ADRES, countDrain+countAA+count9V+countC);
            if (startGear){
                 wait_2ms(2000);
                 startGear = 0;
-                gearDir(0);
-                doneTimer = 0;
-
-                unsigned char steps = 0;
-                while(steps<20 && screenMode==OPERATING){    //big stepper motor turning sequence 180deg
-                    steps++;
-                    gearStep(1);
-                    __delay_ms(5);
-                    gearStep(0);
-                    __delay_ms(5);
-                }
-                steps = 0;
-                while(steps < 178 && screenMode==OPERATING){
-                    steps++;
-                    gearStep(1);
-                    __delay_ms(2);
-                    gearStep(0);
-                    __delay_ms(2);
-                }
-                steps = 0;
-                while(steps <5 && screenMode==OPERATING){
-                    steps++;
-                    gearStep(1);
-                    __delay_ms(5);
-                    gearStep(0);
-                    __delay_ms(5);
-                }
-                steps = 0;
-                gearDir(1);
-                while(steps <3 && screenMode==OPERATING){
-                    steps++;
-                    gearStep(1);
-                    __delay_ms(5);
-                    gearStep(0);
-                    __delay_ms(5);
-                }
-                gearDir(0);
-                steps = 0;
+                chamberDir(0);
+                rotateChamber();
                 wait_2ms(150);
-
-                UVDsol(1);
-                wait_2ms(100);
-                UVDsol(0);
-                plat1Right = 120;
-                plat2Left = 120;
-                while (screenMode == OPERATING && (plat1Right | plat2Left));
-                plat1Left = 120;
-                plat2Right = 120;
-                while (screenMode == OPERATING && (plat1Left | plat2Right));
+                unClogSequence();
+                doneTimer = 0;
             }
 
-             readADC(0); //RA0
-            //read UVD IR sensor RA0 = AN0
-           //  __lcd_home();
-           // __lcd_newline();
-           // printf("%4d %2d         ", ADRES, countDrain+countAA+count9V+countC);
-            if (ADRES < 22 | ADRES > 55){    //if battery is present   
+            readADC(0); 
+            if (ADRES < 45 | ADRES > 60){    //if battery is present   
                 wait_2ms(250);    
                 sorting = 1; 
                 UVDsol(1);          //actuate wall
@@ -295,48 +220,13 @@ void main(void){
                 plat2Left = turn2BackLeft;
                 plat2Right = turn2BackRight;
    
-                unsigned char steps = 0;
-                while(steps<20 && screenMode==OPERATING){    //big stepper motor turning sequence
-                    steps++;
-                    gearStep(1);
-                    __delay_ms(5);
-                    gearStep(0);
-                    __delay_ms(5);
-                }
-                steps = 0;
-                while(steps < 178 && screenMode==OPERATING){
-                    steps++;
-                    gearStep(1);
-                    __delay_ms(2);
-                    gearStep(0);
-                    __delay_ms(2);
-                }
-                steps = 0;
-                while(steps<2 && screenMode==OPERATING){
-                    steps++;
-                    gearStep(1);
-                    __delay_ms(5);
-                    gearStep(0);
-                    __delay_ms(5);
-                }
-                steps = 0;
-
+                rotateChamber();
                 while((plat1Left|plat2Left|plat1Right|plat2Right) && screenMode==OPERATING);  //wait for platforms to turn back
                 
                 wait_2ms(150);
-
-                UVDsol(1);
-                wait_2ms(100);
-                UVDsol(0);
-                plat1Right = 120;
-                plat2Left = 120;
-                while (screenMode == OPERATING && (plat1Right | plat2Left));
-                plat1Left = 120;
-                plat2Right = 120;
-                while (screenMode == OPERATING && (plat1Left | plat2Right));
-
-                gearStep(0);            //reset all stepper motor pins
-                gearDir(0);
+                unClogSequence();
+                chamberStep(0);            //reset all stepper motor pins
+                chamberDir(0);
                 plat1Right = 0;
                 plat2Right = 0;
                 plat1Left = 0;
@@ -358,31 +248,7 @@ void main(void){
             }                       
             wait_2ms(250);
             if (doneTimer >= 5){
-                unsigned char steps = 0;
-                while(steps<20 && screenMode==OPERATING){    //big stepper motor turning sequence
-                    steps++;
-                    gearStep(1);
-                    __delay_ms(5);
-                    gearStep(0);
-                    __delay_ms(5);
-                }
-                steps = 0;
-                while(steps < 178 && screenMode==OPERATING){
-                    steps++;
-                    gearStep(1);
-                    __delay_ms(2);
-                    gearStep(0);
-                    __delay_ms(2);
-                }
-                steps = 0;
-                while(steps<2 && screenMode==OPERATING){
-                    steps++;
-                    gearStep(1);
-                    __delay_ms(5);
-                    gearStep(0);
-                    __delay_ms(5);
-                }
-                steps = 0;
+                rotateChamber();
             }       
         }
         while (screenMode == FINISH){	//finish screen  
@@ -458,21 +324,21 @@ void main(void){
             printf("PERMANENT LOG B:");
             __lcd_newline();
             printf("                ");
-            show_log(97, PERM_LOGB);
+            show_log(89, PERM_LOGB);
         }
         while(screenMode == PERM_LOGC){
             __lcd_home();
             printf("PERMANENT LOG C:");
             __lcd_newline();
             printf("                ");
-            show_log(193, PERM_LOGC);
+            show_log(177, PERM_LOGC);
         }
         while(screenMode == PERM_LOGD){
             __lcd_home();
             printf("PERMANENT LOG D:");
             __lcd_newline();
             printf("                ");
-            show_log(289, PERM_LOGD);
+            show_log(265, PERM_LOGD);
         }
         while (screenMode == PC_LOG){
             __lcd_home();
@@ -513,7 +379,6 @@ void keypressed(unsigned char left, unsigned char right, unsigned char key){
             screenMode = OPERATING;
             T0CONbits.TMR0ON = 1; //turn on TMR0 
             T1CONbits.TMR1ON = 1; //turn on TMR1
-            TMR2ON = 1;
             startGear = 1;
 
             //store real time/date of start of run
@@ -532,7 +397,7 @@ void keypressed(unsigned char left, unsigned char right, unsigned char key){
 
             __lcd_home();
             printf("RUNNING: 00:00  "); 
-            funnelSol(1);
+            initialSol(1);
         }
         else if (screenMode == FINISH)
             screenMode = STANDBY;
@@ -569,10 +434,8 @@ void readADC(unsigned char channel){
 void stopOperation(void){
     T0CONbits.TMR0ON = 0;   //turn off timers
     T1CONbits.TMR1ON = 0;
-    TMR2ON = 0;
     TMR0 = 55770;
     TMR1 = 60535;
-    TMR2 = 155;
 
     num9V = count9V;     //update number of batteries
     numC = countC;
@@ -595,23 +458,23 @@ void stopOperation(void){
     Eeprom_WriteByte(address, lastRunRTC[0]);   //second
     address = next_address(address);
 
-    Eeprom_WriteByte(address, countAA);         //# of AAs
+    Eeprom_WriteByte(address, numAA);         //# of AAs
     address = next_address(address);
-    Eeprom_WriteByte(address, countC);          //# of Cs
+    Eeprom_WriteByte(address, numC);          //# of Cs
     address = next_address(address);
-    Eeprom_WriteByte(address, count9V);         //# of 9Vs
+    Eeprom_WriteByte(address, num9V);         //# of 9Vs
     address = next_address(address);
-    Eeprom_WriteByte(address, countDrain);      //# of drained
+    Eeprom_WriteByte(address, numDrain);      //# of drained
     address = next_address(address);
-    Eeprom_WriteByte(address, numBats);         //total #
-    address = next_address(address);
+    // Eeprom_WriteByte(address, numBats);         //total #
+    // address = next_address(address);
     Eeprom_WriteByte(address, opTimer);         //run time in seconds
            
     address_code++;
     if (address_code > 3)
-        Eeprom_WriteByte(0, 0);
-    else 
-        Eeprom_WriteByte(0, address_code);
+        Eeprom_WriteByte(0, 0);                 //EEPROM will start functioning after 2 runs
+    else                                        //byte at address 0 is initially 255, so the 
+        Eeprom_WriteByte(0, address_code);      //first run will not store properly 
 
     count9V = 0;
     countC = 0;
@@ -633,8 +496,7 @@ void stopOperation(void){
     count_2ms = 0;
     doubleAA = 0;
     solOnTimer = 0;
-    //reset all pins
-    plat1c1a(0);
+    plat1c1a(0);        //reset all pins
     plat1c1b(0);
     plat1c2b(0);
     plat1c2a(0);
@@ -642,32 +504,14 @@ void stopOperation(void){
     plat2c1b(0);
     plat2c2b(0);
     plat2c2a(0);
-    gearDir(0);
+    chamberDir(0);
     UVDsol(0);
-    gearStep(0);
-    funnelSol(0);
+    chamberStep(0);
+    initialSol(0);
     screenMode = FINISH;
 }
 
 void testBatteries(void){
-
-    // unsigned int i = opTimer % 2;
-    // if(i){
-    //     countDrain++;   
-    //     plat1Left = 1;
-    //     plat2Right = 1;
-    //     return;
-    // }
-    // unsigned int j = opTimer * opTimer %3;
-    // if(j == 0)
-    //     count9V++;
-    // if (j == 1)
-    //     countC++;
-    // if (j==2)
-    //     countAA++;
-    // plat1Right = 1; //charged
-    // plat2Left = 1;
-    // return;
     
     readADC(1);         //read C circuit RA1
     unsigned int volt1 = ADRES;
@@ -679,11 +523,6 @@ void testBatteries(void){
     unsigned int volt4 = ADRES;
     readADC(5);         //read 9V circuit RE0
     unsigned int volt5 = ADRES;
-
-    // __lcd_home();
-    // printf("%04d %04d %04d", volt1, volt2, volt3);
-    // __lcd_newline();
-    // printf("%04d %04d       ", volt4, volt5);
 
     if (volt1){     //charged C battery
         countC++;
@@ -723,10 +562,10 @@ void testBatteries(void){
         }
         if (volt2){            //charged AA on first platform
             plat1Right = 512;   //charged
-            plat2Left = 512;   //drained ******************
+            plat2Right = 512;   //drained
         }
         else{                   //charged AA on second platform
-            plat2Right = 512;    //charged  *********
+            plat2Left = 512;    //charged 
             plat1Left = 512;    //drained
         }
         return;
@@ -745,7 +584,7 @@ void wait_2ms(unsigned int x){
 }
 
 /******************************************************************************************************/
-/* EEPROM storage codes */
+/* EEPROM storage code */
 
 uint8_t Eeprom_ReadByte(uint16_t address) {
     // Set address registers
@@ -825,8 +664,8 @@ void show_log(uint16_t log_address, unsigned char currScreen) {
     address = next_address(address);
     unsigned int Drain_num = Eeprom_ReadByte(address);
     address = next_address(address);
-    unsigned int total_num = Eeprom_ReadByte(address);
-    address = next_address(address);
+    // unsigned int total_num = Eeprom_ReadByte(address);
+    // address = next_address(address);
     unsigned int elapsed_time = Eeprom_ReadByte(address);
 
     while (screenMode == currScreen){
@@ -855,180 +694,230 @@ void show_log(uint16_t log_address, unsigned char currScreen) {
 
 /******************************************************************************************************/
 
-void logPC(void) {
+// void logPC(void) {
 
-    for(unsigned int i = 0; i < 31; i++) {
-        I2C_Master_Start(); //Start condition
-        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-        I2C_Master_Write(timeHeader[i]); //7 bit RTC address + Write
-        I2C_Master_Stop();
-    }
-    char started_time[19] = "  /  /     :  :  ";
-    started_time[0] = getChar(getTens( __bcd_to_num(lastRunRTC[6]) ));
-    started_time[1] = getChar(getOnes( __bcd_to_num(lastRunRTC[6]) ));
-    started_time[3] = getChar(getTens( __bcd_to_num(lastRunRTC[5]) ));
-    started_time[4] = getChar(getOnes( __bcd_to_num(lastRunRTC[5]) ));
-    started_time[6] = getChar(getTens( __bcd_to_num(lastRunRTC[4]) ));
-    started_time[7] = getChar(getOnes( __bcd_to_num(lastRunRTC[4]) ));
-    started_time[9] = getChar(getTens( __bcd_to_num(lastRunRTC[2]) ));
-    started_time[10] = getChar(getOnes( __bcd_to_num(lastRunRTC[2]) ));
-    started_time[12] = getChar(getTens( __bcd_to_num(lastRunRTC[1]) ));
-    started_time[13] = getChar(getOnes( __bcd_to_num(lastRunRTC[1]) ));
-    started_time[15] = getChar(getTens( __bcd_to_num(lastRunRTC[0]) ));
-    started_time[16] = getChar(getOnes( __bcd_to_num(lastRunRTC[0]) ));
-    for(unsigned int i = 0; i < 19; i++) {
-        I2C_Master_Start(); //Start condition
-        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-        I2C_Master_Write(started_time[i]); //7 bit RTC address + Write
-        I2C_Master_Stop();
-    }
+//     for(unsigned int i = 0; i < 31; i++) {
+//         //send timeHeader to serial monitor
+//         I2C_Master_Start(); //Start condition
+//         I2C_Master_Write(0b00010000); //7 bit RTC address + Write
+//         I2C_Master_Write(timeHeader[i]); //7 bit RTC address + Write
+//         I2C_Master_Stop();
+//     }
+//     char started_time[19] = "  /  /     :  :  ";
+//     //convert time into string representation
+//     started_time[0] = getChar(getTens( __bcd_to_num(lastRunRTC[6]) ));
+//     started_time[1] = getChar(getOnes( __bcd_to_num(lastRunRTC[6]) ));
+//     started_time[3] = getChar(getTens( __bcd_to_num(lastRunRTC[5]) ));
+//     started_time[4] = getChar(getOnes( __bcd_to_num(lastRunRTC[5]) ));
+//     started_time[6] = getChar(getTens( __bcd_to_num(lastRunRTC[4]) ));
+//     started_time[7] = getChar(getOnes( __bcd_to_num(lastRunRTC[4]) ));
+//     started_time[9] = getChar(getTens( __bcd_to_num(lastRunRTC[2]) ));
+//     started_time[10] = getChar(getOnes( __bcd_to_num(lastRunRTC[2]) ));
+//     started_time[12] = getChar(getTens( __bcd_to_num(lastRunRTC[1]) ));
+//     started_time[13] = getChar(getOnes( __bcd_to_num(lastRunRTC[1]) ));
+//     started_time[15] = getChar(getTens( __bcd_to_num(lastRunRTC[0]) ));
+//     started_time[16] = getChar(getOnes( __bcd_to_num(lastRunRTC[0]) ));
 
-    I2C_Master_Start(); //Start condition
-    I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-    I2C_Master_Write('\n'); //7 bit RTC address + Write
-    I2C_Master_Stop();
-    for(unsigned int i = 0; i < 31; i++) {
-        I2C_Master_Start(); //Start condition
-        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-        I2C_Master_Write(AAHeader[i]); //7 bit RTC address + Write
-        I2C_Master_Stop();
-    }
-    char numberAA[2] = "  ";
-    numberAA[0] = getChar(getTens(numAA));
-    numberAA[1] = getChar(getOnes(numAA));
-    for(unsigned int i = 0; i < 2; i++) {
-        I2C_Master_Start(); //Start condition
-        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-        I2C_Master_Write(numberAA[i]); //7 bit RTC address + Write
-        I2C_Master_Stop();
-    }
+//     for(unsigned int i = 0; i < 19; i++) {
+//         //send started_time to serial monitor
+//         I2C_Master_Start();
+//         I2C_Master_Write(0b00010000);
+//         I2C_Master_Write(started_time[i]);
+//         I2C_Master_Stop();
+//     }
 
-    I2C_Master_Start(); //Start condition
-    I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-    I2C_Master_Write('\n'); //7 bit RTC address + Write
-    I2C_Master_Stop();
-    for(unsigned int i = 0; i < 30; i++) {
-        I2C_Master_Start(); //Start condition
-        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-        I2C_Master_Write(CHeader[i]); //7 bit RTC address + Write
-        I2C_Master_Stop();
-    }
-    char numberC[2] = "  ";
-    numberC[0] = getChar(getTens(numC));
-    numberC[1] = getChar(getOnes(numC));
-    for(unsigned int i = 0; i < 2; i++) {
-        I2C_Master_Start(); //Start condition
-        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-        I2C_Master_Write(numberC[i]); //7 bit RTC address + Write
-        I2C_Master_Stop();
-    }
+//     I2C_Master_Start(); 
+//     I2C_Master_Write(0b00010000);
+//     I2C_Master_Write('\n');
+//     I2C_Master_Stop();
 
-    I2C_Master_Start(); //Start condition
-    I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-    I2C_Master_Write('\n'); //7 bit RTC address + Write
-    I2C_Master_Stop();
-    for(unsigned int i = 0; i < 31; i++) {
-        I2C_Master_Start(); //Start condition
-        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-        I2C_Master_Write(nineVHeader[i]); //7 bit RTC address + Write
-        I2C_Master_Stop();
-    }
-    char number9V[2] = "  ";
-    number9V[0] = getChar(getTens(num9V));
-    number9V[1] = getChar(getOnes(num9V));
-    for(unsigned int i = 0; i < 2; i++) {
-        I2C_Master_Start(); //Start condition
-        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-        I2C_Master_Write(number9V[i]); //7 bit RTC address + Write
-        I2C_Master_Stop();
-    }
+//     for(unsigned int i = 0; i < 31; i++) {
+//         I2C_Master_Start();
+//         I2C_Master_Write(0b00010000);
+//         I2C_Master_Write(AAHeader[i]);
+//         I2C_Master_Stop();
+//     }
+//     char numberAA[2] = "  ";
+//     numberAA[0] = getChar(getTens(numAA));
+//     numberAA[1] = getChar(getOnes(numAA));
+//     for(unsigned int i = 0; i < 2; i++) {
+//         I2C_Master_Start();
+//         I2C_Master_Write(0b00010000);  
+//         I2C_Master_Write(numberAA[i]);  
+//         I2C_Master_Stop();
+//     }
 
-    I2C_Master_Start(); //Start condition
-    I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-    I2C_Master_Write('\n'); //7 bit RTC address + Write
-    I2C_Master_Stop();
-    for(unsigned int i = 0; i < 36; i++) {
-        I2C_Master_Start(); //Start condition
-        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-        I2C_Master_Write(drainHeader[i]); //7 bit RTC address + Write
-        I2C_Master_Stop();
-    }
-    char numberDrain[2] = "  ";
-    numberDrain[0] = getChar(getTens(numDrain));
-    numberDrain[1] = getChar(getOnes(numDrain));
-    for(unsigned int i = 0; i < 2; i++) {
-        I2C_Master_Start(); //Start condition
-        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-        I2C_Master_Write(numberDrain[i]); //7 bit RTC address + Write
-        I2C_Master_Stop();
-    }
+//     I2C_Master_Start(); 
+//     I2C_Master_Write(0b00010000);  
+//     I2C_Master_Write('\n');  
+//     I2C_Master_Stop();
 
-    I2C_Master_Start(); //Start condition
-    I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-    I2C_Master_Write('\n'); //7 bit RTC address + Write
-    I2C_Master_Stop();
-    for(unsigned int i = 0; i < 34; i++) {
-        I2C_Master_Start(); //Start condition
-        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-        I2C_Master_Write(totalHeader[i]); //7 bit RTC address + Write
-        I2C_Master_Stop();
-    }
-    char numberTotal[2] = "  ";
-    numberTotal[0] = getChar(getTens(numBats));
-    numberTotal[1] = getChar(getOnes(numBats));
-    for(unsigned int i = 0; i < 2; i++) {
-        I2C_Master_Start(); //Start condition
-        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-        I2C_Master_Write(numberTotal[i]); //7 bit RTC address + Write
-        I2C_Master_Stop();
-    }
+//     for(unsigned int i = 0; i < 30; i++) {
+//         I2C_Master_Start(); 
+//         I2C_Master_Write(0b00010000);  
+//         I2C_Master_Write(CHeader[i]);  
+//         I2C_Master_Stop();
+//     }
+//     char numberC[2] = "  ";
+//     numberC[0] = getChar(getTens(numC));
+//     numberC[1] = getChar(getOnes(numC));
+//     for(unsigned int i = 0; i < 2; i++) {
+//         I2C_Master_Start(); 
+//         I2C_Master_Write(0b00010000);  
+//         I2C_Master_Write(numberC[i]);  
+//         I2C_Master_Stop();
+//     }
 
-    I2C_Master_Start(); //Start condition
-    I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-    I2C_Master_Write('\n'); //7 bit RTC address + Write
-    I2C_Master_Stop();
-    for(unsigned int i = 0; i < 32; i++) {
-        I2C_Master_Start(); //Start condition
-        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-        I2C_Master_Write(runTimeHeader[i]); //7 bit RTC address + Write
-        I2C_Master_Stop();
+//     I2C_Master_Start(); 
+//     I2C_Master_Write(0b00010000);  
+//     I2C_Master_Write('\n');  
+//     I2C_Master_Stop();
+
+//     for(unsigned int i = 0; i < 31; i++) {
+//         I2C_Master_Start(); 
+//         I2C_Master_Write(0b00010000);  
+//         I2C_Master_Write(nineVHeader[i]);  
+//         I2C_Master_Stop();
+//     }
+//     char number9V[2] = "  ";
+//     number9V[0] = getChar(getTens(num9V));
+//     number9V[1] = getChar(getOnes(num9V));
+//     for(unsigned int i = 0; i < 2; i++) {
+//         I2C_Master_Start(); 
+//         I2C_Master_Write(0b00010000);  
+//         I2C_Master_Write(number9V[i]);  
+//         I2C_Master_Stop();
+//     }
+
+//     I2C_Master_Start(); 
+//     I2C_Master_Write(0b00010000);  
+//     I2C_Master_Write('\n');  
+//     I2C_Master_Stop();
+
+//     for(unsigned int i = 0; i < 36; i++) {
+//         I2C_Master_Start(); 
+//         I2C_Master_Write(0b00010000);  
+//         I2C_Master_Write(drainHeader[i]);  
+//         I2C_Master_Stop();
+//     }
+//     char numberDrain[2] = "  ";
+//     numberDrain[0] = getChar(getTens(numDrain));
+//     numberDrain[1] = getChar(getOnes(numDrain));
+//     for(unsigned int i = 0; i < 2; i++) {
+//         I2C_Master_Start(); 
+//         I2C_Master_Write(0b00010000);  
+//         I2C_Master_Write(numberDrain[i]);  
+//         I2C_Master_Stop();
+//     }
+
+//     I2C_Master_Start(); 
+//     I2C_Master_Write(0b00010000);  
+//     I2C_Master_Write('\n');  
+//     I2C_Master_Stop();
+
+//     for(unsigned int i = 0; i < 34; i++) {
+//         I2C_Master_Start(); 
+//         I2C_Master_Write(0b00010000);  
+//         I2C_Master_Write(totalHeader[i]);  
+//         I2C_Master_Stop();
+//     }
+//     char numberTotal[2] = "  ";
+//     numberTotal[0] = getChar(getTens(numBats));
+//     numberTotal[1] = getChar(getOnes(numBats));
+//     for(unsigned int i = 0; i < 2; i++) {
+//         I2C_Master_Start(); 
+//         I2C_Master_Write(0b00010000);  
+//         I2C_Master_Write(numberTotal[i]);  
+//         I2C_Master_Stop();
+//     }
+
+//     I2C_Master_Start(); 
+//     I2C_Master_Write(0b00010000);  
+//     I2C_Master_Write('\n');  
+//     I2C_Master_Stop();
+
+//     for(unsigned int i = 0; i < 32; i++) {
+//         I2C_Master_Start(); 
+//         I2C_Master_Write(0b00010000);  
+//         I2C_Master_Write(runTimeHeader[i]);  
+//         I2C_Master_Stop();
+//     }
+//     char runTime[3] = "   ";
+//     runTime[0] = getChar(getHundreds(min*60+sec));
+//     runTime[1] = getChar(getTens(min*60+sec));
+//     runTime[2] = getChar(getOnes(min*60+sec));
+//     for(unsigned int i = 0; i < 3; i++) {
+//         I2C_Master_Start(); 
+//         I2C_Master_Write(0b00010000);  
+//         I2C_Master_Write(runTime[i]);  
+//         I2C_Master_Stop();
+//     }
+//     I2C_Master_Start(); 
+//     I2C_Master_Write(0b00010000);  
+//     I2C_Master_Write('\n');  
+//     I2C_Master_Stop();
+//     I2C_Master_Start(); 
+//     I2C_Master_Write(0b00010000);  
+//     I2C_Master_Write('\n');  
+//     I2C_Master_Stop();
+// }
+
+// int getHundreds(unsigned int num) {
+//     if(num > 99) { return (int)(num / 100); }
+//     return 0;
+// }
+
+// int getTens(unsigned int num) {
+//     if(num > 9) { return (int)(num / 10); }
+//     return 0;
+// }
+
+// int getOnes(unsigned int num) {
+//     return num % 10;
+// }
+
+// char getChar(unsigned int num) {
+//     return num + '0'; 
+// }
+
+void rotateChamber(void){
+    unsigned char steps = 0;
+    while(steps<20 && screenMode==OPERATING){    //big stepper motor turning sequence
+        steps++;
+        chamberStep(1);
+        __delay_ms(5);
+        chamberStep(0);
+        __delay_ms(5);
     }
-    char runTime[3] = "   ";
-    runTime[0] = getChar(getHundreds(min*60+sec));
-    runTime[1] = getChar(getTens(min*60+sec));
-    runTime[2] = getChar(getOnes(min*60+sec));
-    for(unsigned int i = 0; i < 3; i++) {
-        I2C_Master_Start(); //Start condition
-        I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-        I2C_Master_Write(runTime[i]); //7 bit RTC address + Write
-        I2C_Master_Stop();
+    steps = 0;
+    while(steps < 178 && screenMode==OPERATING){
+        steps++;
+        chamberStep(1);
+        __delay_ms(2);
+        chamberStep(0);
+        __delay_ms(2);
     }
-    I2C_Master_Start(); //Start condition
-    I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-    I2C_Master_Write('\n'); //7 bit RTC address + Write
-    I2C_Master_Stop();
-    I2C_Master_Start(); //Start condition
-    I2C_Master_Write(0b00010000); //7 bit RTC address + Write
-    I2C_Master_Write('\n'); //7 bit RTC address + Write
-    I2C_Master_Stop();
+    steps = 0;
+    while(steps<2 && screenMode==OPERATING){
+        steps++;
+        chamberStep(1);
+        __delay_ms(5);
+        chamberStep(0);
+        __delay_ms(5);
+    }
 }
 
-int getHundreds(unsigned int num) {
-    if(num > 99) { return (int)(num / 100); }
-    return 0;
-}
+void unClogSequence(void){
+    UVDsol(1);
+    wait_2ms(100);
+    UVDsol(0);
+    plat1Right = 120;
+    plat2Left = 120;
+    while (screenMode == OPERATING && (plat1Right | plat2Left));
+    plat1Left = 120;
+    plat2Right = 120;
+    while (screenMode == OPERATING && (plat1Left | plat2Right));
 
-int getTens(unsigned int num) {
-    if(num > 9) { return (int)(num / 10); }
-    return 0;
-}
-
-int getOnes(unsigned int num) {
-    return num % 10;
-}
-
-char getChar(unsigned int num) {
-    return num + '0'; 
 }
 
 void interrupt ISR(void) {
@@ -1048,7 +937,7 @@ void interrupt ISR(void) {
 
         if (opTimer >= 180)    //stop operation after 3 minutes
             stopOperation();            
-        //funnelSol(!LATBbits.LB0);   //turn big solenoid on and off every second
+        //initialSol(!LATBbits.LB0);   //turn big solenoid on and off every second
         if (!sorting){              //UVD does not detect a battery for WAIT_TIME seconds
             if (ADRES > 50)
                 doneTimer++;
@@ -1069,7 +958,7 @@ void interrupt ISR(void) {
         solOnTimer++;
         if (solOnTimer >= 150){
             solOnTimer = 0;
-            funnelSol(!LATBbits.LB0);         //turn solenoid on and off every 0.4 seconds
+            initialSol(!LATBbits.LB0);         //turn solenoid on and off every 0.4 seconds
         }
         if (plat1Left){          //drained
             if (step1 == 1){
@@ -1164,9 +1053,5 @@ void interrupt ISR(void) {
                 step2--;
         }
     }	
-    if (screenMode == OPERATING && TMR2IF){
-        TMR2IF = 0;
-        TMR2 = 155;
-        servoPin(!LATBbits.LB2);
-    }
+    
 }

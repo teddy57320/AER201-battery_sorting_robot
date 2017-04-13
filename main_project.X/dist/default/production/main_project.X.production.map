@@ -5,7 +5,7 @@ Linker command line:
 -W-3 --edf=C:\Program Files (x86)\Microchip\xc8\v1.40\dat\en_msgs.txt -cs \
   -h+dist/default/production\main_project.X.production.sym \
   --cmf=dist/default/production\main_project.X.production.cmf -z -Q18F4620 \
-  -oC:\Users\teddy\AppData\Local\Temp\sdvs.2 \
+  -oC:\Users\teddy\AppData\Local\Temp\sdes.2 \
   -Mdist/default/production/main_project.X.production.map -E1 -ver=XC8 \
   -ASTACK=013Ch-0f7fh -pstack=STACK -ACODE=00h-0FFFFh -ACONST=00h-0FFFFh \
   -ASMALLCONST=01000h-010FFhx240 -AMEDIUMCONST=01000h-0FFFFh \
@@ -25,7 +25,7 @@ Linker command line:
   -pfarbss=FARRAM,fardata=FARRAM,nvFARRAM=FARRAM \
   -pintsave_regs=BIGRAM,bigbss=BIGRAM,bigdata=BIGRAM -pbss=RAM \
   -pidata=CODE,irdata=CODE,ibigdata=CODE,ifardata=CODE -prparam=COMRAM \
-  C:\Users\teddy\AppData\Local\Temp\sdvs.obj \
+  C:\Users\teddy\AppData\Local\Temp\sdes.obj \
   dist/default/production\main_project.X.production.obj 
 
 Object code version is 3.11
@@ -38,7 +38,7 @@ Call graph: (short form)
 
 
                 Name                               Link     Load   Length Selector   Space Scale
-C:\Users\teddy\AppData\Local\Temp\sdvs.obj
+C:\Users\teddy\AppData\Local\Temp\sdes.obj
                 init                                  E        E        4        4       0
                 reset_vec                             0        0        4        0       0
                 idloc                            200000   200000        8   200000       0
@@ -379,6 +379,7 @@ _T0CONbits                   (abs)        000FD5
 _T1CON                       (abs)        000FCD
 _T1CONbits                   (abs)        000FCD
 _T2CON                       (abs)        000FCA
+_T2CONbits                   (abs)        000FCA
 _TMR0                        (abs)        000FD6
 _TMR0IE                      (abs)        007F95
 _TMR0IF                      (abs)        007F92
@@ -922,7 +923,7 @@ _getTens                     text16       003520
 _hexpowers                   mediumconst  00FDA2
 _initLCD                     text25       003494
 _isdigit                     text11       0035FC
-_isdigit$1200                cstackBANK0  000081
+_isdigit$1231                cstackBANK0  000081
 _keypressed                  text33       002DD4
 _keys                        mediumconst  00FD87
 _lastRunRTC                  bssBANK0     0000C8
@@ -1010,7 +1011,7 @@ i2___wmul@multiplicand       cstackCOMRAM 000003
 i2___wmul@multiplier         cstackCOMRAM 000001
 i2___wmul@product            cstackCOMRAM 000005
 i2_isdigit                   text42       0036E0
-i2_isdigit$1200              cstackCOMRAM 000002
+i2_isdigit$1231              cstackCOMRAM 000002
 i2_lcdInst                   text46       0037F6
 i2_lcdNibble                 text47       003446
 i2_next_address              text35       0037DC
@@ -1055,19 +1056,19 @@ logPC@F3242                  dataBANK0    0000F6
 logPC@F3246                  dataBANK0    0000F8
 logPC@F3250                  dataBANK0    0000ED
 logPC@i                      cstackBANK1  000120
-logPC@i_913                  cstackBANK1  000122
-logPC@i_914                  cstackBANK1  000124
-logPC@i_917                  cstackBANK1  000126
-logPC@i_918                  cstackBANK1  000128
-logPC@i_921                  cstackBANK1  00012A
-logPC@i_922                  cstackBANK1  00012C
-logPC@i_925                  cstackBANK1  00012E
-logPC@i_926                  cstackBANK1  000130
-logPC@i_929                  cstackBANK1  000132
-logPC@i_930                  cstackBANK1  000134
-logPC@i_933                  cstackBANK1  000136
-logPC@i_934                  cstackBANK1  000138
-logPC@i_937                  cstackBANK1  00013A
+logPC@i_944                  cstackBANK1  000122
+logPC@i_945                  cstackBANK1  000124
+logPC@i_948                  cstackBANK1  000126
+logPC@i_949                  cstackBANK1  000128
+logPC@i_952                  cstackBANK1  00012A
+logPC@i_953                  cstackBANK1  00012C
+logPC@i_956                  cstackBANK1  00012E
+logPC@i_957                  cstackBANK1  000130
+logPC@i_960                  cstackBANK1  000132
+logPC@i_961                  cstackBANK1  000134
+logPC@i_964                  cstackBANK1  000136
+logPC@i_965                  cstackBANK1  000138
+logPC@i_968                  cstackBANK1  00013A
 logPC@number9V               cstackBANK1  00011A
 logPC@numberAA               cstackBANK1  000116
 logPC@numberC                cstackBANK1  000118
@@ -1076,14 +1077,14 @@ logPC@numberTotal            cstackBANK1  00011E
 logPC@runTime                cstackBANK1  000113
 logPC@started_time           cstackBANK1  000100
 main@i                       cstackBANK0  0000C0
-main@i_743                   cstackBANK0  0000C1
-main@i_791                   cstackBANK0  0000C2
-main@i_793                   cstackBANK0  0000C3
-main@i_808                   cstackBANK0  0000C4
+main@i_771                   cstackBANK0  0000C1
+main@i_819                   cstackBANK0  0000C2
+main@i_821                   cstackBANK0  0000C3
+main@i_836                   cstackBANK0  0000C4
 main@keypress                cstackBANK0  0000BF
 main@steps                   cstackBANK0  0000C7
-main@steps_765               cstackBANK0  0000C5
-main@steps_774               cstackBANK0  0000C6
+main@steps_793               cstackBANK0  0000C5
+main@steps_802               cstackBANK0  0000C6
 next_address@address         cstackBANK0  000080
 printf@ap                    cstackBANK0  000099
 printf@c                     cstackBANK0  0000A1
@@ -1105,8 +1106,8 @@ show_log@day                 cstackBANK0  0000B4
 show_log@elapsed_time        cstackBANK0  0000B0
 show_log@hour                cstackBANK0  0000B5
 show_log@i                   cstackBANK0  0000B8
-show_log@i_905               cstackBANK0  0000B9
-show_log@i_908               cstackBANK0  0000BA
+show_log@i_936               cstackBANK0  0000B9
+show_log@i_939               cstackBANK0  0000BA
 show_log@log_address         cstackBANK0  0000A2
 show_log@minute              cstackBANK0  0000B6
 show_log@month               cstackBANK0  0000B3
@@ -2219,7 +2220,7 @@ Total ram usage:       13 bytes
 
  *************** function _ISR *****************
  Defined at:
-		line 1036 in file "../main.c"
+		line 1034 in file "../main.c"
  Parameters:    Size  Location     Type
 		None
  Auto vars:     Size  Location     Type
